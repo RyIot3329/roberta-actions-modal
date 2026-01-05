@@ -10,28 +10,28 @@ on:
   workflow_dispatch:
     inputs:
       epochs:
-        description: 'Number of training epochs'
+        description: "Number of training epochs"
         required: false
-        default: '2'
+        default: "2"
       batch_size:
-        description: 'Batch size'
+        description: "Batch size"
         required: false
-        default: '8'
+        default: "8"
 
   # Trigger on push to data directory
   push:
     branches: [main]
     paths:
-      - 'data/**'
+      - "data/**"
 
 env:
-  PYTHON_VERSION: '3.10'
+  PYTHON_VERSION: "3.10"
 
 jobs:
   train:
     name: Fine-tune on Modal
     runs-on: ubuntu-latest
-    
+
     permissions:
       contents: write
       pull-requests: write
@@ -70,88 +70,79 @@ jobs:
           modal run finetune.py \
             --epochs ${{ github.event.inputs.epochs || '2' }} \
             --batch-size ${{ github.event.inputs.batch_size || '8' }}
-          
+
           # Capture the output filename
           OUTPUT_FILE=$(ls -t output/*.txt | head -1)
           echo "output_file=$OUTPUT_FILE" >> $GITHUB_OUTPUT
+
+          # Save the content to GITHUB_STEP_SUMMARY for visibility
+          echo "## Training Results" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat "$OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          # Also save content to env for PR body
+          {
+            echo 'RESULTS_CONTENT<<EOF'
+            cat "$OUTPUT_FILE"
+            echo 'EOF'
+          } >> $GITHUB_ENV
+
           echo "Training complete. Output: $OUTPUT_FILE"
 
-      # 7. Create branch and commit results
-      - name: Commit results to new branch
-        id: commit
-        run: |
-          # Configure git
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Create timestamp for branch name
-          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-          BRANCH_NAME="training-results-${TIMESTAMP}"
-          
-          # Create new branch
-          git checkout -b $BRANCH_NAME
-          
-          # Add output file
-          git add output/
-          
-          # Commit
-          git commit -m "Add training results from Modal run
-
-          - Epochs: ${{ github.event.inputs.epochs || '2' }}
-          - Batch size: ${{ github.event.inputs.batch_size || '8' }}
-          - Triggered by: ${{ github.event_name }}
-          - Run ID: ${{ github.run_id }}"
-          
-          # Push branch
-          git push origin $BRANCH_NAME
-          
-          # Output branch name for PR step
-          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
-
-      # 8. Create Pull Request
+      # 7. Create Pull Request (handles branch, commit, push, and PR)
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ steps.commit.outputs.branch_name }}
-          base: main
-          title: "🤖 Training Results - ${{ steps.commit.outputs.branch_name }}"
+          commit-message: |
+            Add training results from Modal run
+
+            - Epochs: ${{ github.event.inputs.epochs || '2' }}
+            - Batch size: ${{ github.event.inputs.batch_size || '8' }}
+            - Triggered by: ${{ github.event_name }}
+            - Run ID: ${{ github.run_id }}
+          branch: training-results-${{ github.run_id }}
+          delete-branch: true
+          title: "🤖 Training Results - Run #${{ github.run_id }}"
           body: |
             ## Automated Training Results
-            
+
             This PR was automatically created by the CI/CD pipeline after a successful training run on Modal.
-            
+
             ### Training Configuration
             - **Model**: FacebookAI/roberta-base
             - **Epochs**: ${{ github.event.inputs.epochs || '2' }}
             - **Batch Size**: ${{ github.event.inputs.batch_size || '8' }}
-            
+
             ### Trigger
             - **Event**: ${{ github.event_name }}
             - **Run ID**: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
             - **Commit**: ${{ github.sha }}
-            
-            ### Output File
-            Check the `output/` directory for the training results file.
-            
+
+            ### Results
+            ```
+            ${{ env.RESULTS_CONTENT }}
+            ```
+
             ---
-            
+
             **Please review the results and merge if satisfactory.**
           labels: |
             automated
             training-results
-          draft: false
 
-      # 9. Print summary
+      # 8. Print summary
       - name: Print summary
         run: |
           echo "=========================================="
           echo "TRAINING COMPLETE"
           echo "=========================================="
           echo "Output file: ${{ steps.train.outputs.output_file }}"
-          echo "Branch: ${{ steps.commit.outputs.branch_name }}"
           echo "Pull request created!"
           echo "=========================================="
           echo ""
-          echo "Results:"
-          cat ${{ steps.train.outputs.output_file }}
+          echo "Results are available in:"
+          echo "  - The PR body"
+          echo "  - The workflow summary"
+          echo "  - The output/ directory in the PR branch"
