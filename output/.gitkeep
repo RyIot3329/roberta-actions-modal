@@ -1,0 +1,2 @@
+# This file ensures the output directory is tracked by git
+# Training results will be saved here with format: YYYYMMDD_HHMMSS_roberta-base.txt

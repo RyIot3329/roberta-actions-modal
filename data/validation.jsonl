@@ -1,0 +1,5 @@
+{"text": "ZN_TEMP_STPT", "label": "zoneTempSp", "label_id": 0}
+{"text": "DISCH_AIR_TEMP", "label": "dischargeTemp", "label_id": 1}
+{"text": "RET_AIR_TEMP", "label": "returnTemp", "label_id": 2}
+{"text": "CLG_VALVE", "label": "coolingValve", "label_id": 3}
+{"text": "HTG_VALVE", "label": "heatingValve", "label_id": 4}
