@@ -4,7 +4,7 @@ A minimal proof-of-concept for fine-tuning `FacebookAI/roberta-base` using Modal
 
 ## What This Does
 
-1. **GitHub Actions** triggers training (manually or on push to `data/`)
+1. **GitHub Actions** triggers training (manually or on push to `data/` or `scripts`)
 2. **Modal** runs the fine-tuning job on a GPU (T4)
 3. **Results** are committed back to the repo with a timestamp
 4. **Pull Request** is automatically created for review
@@ -41,9 +41,9 @@ cat ~/.modal.toml  # Copy token-id and token-secret
 
 Go to your repo → Settings → Secrets → Actions, and add:
 
-| Secret | Description |
-|--------|-------------|
-| `MODAL_TOKEN_ID` | From `~/.modal.toml` |
+| Secret               | Description          |
+| -------------------- | -------------------- |
+| `MODAL_TOKEN_ID`     | From `~/.modal.toml` |
 | `MODAL_TOKEN_SECRET` | From `~/.modal.toml` |
 
 ### 4. Push to GitHub

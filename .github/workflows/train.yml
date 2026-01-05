@@ -21,6 +21,7 @@ on:
     branches: [main]
     paths:
       - "data/**"
+      - "scripts/**"
 
 env:
   PYTHON_VERSION: "3.10"
