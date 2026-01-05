@@ -1,6 +1,6 @@
 # .github/workflows/train.yml
 #
-# Fine-tune RoBERTa on Modal and commit results back to repo
+# Fine-tune RoBERTa on Modal with data preprocessing
 # Creates a pull request with training results
 
 name: Fine-tune RoBERTa
@@ -28,7 +28,7 @@ env:
 
 jobs:
   train:
-    name: Fine-tune on Modal
+    name: Preprocess & Fine-tune on Modal
     runs-on: ubuntu-latest
 
     permissions:
@@ -44,14 +44,44 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Modal
-        run: pip install modal
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install modal
 
       - name: Configure Modal
         run: |
           modal token set \
             --token-id ${{ secrets.MODAL_TOKEN_ID }} \
             --token-secret ${{ secrets.MODAL_TOKEN_SECRET }}
+
+      # ============================================
+      # Data Preprocessing Steps
+      # ============================================
+
+      - name: "Step 1: Clean Data"
+        run: |
+          echo "Cleaning data..."
+          python scripts/clean_data.py
+
+      - name: "Step 2: Print Tags"
+        run: |
+          echo "Printing label distribution..."
+          python scripts/print_tags.py
+
+      - name: "Step 3: Train/Valid Split"
+        run: |
+          echo "Splitting data..."
+          python scripts/train_split.py
+
+      - name: "Step 4: Convert to JSONL"
+        run: |
+          echo "Converting to JSONL format..."
+          python scripts/convert_to_jsonl.py
+
+      # ============================================
+      # Modal Training
+      # ============================================
 
       - name: Create output directory
         run: mkdir -p output
@@ -75,11 +105,24 @@ jobs:
           cat "$OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
+      # ============================================
+      # Commit Results & Create PR
+      # ============================================
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Add training results: ${{ steps.train.outputs.output_filename }}"
+          add-paths: |
+            data/
+            output/
+          commit-message: |
+            Add training results and processed data
+
+            - Preprocessed data files
+            - Training results: ${{ steps.train.outputs.output_filename }}
+            - Epochs: ${{ github.event.inputs.epochs || '2' }}
+            - Batch size: ${{ github.event.inputs.batch_size || '8' }}
           branch: training-results-${{ github.run_id }}
           delete-branch: true
           title: "🤖 Training Results - ${{ steps.train.outputs.output_filename }}"
@@ -88,10 +131,19 @@ jobs:
 
             Training completed successfully on Modal.
 
-            **Config:** ${{ github.event.inputs.epochs || '2' }} epochs, batch size ${{ github.event.inputs.batch_size || '8' }}
+            ### Configuration
+            - **Epochs:** ${{ github.event.inputs.epochs || '2' }}
+            - **Batch size:** ${{ github.event.inputs.batch_size || '8' }}
 
-            **Results file:** `${{ steps.train.outputs.output_file }}`
+            ### Files Updated
+            - `data/cleaned_data.csv` - Cleaned training data
+            - `data/train.csv` / `data/valid.csv` - Train/validation CSV splits
+            - `data/train.jsonl` / `data/validation.jsonl` / `data/test.jsonl` - JSONL format
+            - `data/label_mapping.json` - Label ID mappings
+            - `data/dataset_summary.json` - Dataset statistics
+            - `${{ steps.train.outputs.output_file }}` - Training results
 
+            ### Results
             📊 [View full results in workflow summary](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           labels: |
             automated
@@ -100,7 +152,7 @@ jobs:
       - name: Summary
         run: |
           echo "=========================================="
-          echo "TRAINING COMPLETE"
+          echo "PIPELINE COMPLETE"
           echo "=========================================="
           echo "Output: ${{ steps.train.outputs.output_file }}"
           echo "PR created for branch: training-results-${{ github.run_id }}"
