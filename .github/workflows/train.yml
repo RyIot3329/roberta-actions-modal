@@ -60,7 +60,7 @@ jobs:
         id: train
         run: |
           echo "Starting Modal training..."
-          modal run finetune.py \
+          modal run ./scripts/finetune.py \
             --epochs ${{ github.event.inputs.epochs || '2' }} \
             --batch-size ${{ github.event.inputs.batch_size || '8' }}
 
