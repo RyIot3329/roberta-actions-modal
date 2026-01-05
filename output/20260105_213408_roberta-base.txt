@@ -1,0 +1,51 @@
+============================================================
+RoBERTa Fine-tuning Results
+============================================================
+
+Timestamp: 2026-01-05T21:33:57.609228
+Model: FacebookAI/roberta-base
+GPU: Tesla T4
+
+Configuration:
+  epochs: 2
+  batch_size: 8
+  learning_rate: 2e-05
+  num_labels: 5
+  train_samples: 22
+  val_samples: 5
+
+Training Metrics:
+  loss: 1.6081948280334473
+  runtime_seconds: 17.4047
+  samples_per_second: 2.528
+
+Evaluation Metrics:
+  accuracy: 0.2000
+  f1_weighted: 0.0667
+  loss: 1.6141
+
+============================================================
+Raw JSON:
+{
+  "timestamp": "2026-01-05T21:33:57.609228",
+  "model": "FacebookAI/roberta-base",
+  "config": {
+    "epochs": 2,
+    "batch_size": 8,
+    "learning_rate": 2e-05,
+    "num_labels": 5,
+    "train_samples": 22,
+    "val_samples": 5
+  },
+  "train_metrics": {
+    "loss": 1.6081948280334473,
+    "runtime_seconds": 17.4047,
+    "samples_per_second": 2.528
+  },
+  "eval_metrics": {
+    "accuracy": 0.2,
+    "f1_weighted": 0.06666666666666667,
+    "loss": 1.6140625476837158
+  },
+  "gpu": "Tesla T4"
+}
