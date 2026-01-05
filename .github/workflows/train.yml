@@ -6,7 +6,6 @@
 name: Fine-tune RoBERTa
 
 on:
-  # Manual trigger
   workflow_dispatch:
     inputs:
       epochs:
@@ -18,7 +17,6 @@ on:
         required: false
         default: "8"
 
-  # Trigger on push to data directory
   push:
     branches: [main]
     paths:
@@ -37,32 +35,26 @@ jobs:
       pull-requests: write
 
     steps:
-      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      # 3. Install Modal
       - name: Install Modal
         run: pip install modal
 
-      # 4. Configure Modal authentication
       - name: Configure Modal
         run: |
           modal token set \
             --token-id ${{ secrets.MODAL_TOKEN_ID }} \
             --token-secret ${{ secrets.MODAL_TOKEN_SECRET }}
 
-      # 5. Ensure output directory exists
       - name: Create output directory
         run: mkdir -p output
 
-      # 6. Run training on Modal
       - name: Run fine-tuning on Modal
         id: train
         run: |
@@ -71,78 +63,44 @@ jobs:
             --epochs ${{ github.event.inputs.epochs || '2' }} \
             --batch-size ${{ github.event.inputs.batch_size || '8' }}
 
-          # Capture the output filename
+          # Get the output filename
           OUTPUT_FILE=$(ls -t output/*.txt | head -1)
           echo "output_file=$OUTPUT_FILE" >> $GITHUB_OUTPUT
+          echo "output_filename=$(basename $OUTPUT_FILE)" >> $GITHUB_OUTPUT
 
-          # Save the content to GITHUB_STEP_SUMMARY for visibility
+          # Add to workflow summary
           echo "## Training Results" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           cat "$OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
-          # Also save content to env for PR body
-          {
-            echo 'RESULTS_CONTENT<<EOF'
-            cat "$OUTPUT_FILE"
-            echo 'EOF'
-          } >> $GITHUB_ENV
-
-          echo "Training complete. Output: $OUTPUT_FILE"
-
-      # 7. Create Pull Request (handles branch, commit, push, and PR)
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: |
-            Add training results from Modal run
-
-            - Epochs: ${{ github.event.inputs.epochs || '2' }}
-            - Batch size: ${{ github.event.inputs.batch_size || '8' }}
-            - Triggered by: ${{ github.event_name }}
-            - Run ID: ${{ github.run_id }}
+          commit-message: "Add training results: ${{ steps.train.outputs.output_filename }}"
           branch: training-results-${{ github.run_id }}
           delete-branch: true
-          title: "🤖 Training Results - Run #${{ github.run_id }}"
+          title: "🤖 Training Results - ${{ steps.train.outputs.output_filename }}"
           body: |
             ## Automated Training Results
 
-            This PR was automatically created by the CI/CD pipeline after a successful training run on Modal.
+            Training completed successfully on Modal.
 
-            ### Training Configuration
-            - **Model**: FacebookAI/roberta-base
-            - **Epochs**: ${{ github.event.inputs.epochs || '2' }}
-            - **Batch Size**: ${{ github.event.inputs.batch_size || '8' }}
+            **Config:** ${{ github.event.inputs.epochs || '2' }} epochs, batch size ${{ github.event.inputs.batch_size || '8' }}
 
-            ### Trigger
-            - **Event**: ${{ github.event_name }}
-            - **Run ID**: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            - **Commit**: ${{ github.sha }}
+            **Results file:** `${{ steps.train.outputs.output_file }}`
 
-            ### Results
-            ```
-            ${{ env.RESULTS_CONTENT }}
-            ```
-
-            ---
-
-            **Please review the results and merge if satisfactory.**
+            📊 [View full results in workflow summary](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           labels: |
             automated
             training-results
 
-      # 8. Print summary
-      - name: Print summary
+      - name: Summary
         run: |
           echo "=========================================="
           echo "TRAINING COMPLETE"
           echo "=========================================="
-          echo "Output file: ${{ steps.train.outputs.output_file }}"
-          echo "Pull request created!"
+          echo "Output: ${{ steps.train.outputs.output_file }}"
+          echo "PR created for branch: training-results-${{ github.run_id }}"
           echo "=========================================="
-          echo ""
-          echo "Results are available in:"
-          echo "  - The PR body"
-          echo "  - The workflow summary"
-          echo "  - The output/ directory in the PR branch"

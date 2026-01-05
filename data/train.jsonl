@@ -9,6 +9,7 @@
 {"text": "RETURN_TEMP", "label": "returnTemp", "label_id": 2}
 {"text": "ret-temp", "label": "returnTemp", "label_id": 2}
 {"text": "RAT", "label": "returnTemp", "label_id": 2}
+{"text": "RATmp", "label": "returnTemp", "label_id": 2}
 {"text": "return_air_temperature", "label": "returnTemp", "label_id": 2}
 {"text": "COOLING_VLV", "label": "coolingValve", "label_id": 3}
 {"text": "clg-valve", "label": "coolingValve", "label_id": 3}
