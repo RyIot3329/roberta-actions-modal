@@ -1,25 +1,56 @@
 # RoBERTa Fine-tuning POC
 
-A minimal proof-of-concept for fine-tuning `FacebookAI/roberta-base` using Modal and GitHub Actions.
+A proof-of-concept for fine-tuning `FacebookAI/roberta-base` using Modal and GitHub Actions with automated data preprocessing.
 
 ## What This Does
 
-1. **GitHub Actions** triggers training (manually or on push to `data/` or `scripts`)
-2. **Modal** runs the fine-tuning job on a GPU (T4)
-3. **Results** are committed back to the repo with a timestamp
-4. **Pull Request** is automatically created for review
+1. **Data Preprocessing** - Cleans and converts CSV data to JSONL format
+2. **GitHub Actions** triggers training (manually or on push to `data/` or `scripts/`)
+3. **Modal** runs the fine-tuning job on a GPU (T4)
+4. **Validation Testing** - Tests the model on validation data
+5. **Results** are committed back to the repo with a timestamp
+6. **Pull Request** is automatically created for review
+
+## Pipeline Steps
+
+```
+┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
+│  Clean Data │──▶│ Print Tags  │──▶│ Train/Valid │──▶│ Convert to  │
+│             │   │             │   │   Split     │   │   JSONL     │
+└─────────────┘   └─────────────┘   └─────────────┘   └─────────────┘
+                                                             │
+                                                             ▼
+┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
+│  Create PR  │◀──│   Commit    │◀──│  Validate   │◀──│ Fine-tune   │
+│             │   │   Results   │   │   Model     │   │  on Modal   │
+└─────────────┘   └─────────────┘   └─────────────┘   └─────────────┘
+```
 
 ## Project Structure
 
 ```
 roberta-poc/
 ├── .github/workflows/
-│   └── train.yml          # CI/CD pipeline
+│   └── train.yml              # CI/CD pipeline
 ├── data/
-│   ├── train.jsonl        # Training data (20 samples)
-│   └── validation.jsonl   # Validation data (5 samples)
-├── output/                 # Training results (auto-generated)
-├── finetune.py            # Modal fine-tuning script
+│   └── train_all.csv          # Input: Raw training data (text, target)
+│   # Generated files:
+│   ├── cleaned_data.csv       # Step 1 output
+│   ├── train.csv              # Step 3 output
+│   ├── valid.csv              # Step 3 output
+│   ├── train.jsonl            # Step 4 output
+│   ├── validation.jsonl       # Step 4 output
+│   ├── test.jsonl             # Step 4 output
+│   ├── label_mapping.json     # Step 4 output
+│   └── dataset_summary.json   # Step 4 output
+├── scripts/
+│   ├── clean_data.py          # Step 1: Remove spaces
+│   ├── print_tags.py          # Step 2: Show label distribution
+│   ├── train_split.py         # Step 3: Split into train/valid
+│   ├── convert_to_jsonl.py    # Step 4: Convert to JSONL
+│   └── finetune.py            # Modal fine-tuning script
+├── output/                     # Training results (auto-generated)
+├── requirements.txt           # Python dependencies
 └── README.md
 ```
 
@@ -68,11 +99,11 @@ git push -u origin main
 
 ### Automatic Trigger
 
-Push changes to the `data/` directory:
+Push changes to the `data/` or `scripts/` directory:
 
 ```bash
-# Edit data/train.jsonl
-git add data/
+# Update your training data
+git add data/train_all.csv
 git commit -m "Update training data"
 git push
 ```
@@ -80,8 +111,17 @@ git push
 ### Local Testing
 
 ```bash
+pip install -r requirements.txt
 pip install modal
-modal run finetune.py --epochs 2
+
+# Run preprocessing locally
+python scripts/clean_data.py
+python scripts/print_tags.py
+python scripts/train_split.py
+python scripts/convert_to_jsonl.py
+
+# Run training on Modal
+modal run scripts/finetune.py --epochs 2
 ```
 
 ## Output Format
@@ -115,28 +155,32 @@ Evaluation Metrics:
   loss: 0.2345
 ```
 
-## Data Format
+## Input Data Format
 
-JSONL format with three fields:
+Place your training data in `data/train_all.csv` with two columns:
 
-```json
-{"text": "ZONE_TEMP_SP", "label": "zoneTempSp", "label_id": 0}
-{"text": "DISCHARGE_TEMP", "label": "dischargeTemp", "label_id": 1}
+```csv
+text,target
+ZONE_TEMP_SP,zoneTempSp
+discharge-temp,dischargeTemp
+RAT,returnTemp
 ```
 
-## Workflow
+- **text**: The raw point name to classify
+- **target**: The standardized label
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Trigger   │────▶│    Modal    │────▶│   Commit    │────▶│  Create PR  │
-│  (Manual/   │     │  Training   │     │   Results   │     │             │
-│   Push)     │     │   (GPU)     │     │             │     │             │
-└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
-```
+## Preprocessing Scripts
+
+| Script                | Input              | Output                   | Description                 |
+| --------------------- | ------------------ | ------------------------ | --------------------------- |
+| `clean_data.py`       | `train_all.csv`    | `cleaned_data.csv`       | Removes spaces from strings |
+| `print_tags.py`       | `cleaned_data.csv` | Console                  | Shows label distribution    |
+| `train_split.py`      | `cleaned_data.csv` | `train.csv`, `valid.csv` | 80/20 stratified split      |
+| `convert_to_jsonl.py` | `cleaned_data.csv` | `*.jsonl` + mappings     | Creates training files      |
 
 ## Notes
 
-- This is a **proof-of-concept** with minimal training data
-- The model won't be production-ready with only 20 samples
-- Increase `data/train.jsonl` for real use cases
+- Place your raw CSV data in `data/train_all.csv`
+- All preprocessing happens automatically in the workflow
+- Generated files are committed back to the repo via PR
 - Modal's free tier includes GPU credits for testing
