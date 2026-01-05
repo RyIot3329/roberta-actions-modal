@@ -1,0 +1,130 @@
+============================================================
+RoBERTa Fine-tuning Results
+============================================================
+
+Timestamp: 2026-01-05T21:58:50.305140
+Model: FacebookAI/roberta-base
+GPU: Tesla T4
+
+Configuration:
+  epochs: 2
+  batch_size: 8
+  learning_rate: 2e-05
+  num_labels: 5
+  train_samples: 22
+  val_samples: 5
+
+Training Metrics:
+  loss: 1.6252916653951008
+  runtime_seconds: 9.5428
+  samples_per_second: 4.611
+
+Evaluation Metrics:
+  accuracy: 0.2000
+  f1_weighted: 0.0667
+  loss: 1.6148
+
+============================================================
+Validation Inference Results
+============================================================
+Accuracy: 1/5 (20.00%)
+
+Predictions:
+------------------------------------------------------------
+✗ Input: 'ZN_TEMP_STPT'
+   Predicted: heatingValve (confidence: 23.89%)
+   Actual:    zoneTempSp
+
+✗ Input: 'DISCH_AIR_TEMP'
+   Predicted: heatingValve (confidence: 23.86%)
+   Actual:    dischargeTemp
+
+✗ Input: 'RET_AIR_TEMP'
+   Predicted: heatingValve (confidence: 23.85%)
+   Actual:    returnTemp
+
+✗ Input: 'CLG_VALVE'
+   Predicted: heatingValve (confidence: 23.92%)
+   Actual:    coolingValve
+
+✓ Input: 'HTG_VALVE'
+   Predicted: heatingValve (confidence: 24.02%)
+   Actual:    heatingValve
+
+============================================================
+Raw JSON:
+{
+  "timestamp": "2026-01-05T21:58:50.305140",
+  "model": "FacebookAI/roberta-base",
+  "config": {
+    "epochs": 2,
+    "batch_size": 8,
+    "learning_rate": 2e-05,
+    "num_labels": 5,
+    "train_samples": 22,
+    "val_samples": 5
+  },
+  "train_metrics": {
+    "loss": 1.6252916653951008,
+    "runtime_seconds": 9.5428,
+    "samples_per_second": 4.611
+  },
+  "eval_metrics": {
+    "accuracy": 0.2,
+    "f1_weighted": 0.06666666666666667,
+    "loss": 1.614843726158142
+  },
+  "validation_inference": {
+    "accuracy": 0.2,
+    "correct": 1,
+    "total": 5,
+    "predictions": [
+      {
+        "text": "ZN_TEMP_STPT",
+        "actual_label": "zoneTempSp",
+        "actual_id": 0,
+        "predicted_label": "heatingValve",
+        "predicted_id": 4,
+        "confidence": 0.23890256881713867,
+        "correct": false
+      },
+      {
+        "text": "DISCH_AIR_TEMP",
+        "actual_label": "dischargeTemp",
+        "actual_id": 1,
+        "predicted_label": "heatingValve",
+        "predicted_id": 4,
+        "confidence": 0.23857396841049194,
+        "correct": false
+      },
+      {
+        "text": "RET_AIR_TEMP",
+        "actual_label": "returnTemp",
+        "actual_id": 2,
+        "predicted_label": "heatingValve",
+        "predicted_id": 4,
+        "confidence": 0.2385125607252121,
+        "correct": false
+      },
+      {
+        "text": "CLG_VALVE",
+        "actual_label": "coolingValve",
+        "actual_id": 3,
+        "predicted_label": "heatingValve",
+        "predicted_id": 4,
+        "confidence": 0.2391986846923828,
+        "correct": false
+      },
+      {
+        "text": "HTG_VALVE",
+        "actual_label": "heatingValve",
+        "actual_id": 4,
+        "predicted_label": "heatingValve",
+        "predicted_id": 4,
+        "confidence": 0.24020585417747498,
+        "correct": true
+      }
+    ]
+  },
+  "gpu": "Tesla T4"
+}
