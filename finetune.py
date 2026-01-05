@@ -165,6 +165,57 @@ def train(
     print("\nEvaluating...")
     eval_result = trainer.evaluate()
 
+    # Run validation inference - test each sample individually
+    print("\nRunning validation inference...")
+    print("-" * 60)
+    
+    model.eval()
+    predictions_list = []
+    
+    with torch.no_grad():
+        for i, sample in enumerate(val_data):
+            # Tokenize single sample
+            inputs = tokenizer(
+                sample["text"],
+                padding="max_length",
+                truncation=True,
+                max_length=64,
+                return_tensors="pt"
+            )
+            inputs = {k: v.to(model.device) for k, v in inputs.items()}
+            
+            # Get prediction
+            outputs = model(**inputs)
+            pred_id = torch.argmax(outputs.logits, dim=1).item()
+            confidence = torch.softmax(outputs.logits, dim=1).max().item()
+            
+            # Get label name from training data (build a mapping)
+            label_id_to_name = {d["label_id"]: d["label"] for d in train_data + val_data}
+            pred_label = label_id_to_name.get(pred_id, f"unknown_{pred_id}")
+            actual_label = sample["label"]
+            is_correct = pred_id == sample["label_id"]
+            
+            predictions_list.append({
+                "text": sample["text"],
+                "actual_label": actual_label,
+                "actual_id": sample["label_id"],
+                "predicted_label": pred_label,
+                "predicted_id": pred_id,
+                "confidence": confidence,
+                "correct": is_correct,
+            })
+            
+            status = "✓" if is_correct else "✗"
+            print(f"{status} '{sample['text']}' -> predicted: {pred_label} (conf: {confidence:.2%}), actual: {actual_label}")
+    
+    # Calculate validation accuracy
+    val_correct = sum(1 for p in predictions_list if p["correct"])
+    val_total = len(predictions_list)
+    val_accuracy = val_correct / val_total if val_total > 0 else 0
+    
+    print("-" * 60)
+    print(f"Validation Results: {val_correct}/{val_total} correct ({val_accuracy:.2%})")
+    
     # Prepare results
     results = {
         "timestamp": datetime.now().isoformat(),
@@ -187,6 +238,12 @@ def train(
             "f1_weighted": eval_result.get("eval_f1_weighted"),
             "loss": eval_result.get("eval_loss"),
         },
+        "validation_inference": {
+            "accuracy": val_accuracy,
+            "correct": val_correct,
+            "total": val_total,
+            "predictions": predictions_list,
+        },
         "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU",
     }
 
@@ -203,6 +260,7 @@ def train(
     print(f"Accuracy: {results['eval_metrics']['accuracy']:.4f}")
     print(f"F1 (weighted): {results['eval_metrics']['f1_weighted']:.4f}")
     print(f"Training time: {results['train_metrics']['runtime_seconds']:.2f}s")
+    print(f"Validation Inference: {val_correct}/{val_total} ({val_accuracy:.2%})")
     print("=" * 60)
 
     return results
@@ -276,9 +334,24 @@ def main(epochs: int = 2, batch_size: int = 8):
         for k, v in results['eval_metrics'].items():
             if v is not None:
                 f.write(f"  {k}: {v:.4f}\n")
+        
+        # Add validation inference results
         f.write("\n" + "=" * 60 + "\n")
+        f.write("Validation Inference Results\n")
+        f.write("=" * 60 + "\n")
+        val_inf = results.get('validation_inference', {})
+        f.write(f"Accuracy: {val_inf.get('correct', 0)}/{val_inf.get('total', 0)} ({val_inf.get('accuracy', 0):.2%})\n\n")
+        f.write("Predictions:\n")
+        f.write("-" * 60 + "\n")
+        for pred in val_inf.get('predictions', []):
+            status = "✓" if pred['correct'] else "✗"
+            f.write(f"{status} Input: '{pred['text']}'\n")
+            f.write(f"   Predicted: {pred['predicted_label']} (confidence: {pred['confidence']:.2%})\n")
+            f.write(f"   Actual:    {pred['actual_label']}\n\n")
+        
+        f.write("=" * 60 + "\n")
         f.write("Raw JSON:\n")
-        f.write(json.dumps(results, indent=2))
+        f.write(json.dumps(results, indent=2, default=str))
 
     print(f"\nResults saved to: {output_file}")
     return results
