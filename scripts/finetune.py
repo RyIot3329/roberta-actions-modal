@@ -167,13 +167,15 @@ def train(
 
     # Run validation inference - test each sample individually
     print("\nRunning validation inference...")
-    print("-" * 60)
     
     model.eval()
     predictions_list = []
     
+    # Build label mapping
+    label_id_to_name = {d["label_id"]: d["label"] for d in train_data + val_data}
+    
     with torch.no_grad():
-        for i, sample in enumerate(val_data):
+        for sample in val_data:
             # Tokenize single sample
             inputs = tokenizer(
                 sample["text"],
@@ -189,8 +191,6 @@ def train(
             pred_id = torch.argmax(outputs.logits, dim=1).item()
             confidence = torch.softmax(outputs.logits, dim=1).max().item()
             
-            # Get label name from training data (build a mapping)
-            label_id_to_name = {d["label_id"]: d["label"] for d in train_data + val_data}
             pred_label = label_id_to_name.get(pred_id, f"unknown_{pred_id}")
             actual_label = sample["label"]
             is_correct = pred_id == sample["label_id"]
@@ -204,17 +204,11 @@ def train(
                 "confidence": confidence,
                 "correct": is_correct,
             })
-            
-            status = "✓" if is_correct else "✗"
-            print(f"{status} '{sample['text']}' -> predicted: {pred_label} (conf: {confidence:.2%}), actual: {actual_label}")
     
     # Calculate validation accuracy
     val_correct = sum(1 for p in predictions_list if p["correct"])
     val_total = len(predictions_list)
     val_accuracy = val_correct / val_total if val_total > 0 else 0
-    
-    print("-" * 60)
-    print(f"Validation Results: {val_correct}/{val_total} correct ({val_accuracy:.2%})")
     
     # Prepare results
     results = {
@@ -257,10 +251,8 @@ def train(
     print("\n" + "=" * 60)
     print("TRAINING COMPLETE")
     print("=" * 60)
-    print(f"Accuracy: {results['eval_metrics']['accuracy']:.4f}")
-    print(f"F1 (weighted): {results['eval_metrics']['f1_weighted']:.4f}")
     print(f"Training time: {results['train_metrics']['runtime_seconds']:.2f}s")
-    print(f"Validation Inference: {val_correct}/{val_total} ({val_accuracy:.2%})")
+    print(f"Results saved to Modal volume")
     print("=" * 60)
 
     return results
@@ -279,7 +271,7 @@ def main(epochs: int = 2, batch_size: int = 8):
 
     print("Loading training data...")
     
-    # Load data from local files
+    # Load data from local files (paths relative to repo root)
     def load_jsonl(filepath: str) -> list:
         data = []
         with open(filepath, "r") as f:
@@ -306,12 +298,6 @@ def main(epochs: int = 2, batch_size: int = 8):
         epochs=epochs,
         batch_size=batch_size,
     )
-
-    # Print results
-    print("\n" + "=" * 60)
-    print("RESULTS FROM MODAL")
-    print("=" * 60)
-    print(json.dumps(results, indent=2))
 
     # Save results locally
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
