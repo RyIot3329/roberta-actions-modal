@@ -17494,6 +17494,7 @@ CFM_CAL_K,kFactor
 SETPNTOFFSET,zoneTempSpOffset
 setPointOffset,zoneTempSpOffset
 ZN-SP-DB,zoneTempSpOffset
+ZNT-SP-ADJUST,zoneTempSpOffset
 zone-tmp-setpoint-offset,zoneTempSpOffset
 SPACE_TEMP_OFFST,zoneTempSpOffset
 ZN-SP-ADJ,zoneTempSpOffset
