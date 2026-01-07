@@ -1,14 +1,25 @@
 # .github/workflows/train.yml
 #
-# Fine-tune RoBERTa on Modal with data preprocessing
+# Fine-tune BERT on Modal with data preprocessing
 # Creates a pull request with training results
 # Pushes model to Hugging Face Hub
 
-name: Fine-tune RoBERTa
+name: Fine-tune Transformer
 
 on:
   workflow_dispatch:
     inputs:
+      model:
+        description: "Model to fine-tune"
+        required: false
+        default: "microsoft/deberta-v3-base"
+        type: choice
+        options:
+          - "microsoft/deberta-v3-base"
+          - "microsoft/deberta-v3-small"
+          - "microsoft/deberta-v3-large"
+          - "FacebookAI/roberta-base"
+          - "FacebookAI/roberta-large"
       epochs:
         description: "Number of training epochs"
         required: false
@@ -64,6 +75,10 @@ on:
         description: "Weight decay"
         required: false
         default: "0.075"
+      warmup_ratio:
+        description: "Warmup ratio"
+        required: false
+        default: "0.1"
       push_to_hub:
         description: "Push model to Hugging Face Hub"
         required: false
@@ -88,6 +103,7 @@ env:
   HF_REPO: ${{ github.event.inputs.hf_repo || 'RyIoT33/haystack-autotagging' }}
   PUSH_TO_HUB: ${{ github.event.inputs.push_to_hub || 'true' }}
   # Training defaults
+  MODEL: ${{ github.event.inputs.model || 'microsoft/deberta-v3-base' }}
   EPOCHS: ${{ github.event.inputs.epochs || '9' }}
   BATCH_SIZE: ${{ github.event.inputs.batch_size || '2' }}
   LEARNING_RATE: ${{ github.event.inputs.learning_rate || '1e-5' }}
@@ -97,6 +113,7 @@ env:
   GRADIENT_ACCUMULATION: ${{ github.event.inputs.gradient_accumulation || '8' }}
   MIXED_PRECISION: ${{ github.event.inputs.mixed_precision || 'fp16' }}
   WEIGHT_DECAY: ${{ github.event.inputs.weight_decay || '0.075' }}
+  WARMUP_RATIO: ${{ github.event.inputs.warmup_ratio || '0.1' }}
 
 jobs:
   train:
@@ -166,6 +183,7 @@ jobs:
           echo "Starting Modal training..."
           echo "========================================"
           echo "Training Configuration:"
+          echo "  Model: ${{ env.MODEL }}"
           echo "  Epochs: ${{ env.EPOCHS }}"
           echo "  Batch size: ${{ env.BATCH_SIZE }}"
           echo "  Learning rate: ${{ env.LEARNING_RATE }}"
@@ -175,10 +193,12 @@ jobs:
           echo "  Gradient accumulation: ${{ env.GRADIENT_ACCUMULATION }}"
           echo "  Mixed precision: ${{ env.MIXED_PRECISION }}"
           echo "  Weight decay: ${{ env.WEIGHT_DECAY }}"
+          echo "  Warmup ratio: ${{ env.WARMUP_RATIO }}"
           echo "========================================"
 
           # Build the command
           CMD="modal run ./scripts/finetune.py"
+          CMD="$CMD --model '${{ env.MODEL }}'"
           CMD="$CMD --epochs ${{ env.EPOCHS }}"
           CMD="$CMD --batch-size ${{ env.BATCH_SIZE }}"
           CMD="$CMD --learning-rate ${{ env.LEARNING_RATE }}"
@@ -188,6 +208,7 @@ jobs:
           CMD="$CMD --gradient-accumulation ${{ env.GRADIENT_ACCUMULATION }}"
           CMD="$CMD --mixed-precision ${{ env.MIXED_PRECISION }}"
           CMD="$CMD --weight-decay ${{ env.WEIGHT_DECAY }}"
+          CMD="$CMD --warmup-ratio ${{ env.WARMUP_RATIO }}"
 
           # Add HF Hub flags if pushing
           if [ "${{ env.PUSH_TO_HUB }}" == "true" ]; then
@@ -204,6 +225,7 @@ jobs:
 
           # Add to workflow summary
           echo "## Training Results" >> $GITHUB_STEP_SUMMARY
+          echo "**Model:** ${{ env.MODEL }}" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           cat "$OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
@@ -228,7 +250,7 @@ jobs:
           commit-message: |
             Add training results and processed data
 
-            - Preprocessed data files
+            - Model: ${{ env.MODEL }}
             - Training results: ${{ steps.train.outputs.output_filename }}
             - Epochs: ${{ env.EPOCHS }}
             - Batch size: ${{ env.BATCH_SIZE }}
@@ -236,17 +258,22 @@ jobs:
             - Model pushed to: ${{ env.HF_REPO }}
           branch: training-results-${{ github.run_id }}
           delete-branch: true
-          title: "🤖 Training Results - ${{ steps.train.outputs.output_filename }}"
+          title: "🤖 Training Results - ${{ env.MODEL }} - ${{ steps.train.outputs.output_filename }}"
           body: |
             ## Automated Training Results
 
             Training completed successfully on Modal.
 
+            ### Model
+            **${{ env.MODEL }}**
+
             ### Configuration
             | Parameter | Value |
             |-----------|-------|
+            | Model | ${{ env.MODEL }} |
             | Epochs | ${{ env.EPOCHS }} |
             | Batch size | ${{ env.BATCH_SIZE }} |
+            | Effective batch size | ${{ env.BATCH_SIZE }} × ${{ env.GRADIENT_ACCUMULATION }} = $(( ${{ env.BATCH_SIZE }} * ${{ env.GRADIENT_ACCUMULATION }} )) |
             | Learning rate | ${{ env.LEARNING_RATE }} |
             | Max seq length | ${{ env.MAX_SEQ_LENGTH }} |
             | Optimizer | ${{ env.OPTIMIZER }} |
@@ -254,9 +281,10 @@ jobs:
             | Gradient accumulation | ${{ env.GRADIENT_ACCUMULATION }} |
             | Mixed precision | ${{ env.MIXED_PRECISION }} |
             | Weight decay | ${{ env.WEIGHT_DECAY }} |
+            | Warmup ratio | ${{ env.WARMUP_RATIO }} |
 
-            ### Model
-            🤗 **Hugging Face:** https://huggingface.co/${{ env.HF_REPO }}
+            ### Hugging Face
+            🤗 **Model:** https://huggingface.co/${{ env.HF_REPO }}
 
             ### Files Updated
             - `data/cleaned_data.csv` - Cleaned training data
@@ -277,7 +305,8 @@ jobs:
           echo "=========================================="
           echo "PIPELINE COMPLETE"
           echo "=========================================="
+          echo "Model: ${{ env.MODEL }}"
           echo "Output: ${{ steps.train.outputs.output_file }}"
-          echo "Model: https://huggingface.co/${{ env.HF_REPO }}"
+          echo "HF Model: https://huggingface.co/${{ env.HF_REPO }}"
           echo "PR created for branch: training-results-${{ github.run_id }}"
           echo "=========================================="
