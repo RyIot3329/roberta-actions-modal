@@ -1,7 +1,7 @@
 {
-  "total_samples": 17553,
+  "total_samples": 17554,
   "num_classes": 277,
-  "train_samples": 14041,
+  "train_samples": 14042,
   "validation_samples": 1756,
   "test_samples": 1756,
   "class_distribution": {
@@ -144,6 +144,7 @@
     "dischargeTempMinSp": 62,
     "dischargeFlowCoolMaxSp": 62,
     "dischargeFlowCoolMinSp": 62,
+    "zoneTempSpOffset": 62,
     "compEnable": 61,
     "compStatus": 61,
     "compWarning": 61,
@@ -161,7 +162,6 @@
     "evapBypassFlow": 61,
     "mixedDamper": 61,
     "dischargeFlowHeatMaxSp": 61,
-    "zoneTempSpOffset": 61,
     "returnHumidity": 60,
     "zonePressure": 60,
     "boilerFault": 60,
@@ -286,7 +286,7 @@
   "text_length_stats": {
     "min": 2,
     "max": 36,
-    "mean": 14.69560758844642,
+    "mean": 14.695510994645096,
     "median": 14.0
   }
 }
