@@ -40,7 +40,7 @@ app = modal.App("deberta-finetune", image=image, volumes={volume_path: volume})
 
 # Training configuration
 TRAIN_GPU = "T4"  # Options: "T4", "A10G", "A100"
-TRAIN_TIMEOUT = 90 * 60  # 90 minutes (DeBERTa may take longer)
+TRAIN_TIMEOUT = 120 * 60  # 90 minutes (DeBERTa may take longer)
 
 # Available models
 AVAILABLE_MODELS = {
