@@ -251,17 +251,33 @@ def train(
                 trainer.save_model(str(final_model_path))
                 tokenizer.save_pretrained(str(final_model_path))
                 
-                # Push to Hub
-                from huggingface_hub import HfApi
-                api = HfApi(token=hf_token)
+                print(f"Model saved locally to: {final_model_path}")
                 
-                # Create repo if it doesn't exist
+                # Push to Hub using login for authentication
+                from huggingface_hub import HfApi, login
+                
+                # Login first - this sets up authentication properly
+                login(token=hf_token)
+                print("Logged in to Hugging Face Hub")
+                
+                api = HfApi()
+                
+                # Create repo - be explicit about all parameters
+                print(f"Creating/verifying repo: {hf_repo}")
                 try:
-                    api.create_repo(repo_id=hf_repo, private=True, exist_ok=True)
+                    repo_url = api.create_repo(
+                        repo_id=hf_repo,
+                        private=True,
+                        exist_ok=True,
+                        repo_type="model",
+                    )
+                    print(f"Repo ready: {repo_url}")
                 except Exception as e:
-                    print(f"Note: {e}")
+                    print(f"Repo creation note: {e}")
+                    # Continue anyway - repo might already exist
                 
                 # Upload folder
+                print(f"Uploading model files...")
                 api.upload_folder(
                     folder_path=str(final_model_path),
                     repo_id=hf_repo,
