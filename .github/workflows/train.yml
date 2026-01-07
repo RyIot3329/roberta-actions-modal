@@ -2,6 +2,7 @@
 #
 # Fine-tune RoBERTa on Modal with data preprocessing
 # Creates a pull request with training results
+# Pushes model to Hugging Face Hub
 
 name: Fine-tune RoBERTa
 
@@ -16,6 +17,10 @@ on:
         description: "Batch size"
         required: false
         default: "8"
+      hf_repo:
+        description: "Hugging Face repo (username/model-name)"
+        required: false
+        default: "your-username/your-model-name"
 
   push:
     branches: [main]
@@ -25,6 +30,7 @@ on:
 
 env:
   PYTHON_VERSION: "3.10"
+  HF_REPO: ${{ github.event.inputs.hf_repo || 'your-username/your-model-name' }}
 
 jobs:
   train:
@@ -47,7 +53,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install modal
+          pip install modal huggingface_hub
 
       - name: Configure Modal
         run: |
@@ -84,15 +90,18 @@ jobs:
       # ============================================
 
       - name: Create output directory
-        run: mkdir -p output
+        run: mkdir -p output model
 
       - name: Run fine-tuning on Modal
         id: train
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           echo "Starting Modal training..."
           modal run ./scripts/finetune.py \
             --epochs ${{ github.event.inputs.epochs || '2' }} \
-            --batch-size ${{ github.event.inputs.batch_size || '8' }}
+            --batch-size ${{ github.event.inputs.batch_size || '8' }} \
+            --output-dir ./model
 
           # Get the output filename
           OUTPUT_FILE=$(ls -t output/*.txt | head -1)
@@ -104,6 +113,36 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
           cat "$OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
+
+      # ============================================
+      # Push Model to Hugging Face Hub
+      # ============================================
+
+      - name: Push model to Hugging Face Hub
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          echo "Pushing model to Hugging Face Hub..."
+
+          # Login to Hugging Face
+          huggingface-cli login --token $HF_TOKEN
+
+          # Upload the model directory to HF Hub
+          python -c "
+          from huggingface_hub import HfApi
+          api = HfApi()
+          api.upload_folder(
+              folder_path='./model',
+              repo_id='${{ env.HF_REPO }}',
+              repo_type='model',
+              commit_message='Update model from training run ${{ github.run_id }}',
+              private=True
+          )
+          print('Model uploaded successfully to ${{ env.HF_REPO }}')
+          "
+
+          echo "## Hugging Face Upload" >> $GITHUB_STEP_SUMMARY
+          echo "Model pushed to: https://huggingface.co/${{ env.HF_REPO }}" >> $GITHUB_STEP_SUMMARY
 
       # ============================================
       # Commit Results & Create PR
@@ -123,6 +162,7 @@ jobs:
             - Training results: ${{ steps.train.outputs.output_filename }}
             - Epochs: ${{ github.event.inputs.epochs || '2' }}
             - Batch size: ${{ github.event.inputs.batch_size || '8' }}
+            - Model pushed to: ${{ env.HF_REPO }}
           branch: training-results-${{ github.run_id }}
           delete-branch: true
           title: "🤖 Training Results - ${{ steps.train.outputs.output_filename }}"
@@ -134,6 +174,9 @@ jobs:
             ### Configuration
             - **Epochs:** ${{ github.event.inputs.epochs || '2' }}
             - **Batch size:** ${{ github.event.inputs.batch_size || '8' }}
+
+            ### Model
+            🤗 **Hugging Face:** https://huggingface.co/${{ env.HF_REPO }}
 
             ### Files Updated
             - `data/cleaned_data.csv` - Cleaned training data
@@ -155,5 +198,6 @@ jobs:
           echo "PIPELINE COMPLETE"
           echo "=========================================="
           echo "Output: ${{ steps.train.outputs.output_file }}"
+          echo "Model: https://huggingface.co/${{ env.HF_REPO }}"
           echo "PR created for branch: training-results-${{ github.run_id }}"
           echo "=========================================="
