@@ -12,11 +12,58 @@ on:
       epochs:
         description: "Number of training epochs"
         required: false
-        default: "2"
+        default: "9"
       batch_size:
         description: "Batch size"
         required: false
+        default: "2"
+      learning_rate:
+        description: "Learning rate"
+        required: false
+        default: "1e-5"
+      max_seq_length:
+        description: "Maximum sequence length"
+        required: false
+        default: "25"
+      optimizer:
+        description: "Optimizer"
+        required: false
+        default: "adamw_torch"
+        type: choice
+        options:
+          - "adamw_torch"
+          - "adamw_hf"
+          - "sgd"
+          - "adafactor"
+      scheduler:
+        description: "Learning rate scheduler"
+        required: false
+        default: "linear"
+        type: choice
+        options:
+          - "linear"
+          - "cosine"
+          - "cosine_with_restarts"
+          - "polynomial"
+          - "constant"
+          - "constant_with_warmup"
+      gradient_accumulation:
+        description: "Gradient accumulation steps"
+        required: false
         default: "8"
+      mixed_precision:
+        description: "Mixed precision training"
+        required: false
+        default: "fp16"
+        type: choice
+        options:
+          - "fp16"
+          - "bf16"
+          - "no"
+      weight_decay:
+        description: "Weight decay"
+        required: false
+        default: "0.075"
       push_to_hub:
         description: "Push model to Hugging Face Hub"
         required: false
@@ -40,6 +87,16 @@ env:
   PYTHON_VERSION: "3.10"
   HF_REPO: ${{ github.event.inputs.hf_repo || 'RyIoT33/haystack-autotagging' }}
   PUSH_TO_HUB: ${{ github.event.inputs.push_to_hub || 'true' }}
+  # Training defaults
+  EPOCHS: ${{ github.event.inputs.epochs || '9' }}
+  BATCH_SIZE: ${{ github.event.inputs.batch_size || '2' }}
+  LEARNING_RATE: ${{ github.event.inputs.learning_rate || '1e-5' }}
+  MAX_SEQ_LENGTH: ${{ github.event.inputs.max_seq_length || '25' }}
+  OPTIMIZER: ${{ github.event.inputs.optimizer || 'adamw_torch' }}
+  SCHEDULER: ${{ github.event.inputs.scheduler || 'linear' }}
+  GRADIENT_ACCUMULATION: ${{ github.event.inputs.gradient_accumulation || '8' }}
+  MIXED_PRECISION: ${{ github.event.inputs.mixed_precision || 'fp16' }}
+  WEIGHT_DECAY: ${{ github.event.inputs.weight_decay || '0.075' }}
 
 jobs:
   train:
@@ -107,9 +164,30 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           echo "Starting Modal training..."
+          echo "========================================"
+          echo "Training Configuration:"
+          echo "  Epochs: ${{ env.EPOCHS }}"
+          echo "  Batch size: ${{ env.BATCH_SIZE }}"
+          echo "  Learning rate: ${{ env.LEARNING_RATE }}"
+          echo "  Max seq length: ${{ env.MAX_SEQ_LENGTH }}"
+          echo "  Optimizer: ${{ env.OPTIMIZER }}"
+          echo "  Scheduler: ${{ env.SCHEDULER }}"
+          echo "  Gradient accumulation: ${{ env.GRADIENT_ACCUMULATION }}"
+          echo "  Mixed precision: ${{ env.MIXED_PRECISION }}"
+          echo "  Weight decay: ${{ env.WEIGHT_DECAY }}"
+          echo "========================================"
 
           # Build the command
-          CMD="modal run ./scripts/finetune.py --epochs ${{ github.event.inputs.epochs || '2' }} --batch-size ${{ github.event.inputs.batch_size || '8' }}"
+          CMD="modal run ./scripts/finetune.py"
+          CMD="$CMD --epochs ${{ env.EPOCHS }}"
+          CMD="$CMD --batch-size ${{ env.BATCH_SIZE }}"
+          CMD="$CMD --learning-rate ${{ env.LEARNING_RATE }}"
+          CMD="$CMD --max-seq-length ${{ env.MAX_SEQ_LENGTH }}"
+          CMD="$CMD --optimizer ${{ env.OPTIMIZER }}"
+          CMD="$CMD --scheduler ${{ env.SCHEDULER }}"
+          CMD="$CMD --gradient-accumulation ${{ env.GRADIENT_ACCUMULATION }}"
+          CMD="$CMD --mixed-precision ${{ env.MIXED_PRECISION }}"
+          CMD="$CMD --weight-decay ${{ env.WEIGHT_DECAY }}"
 
           # Add HF Hub flags if pushing
           if [ "${{ env.PUSH_TO_HUB }}" == "true" ]; then
@@ -152,8 +230,9 @@ jobs:
 
             - Preprocessed data files
             - Training results: ${{ steps.train.outputs.output_filename }}
-            - Epochs: ${{ github.event.inputs.epochs || '2' }}
-            - Batch size: ${{ github.event.inputs.batch_size || '8' }}
+            - Epochs: ${{ env.EPOCHS }}
+            - Batch size: ${{ env.BATCH_SIZE }}
+            - Learning rate: ${{ env.LEARNING_RATE }}
             - Model pushed to: ${{ env.HF_REPO }}
           branch: training-results-${{ github.run_id }}
           delete-branch: true
@@ -164,8 +243,17 @@ jobs:
             Training completed successfully on Modal.
 
             ### Configuration
-            - **Epochs:** ${{ github.event.inputs.epochs || '2' }}
-            - **Batch size:** ${{ github.event.inputs.batch_size || '8' }}
+            | Parameter | Value |
+            |-----------|-------|
+            | Epochs | ${{ env.EPOCHS }} |
+            | Batch size | ${{ env.BATCH_SIZE }} |
+            | Learning rate | ${{ env.LEARNING_RATE }} |
+            | Max seq length | ${{ env.MAX_SEQ_LENGTH }} |
+            | Optimizer | ${{ env.OPTIMIZER }} |
+            | Scheduler | ${{ env.SCHEDULER }} |
+            | Gradient accumulation | ${{ env.GRADIENT_ACCUMULATION }} |
+            | Mixed precision | ${{ env.MIXED_PRECISION }} |
+            | Weight decay | ${{ env.WEIGHT_DECAY }} |
 
             ### Model
             🤗 **Hugging Face:** https://huggingface.co/${{ env.HF_REPO }}

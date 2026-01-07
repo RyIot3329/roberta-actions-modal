@@ -1,14 +1,14 @@
 """
-Fine-tune RoBERTa for HVAC Point Classification on Modal
+Fine-tune for HVAC Point Classification on Modal
 =========================================================
 
-A minimal proof-of-concept for fine-tuning FacebookAI/roberta-base
+A minimal proof-of-concept for fine-tuning a BERT model
 on Modal's serverless GPU infrastructure.
 
 Usage:
     modal run finetune.py
-    modal run finetune.py --epochs 3
-    modal run finetune.py --epochs 3 --push-to-hub --hf-repo username/model-name
+    modal run finetune.py --epochs 9 --batch-size 2 --learning-rate 1e-5
+    modal run finetune.py --epochs 9 --push-to-hub --hf-repo username/model-name
 """
 
 from datetime import datetime
@@ -31,15 +31,15 @@ image = (
 )
 
 # Create a persistent volume for storing outputs
-volume = modal.Volume.from_name("roberta-finetune-vol", create_if_missing=True)
+volume = modal.Volume.from_name("autotagging-finetune-vol", create_if_missing=True)
 volume_path = Path("/root") / "data"
 
 # Create the Modal app
-app = modal.App("roberta-finetune", image=image, volumes={volume_path: volume})
+app = modal.App("autotagging-finetune", image=image, volumes={volume_path: volume})
 
 # Training configuration
 TRAIN_GPU = "T4"  # Options: "T4", "A10G", "A100"
-TRAIN_TIMEOUT = 30 * 60  # 30 minutes
+TRAIN_TIMEOUT = 60 * 60  # 60 minutes (increased for more epochs)
 
 
 @app.function(
@@ -52,9 +52,15 @@ def train(
     num_labels: int,
     label2id: dict,
     id2label: dict,
-    epochs: int = 2,
-    batch_size: int = 8,
-    learning_rate: float = 2e-5,
+    epochs: int = 9,
+    batch_size: int = 2,
+    learning_rate: float = 1e-5,
+    max_seq_length: int = 25,
+    optimizer: str = "adamw_torch",
+    scheduler: str = "linear",
+    gradient_accumulation: int = 8,
+    mixed_precision: str = "fp16",
+    weight_decay: float = 0.075,
     push_to_hub: bool = False,
     hf_repo: str = None,
     hf_token: str = None,
@@ -69,8 +75,14 @@ def train(
         label2id: Dict mapping label names to IDs
         id2label: Dict mapping IDs to label names
         epochs: Training epochs
-        batch_size: Batch size
+        batch_size: Batch size per device
         learning_rate: Learning rate
+        max_seq_length: Maximum sequence length for tokenization
+        optimizer: Optimizer type (adamw_torch, adamw_hf, sgd, adafactor)
+        scheduler: LR scheduler type (linear, cosine, etc.)
+        gradient_accumulation: Gradient accumulation steps
+        mixed_precision: Mixed precision mode (fp16, bf16, no)
+        weight_decay: Weight decay for regularization
         push_to_hub: Whether to push model to Hugging Face Hub
         hf_repo: Hugging Face repo ID (username/model-name)
         hf_token: Hugging Face API token
@@ -97,8 +109,18 @@ def train(
     print(f"Train samples: {len(train_data)}")
     print(f"Val samples: {len(val_data)}")
     print(f"Num labels: {num_labels}")
-    print(f"Epochs: {epochs}")
-    print(f"Batch size: {batch_size}")
+    print("-" * 60)
+    print("Training Parameters:")
+    print(f"  Epochs: {epochs}")
+    print(f"  Batch size: {batch_size}")
+    print(f"  Learning rate: {learning_rate}")
+    print(f"  Max seq length: {max_seq_length}")
+    print(f"  Optimizer: {optimizer}")
+    print(f"  Scheduler: {scheduler}")
+    print(f"  Gradient accumulation: {gradient_accumulation}")
+    print(f"  Mixed precision: {mixed_precision}")
+    print(f"  Weight decay: {weight_decay}")
+    print("-" * 60)
     print(f"Push to Hub: {push_to_hub}")
     if push_to_hub:
         print(f"HF Repo: {hf_repo}")
@@ -116,7 +138,7 @@ def train(
     })
 
     # Load tokenizer and model
-    model_name = "FacebookAI/roberta-base"
+    model_name = "microsoft/deberta-v3-base"
     print(f"Loading model: {model_name}")
     
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -139,7 +161,7 @@ def train(
             examples["text"],
             padding="max_length",
             truncation=True,
-            max_length=64,
+            max_length=max_seq_length,
         )
 
     print("Tokenizing datasets...")
@@ -159,19 +181,29 @@ def train(
     output_dir = volume_path / "training_output"
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    # Determine mixed precision settings
+    fp16 = mixed_precision == "fp16" and torch.cuda.is_available()
+    bf16 = mixed_precision == "bf16" and torch.cuda.is_available()
+
     training_args = TrainingArguments(
         output_dir=str(output_dir),
         num_train_epochs=epochs,
         per_device_train_batch_size=batch_size,
         per_device_eval_batch_size=batch_size,
         learning_rate=learning_rate,
+        weight_decay=weight_decay,
+        gradient_accumulation_steps=gradient_accumulation,
+        optim=optimizer,
+        lr_scheduler_type=scheduler,
         eval_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
         metric_for_best_model="f1_weighted",
         logging_steps=10,
-        fp16=torch.cuda.is_available(),
+        fp16=fp16,
+        bf16=bf16,
         report_to="none",
+        warmup_ratio=0.1,  # 10% warmup
     )
 
     trainer = Trainer(
@@ -203,7 +235,7 @@ def train(
                 sample["text"],
                 padding="max_length",
                 truncation=True,
-                max_length=64,
+                max_length=max_seq_length,
                 return_tensors="pt"
             )
             inputs = {k: v.to(model.device) for k, v in inputs.items()}
@@ -282,7 +314,7 @@ def train(
                     folder_path=str(final_model_path),
                     repo_id=hf_repo,
                     repo_type="model",
-                    commit_message=f"Training run: {epochs} epochs, {batch_size} batch size, F1: {eval_result.get('eval_f1_weighted', 0):.4f}",
+                    commit_message=f"Training: {epochs}ep, bs{batch_size}, lr{learning_rate}, F1:{eval_result.get('eval_f1_weighted', 0):.4f}",
                 )
                 
                 hf_url = f"https://huggingface.co/{hf_repo}"
@@ -301,6 +333,12 @@ def train(
             "epochs": epochs,
             "batch_size": batch_size,
             "learning_rate": learning_rate,
+            "max_seq_length": max_seq_length,
+            "optimizer": optimizer,
+            "scheduler": scheduler,
+            "gradient_accumulation": gradient_accumulation,
+            "mixed_precision": mixed_precision,
+            "weight_decay": weight_decay,
             "num_labels": num_labels,
             "train_samples": len(train_data),
             "val_samples": len(val_data),
@@ -336,6 +374,8 @@ def train(
     print("TRAINING COMPLETE")
     print("=" * 60)
     print(f"Training time: {results['train_metrics']['runtime_seconds']:.2f}s")
+    print(f"Final F1 (weighted): {eval_result.get('eval_f1_weighted', 0):.4f}")
+    print(f"Final Accuracy: {eval_result.get('eval_accuracy', 0):.4f}")
     print(f"Results saved to Modal volume")
     if hf_url:
         print(f"Model available at: {hf_url}")
@@ -346,8 +386,15 @@ def train(
 
 @app.local_entrypoint()
 def main(
-    epochs: int = 2,
-    batch_size: int = 8,
+    epochs: int = 9,
+    batch_size: int = 2,
+    learning_rate: float = 1e-5,
+    max_seq_length: int = 25,
+    optimizer: str = "adamw_torch",
+    scheduler: str = "linear",
+    gradient_accumulation: int = 8,
+    mixed_precision: str = "fp16",
+    weight_decay: float = 0.075,
     push_to_hub: bool = False,
     hf_repo: str = None,
 ):
@@ -356,7 +403,14 @@ def main(
     
     Args:
         epochs: Number of training epochs
-        batch_size: Training batch size
+        batch_size: Training batch size per device
+        learning_rate: Learning rate
+        max_seq_length: Maximum sequence length for tokenization
+        optimizer: Optimizer type
+        scheduler: Learning rate scheduler type
+        gradient_accumulation: Gradient accumulation steps
+        mixed_precision: Mixed precision mode (fp16, bf16, no)
+        weight_decay: Weight decay for regularization
         push_to_hub: Whether to push model to Hugging Face Hub
         hf_repo: Hugging Face repo ID (username/model-name)
     """
@@ -392,6 +446,7 @@ def main(
     print(f"Loaded {len(train_data)} train, {len(val_data)} val samples")
     print(f"Number of labels: {num_labels}")
     print(f"Starting Modal training with {epochs} epochs...")
+    print(f"Config: bs={batch_size}, lr={learning_rate}, seq_len={max_seq_length}")
     if push_to_hub:
         print(f"Will push to Hugging Face: {hf_repo}")
 
@@ -404,6 +459,13 @@ def main(
         id2label=id2label,
         epochs=epochs,
         batch_size=batch_size,
+        learning_rate=learning_rate,
+        max_seq_length=max_seq_length,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        gradient_accumulation=gradient_accumulation,
+        mixed_precision=mixed_precision,
+        weight_decay=weight_decay,
         push_to_hub=push_to_hub,
         hf_repo=hf_repo,
         hf_token=hf_token,
@@ -411,11 +473,11 @@ def main(
 
     # Save results locally
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = f"output/{timestamp}_roberta-base.txt"
+    output_file = f"output/{timestamp}_debertav3-base.txt"
     
     with open(output_file, "w") as f:
         f.write("=" * 60 + "\n")
-        f.write("RoBERTa Fine-tuning Results\n")
+        f.write("Fine-tuning Results\n")
         f.write("=" * 60 + "\n\n")
         f.write(f"Timestamp: {results['timestamp']}\n")
         f.write(f"Model: {results['model']}\n")

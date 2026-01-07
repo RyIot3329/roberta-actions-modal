@@ -2,6 +2,8 @@ text,target
 ZN-T,zoneTemp  
 Zone Temperature,zoneTemp
 Room Temperature,zoneTemp
+RmTmp,zoneTemp
+RoomTEMP,zoneTemp
 Space Temperature,zoneTemp
 ZN_TEMP,zoneTemp  
 ZN-TEMP,zoneTemp  
