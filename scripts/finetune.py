@@ -334,7 +334,7 @@ def main(
     hf_repo: str = None,
 ):
     """
-    Run fine-tuning from the command line.
+    Run fine-tuning from the command line on Modal.
     
     Args:
         epochs: Number of training epochs
