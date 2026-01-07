@@ -50,7 +50,8 @@ def train(
     train_data: list[dict],
     val_data: list[dict],
     num_labels: int,
-    label_mapping: dict,
+    label2id: dict,
+    id2label: dict,
     epochs: int = 2,
     batch_size: int = 8,
     learning_rate: float = 2e-5,
@@ -65,7 +66,8 @@ def train(
         train_data: List of {"text": str, "label_id": int} dicts
         val_data: Validation data in same format
         num_labels: Number of classification labels
-        label_mapping: Dict mapping label names to IDs
+        label2id: Dict mapping label names to IDs
+        id2label: Dict mapping IDs to label names
         epochs: Training epochs
         batch_size: Batch size
         learning_rate: Learning rate
@@ -123,10 +125,12 @@ def train(
         num_labels=num_labels,
     )
 
-    # Add label mapping to model config
-    id2label = {v: k for k, v in label_mapping.items()}
-    label2id = label_mapping
-    model.config.id2label = id2label
+    # Convert id2label keys to integers for model config
+    # (JSON keys are always strings, but model expects int keys)
+    id2label_int = {int(k): v for k, v in id2label.items()}
+    
+    # Set label mappings on model config
+    model.config.id2label = id2label_int
     model.config.label2id = label2id
 
     # Tokenize datasets
@@ -192,9 +196,6 @@ def train(
     model.eval()
     predictions_list = []
     
-    # Build label mapping
-    label_id_to_name = {d["label_id"]: d["label"] for d in train_data + val_data}
-    
     with torch.no_grad():
         for sample in val_data:
             # Tokenize single sample
@@ -212,7 +213,8 @@ def train(
             pred_id = torch.argmax(outputs.logits, dim=1).item()
             confidence = torch.softmax(outputs.logits, dim=1).max().item()
             
-            pred_label = label_id_to_name.get(pred_id, f"unknown_{pred_id}")
+            # Use id2label for predicted label name
+            pred_label = id2label_int.get(pred_id, f"unknown_{pred_id}")
             actual_label = sample["label"]
             is_correct = pred_id == sample["label_id"]
             
@@ -334,7 +336,7 @@ def main(
     hf_repo: str = None,
 ):
     """
-    Run fine-tuning from the command line on Modal.
+    Run fine-tuning from the command line.
     
     Args:
         epochs: Number of training epochs
@@ -362,13 +364,14 @@ def main(
     train_data = load_jsonl("data/train.jsonl")
     val_data = load_jsonl("data/validation.jsonl")
 
-    # Load label mapping
+    # Load label mapping (contains label2id, id2label, num_labels)
     with open("data/label_mapping.json", "r") as f:
         label_mapping = json.load(f)
-
-    # Get number of unique labels
-    all_labels = set(d["label_id"] for d in train_data + val_data)
-    num_labels = len(all_labels)
+    
+    # Extract the nested structures
+    label2id = label_mapping["label2id"]
+    id2label = label_mapping["id2label"]
+    num_labels = label_mapping["num_labels"]
 
     print(f"Loaded {len(train_data)} train, {len(val_data)} val samples")
     print(f"Number of labels: {num_labels}")
@@ -381,7 +384,8 @@ def main(
         train_data=train_data,
         val_data=val_data,
         num_labels=num_labels,
-        label_mapping=label_mapping,
+        label2id=label2id,
+        id2label=id2label,
         epochs=epochs,
         batch_size=batch_size,
         push_to_hub=push_to_hub,
