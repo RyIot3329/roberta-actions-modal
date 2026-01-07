@@ -13,6 +13,7 @@ Usage:
 
 from datetime import datetime
 from pathlib import Path
+import os
 
 import modal
 
@@ -44,7 +45,6 @@ TRAIN_TIMEOUT = 30 * 60  # 30 minutes
 @app.function(
     gpu=TRAIN_GPU,
     timeout=TRAIN_TIMEOUT,
-    secrets=[modal.Secret.from_name("huggingface-secret", required=False)],
 )
 def train(
     train_data: list[dict],
@@ -56,6 +56,7 @@ def train(
     learning_rate: float = 2e-5,
     push_to_hub: bool = False,
     hf_repo: str = None,
+    hf_token: str = None,
 ) -> dict:
     """
     Fine-tune RoBERTa on the provided data.
@@ -70,12 +71,12 @@ def train(
         learning_rate: Learning rate
         push_to_hub: Whether to push model to Hugging Face Hub
         hf_repo: Hugging Face repo ID (username/model-name)
+        hf_token: Hugging Face API token
     
     Returns:
         Dictionary with training results and metrics
     """
     import json
-    import os
     import torch
     from transformers import (
         AutoTokenizer,
@@ -99,6 +100,7 @@ def train(
     print(f"Push to Hub: {push_to_hub}")
     if push_to_hub:
         print(f"HF Repo: {hf_repo}")
+        print(f"HF Token: {'provided' if hf_token else 'NOT PROVIDED'}")
     print("=" * 60)
 
     # Convert to HuggingFace datasets
@@ -236,9 +238,8 @@ def train(
         print("Pushing model to Hugging Face Hub...")
         print("=" * 60)
         
-        hf_token = os.environ.get("HF_TOKEN")
         if not hf_token:
-            print("WARNING: HF_TOKEN not found. Skipping push to Hub.")
+            print("WARNING: HF_TOKEN not provided. Skipping push to Hub.")
         else:
             try:
                 # Save model and tokenizer locally first
@@ -271,6 +272,8 @@ def train(
                 
             except Exception as e:
                 print(f"ERROR pushing to Hub: {e}")
+                import traceback
+                traceback.print_exc()
     
     # Prepare results
     results = {
@@ -343,6 +346,11 @@ def main(
 
     print("Loading training data...")
     
+    # Get HF token from environment variable
+    hf_token = os.environ.get("HF_TOKEN")
+    if push_to_hub and not hf_token:
+        print("WARNING: --push-to-hub specified but HF_TOKEN environment variable not set!")
+    
     # Load data from local files (paths relative to repo root)
     def load_jsonl(filepath: str) -> list:
         data = []
@@ -378,6 +386,7 @@ def main(
         batch_size=batch_size,
         push_to_hub=push_to_hub,
         hf_repo=hf_repo,
+        hf_token=hf_token,
     )
 
     # Save results locally

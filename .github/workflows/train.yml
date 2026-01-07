@@ -28,7 +28,7 @@ on:
       hf_repo:
         description: "Hugging Face repo (username/model-name)"
         required: false
-        default: "your-username/your-model-name"
+        default: "RyIoT33/haystack-autotagging"
 
   push:
     branches: [main]
@@ -38,7 +38,7 @@ on:
 
 env:
   PYTHON_VERSION: "3.10"
-  HF_REPO: ${{ github.event.inputs.hf_repo || 'your-username/your-model-name' }}
+  HF_REPO: ${{ github.event.inputs.hf_repo || 'RyIoT33/haystack-autotagging' }}
   PUSH_TO_HUB: ${{ github.event.inputs.push_to_hub || 'true' }}
 
 jobs:
@@ -69,14 +69,6 @@ jobs:
           modal token set \
             --token-id ${{ secrets.MODAL_TOKEN_ID }} \
             --token-secret ${{ secrets.MODAL_TOKEN_SECRET }}
-
-      - name: Create Modal secret for Hugging Face
-        if: env.PUSH_TO_HUB == 'true'
-        run: |
-          # Create or update the HF secret in Modal
-          modal secret create huggingface-secret HF_TOKEN=${{ secrets.HF_TOKEN }} 2>/dev/null || \
-          modal secret update huggingface-secret HF_TOKEN=${{ secrets.HF_TOKEN }} 2>/dev/null || \
-          echo "Secret may already exist, continuing..."
 
       # ============================================
       # Data Preprocessing Steps
@@ -111,6 +103,8 @@ jobs:
 
       - name: Run fine-tuning on Modal
         id: train
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           echo "Starting Modal training..."
 
