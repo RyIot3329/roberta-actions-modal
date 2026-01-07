@@ -17,6 +17,14 @@ on:
         description: "Batch size"
         required: false
         default: "8"
+      push_to_hub:
+        description: "Push model to Hugging Face Hub"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
       hf_repo:
         description: "Hugging Face repo (username/model-name)"
         required: false
@@ -31,6 +39,7 @@ on:
 env:
   PYTHON_VERSION: "3.10"
   HF_REPO: ${{ github.event.inputs.hf_repo || 'your-username/your-model-name' }}
+  PUSH_TO_HUB: ${{ github.event.inputs.push_to_hub || 'true' }}
 
 jobs:
   train:
@@ -53,13 +62,21 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install modal huggingface_hub
+          pip install modal
 
       - name: Configure Modal
         run: |
           modal token set \
             --token-id ${{ secrets.MODAL_TOKEN_ID }} \
             --token-secret ${{ secrets.MODAL_TOKEN_SECRET }}
+
+      - name: Create Modal secret for Hugging Face
+        if: env.PUSH_TO_HUB == 'true'
+        run: |
+          # Create or update the HF secret in Modal
+          modal secret create huggingface-secret HF_TOKEN=${{ secrets.HF_TOKEN }} 2>/dev/null || \
+          modal secret update huggingface-secret HF_TOKEN=${{ secrets.HF_TOKEN }} 2>/dev/null || \
+          echo "Secret may already exist, continuing..."
 
       # ============================================
       # Data Preprocessing Steps
@@ -90,18 +107,23 @@ jobs:
       # ============================================
 
       - name: Create output directory
-        run: mkdir -p output model
+        run: mkdir -p output
 
       - name: Run fine-tuning on Modal
         id: train
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           echo "Starting Modal training..."
-          modal run ./scripts/finetune.py \
-            --epochs ${{ github.event.inputs.epochs || '2' }} \
-            --batch-size ${{ github.event.inputs.batch_size || '8' }} \
-            --output-dir ./model
+
+          # Build the command
+          CMD="modal run ./scripts/finetune.py --epochs ${{ github.event.inputs.epochs || '2' }} --batch-size ${{ github.event.inputs.batch_size || '8' }}"
+
+          # Add HF Hub flags if pushing
+          if [ "${{ env.PUSH_TO_HUB }}" == "true" ]; then
+            CMD="$CMD --push-to-hub --hf-repo ${{ env.HF_REPO }}"
+          fi
+
+          echo "Running: $CMD"
+          eval $CMD
 
           # Get the output filename
           OUTPUT_FILE=$(ls -t output/*.txt | head -1)
@@ -114,35 +136,11 @@ jobs:
           cat "$OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
-      # ============================================
-      # Push Model to Hugging Face Hub
-      # ============================================
-
-      - name: Push model to Hugging Face Hub
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          echo "Pushing model to Hugging Face Hub..."
-
-          # Login to Hugging Face
-          huggingface-cli login --token $HF_TOKEN
-
-          # Upload the model directory to HF Hub
-          python -c "
-          from huggingface_hub import HfApi
-          api = HfApi()
-          api.upload_folder(
-              folder_path='./model',
-              repo_id='${{ env.HF_REPO }}',
-              repo_type='model',
-              commit_message='Update model from training run ${{ github.run_id }}',
-              private=True
-          )
-          print('Model uploaded successfully to ${{ env.HF_REPO }}')
-          "
-
-          echo "## Hugging Face Upload" >> $GITHUB_STEP_SUMMARY
-          echo "Model pushed to: https://huggingface.co/${{ env.HF_REPO }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ env.PUSH_TO_HUB }}" == "true" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## Hugging Face Model" >> $GITHUB_STEP_SUMMARY
+            echo "🤗 https://huggingface.co/${{ env.HF_REPO }}" >> $GITHUB_STEP_SUMMARY
+          fi
 
       # ============================================
       # Commit Results & Create PR

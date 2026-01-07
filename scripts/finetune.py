@@ -8,6 +8,7 @@ on Modal's serverless GPU infrastructure.
 Usage:
     modal run finetune.py
     modal run finetune.py --epochs 3
+    modal run finetune.py --epochs 3 --push-to-hub --hf-repo username/model-name
 """
 
 from datetime import datetime
@@ -24,6 +25,7 @@ image = (
         "datasets",
         "scikit-learn",
         "accelerate",
+        "huggingface_hub",
     )
 )
 
@@ -42,14 +44,18 @@ TRAIN_TIMEOUT = 30 * 60  # 30 minutes
 @app.function(
     gpu=TRAIN_GPU,
     timeout=TRAIN_TIMEOUT,
+    secrets=[modal.Secret.from_name("huggingface-secret", required=False)],
 )
 def train(
     train_data: list[dict],
     val_data: list[dict],
     num_labels: int,
+    label_mapping: dict,
     epochs: int = 2,
     batch_size: int = 8,
     learning_rate: float = 2e-5,
+    push_to_hub: bool = False,
+    hf_repo: str = None,
 ) -> dict:
     """
     Fine-tune RoBERTa on the provided data.
@@ -58,14 +64,18 @@ def train(
         train_data: List of {"text": str, "label_id": int} dicts
         val_data: Validation data in same format
         num_labels: Number of classification labels
+        label_mapping: Dict mapping label names to IDs
         epochs: Training epochs
         batch_size: Batch size
         learning_rate: Learning rate
+        push_to_hub: Whether to push model to Hugging Face Hub
+        hf_repo: Hugging Face repo ID (username/model-name)
     
     Returns:
         Dictionary with training results and metrics
     """
     import json
+    import os
     import torch
     from transformers import (
         AutoTokenizer,
@@ -86,6 +96,9 @@ def train(
     print(f"Num labels: {num_labels}")
     print(f"Epochs: {epochs}")
     print(f"Batch size: {batch_size}")
+    print(f"Push to Hub: {push_to_hub}")
+    if push_to_hub:
+        print(f"HF Repo: {hf_repo}")
     print("=" * 60)
 
     # Convert to HuggingFace datasets
@@ -107,6 +120,12 @@ def train(
         model_name,
         num_labels=num_labels,
     )
+
+    # Add label mapping to model config
+    id2label = {v: k for k, v in label_mapping.items()}
+    label2id = label_mapping
+    model.config.id2label = id2label
+    model.config.label2id = label2id
 
     # Tokenize datasets
     def tokenize_function(examples):
@@ -209,6 +228,49 @@ def train(
     val_correct = sum(1 for p in predictions_list if p["correct"])
     val_total = len(predictions_list)
     val_accuracy = val_correct / val_total if val_total > 0 else 0
+
+    # Push to Hugging Face Hub if requested
+    hf_url = None
+    if push_to_hub and hf_repo:
+        print("\n" + "=" * 60)
+        print("Pushing model to Hugging Face Hub...")
+        print("=" * 60)
+        
+        hf_token = os.environ.get("HF_TOKEN")
+        if not hf_token:
+            print("WARNING: HF_TOKEN not found. Skipping push to Hub.")
+        else:
+            try:
+                # Save model and tokenizer locally first
+                final_model_path = volume_path / "final_model"
+                final_model_path.mkdir(parents=True, exist_ok=True)
+                
+                trainer.save_model(str(final_model_path))
+                tokenizer.save_pretrained(str(final_model_path))
+                
+                # Push to Hub
+                from huggingface_hub import HfApi
+                api = HfApi(token=hf_token)
+                
+                # Create repo if it doesn't exist
+                try:
+                    api.create_repo(repo_id=hf_repo, private=True, exist_ok=True)
+                except Exception as e:
+                    print(f"Note: {e}")
+                
+                # Upload folder
+                api.upload_folder(
+                    folder_path=str(final_model_path),
+                    repo_id=hf_repo,
+                    repo_type="model",
+                    commit_message=f"Training run: {epochs} epochs, {batch_size} batch size, F1: {eval_result.get('eval_f1_weighted', 0):.4f}",
+                )
+                
+                hf_url = f"https://huggingface.co/{hf_repo}"
+                print(f"Model pushed successfully to: {hf_url}")
+                
+            except Exception as e:
+                print(f"ERROR pushing to Hub: {e}")
     
     # Prepare results
     results = {
@@ -239,6 +301,7 @@ def train(
             "predictions": predictions_list,
         },
         "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU",
+        "huggingface_url": hf_url,
     }
 
     # Save results to volume
@@ -253,19 +316,28 @@ def train(
     print("=" * 60)
     print(f"Training time: {results['train_metrics']['runtime_seconds']:.2f}s")
     print(f"Results saved to Modal volume")
+    if hf_url:
+        print(f"Model available at: {hf_url}")
     print("=" * 60)
 
     return results
 
 
 @app.local_entrypoint()
-def main(epochs: int = 2, batch_size: int = 8):
+def main(
+    epochs: int = 2,
+    batch_size: int = 8,
+    push_to_hub: bool = False,
+    hf_repo: str = None,
+):
     """
     Run fine-tuning from the command line.
     
     Args:
         epochs: Number of training epochs
         batch_size: Training batch size
+        push_to_hub: Whether to push model to Hugging Face Hub
+        hf_repo: Hugging Face repo ID (username/model-name)
     """
     import json
 
@@ -282,6 +354,10 @@ def main(epochs: int = 2, batch_size: int = 8):
     train_data = load_jsonl("data/train.jsonl")
     val_data = load_jsonl("data/validation.jsonl")
 
+    # Load label mapping
+    with open("data/label_mapping.json", "r") as f:
+        label_mapping = json.load(f)
+
     # Get number of unique labels
     all_labels = set(d["label_id"] for d in train_data + val_data)
     num_labels = len(all_labels)
@@ -289,14 +365,19 @@ def main(epochs: int = 2, batch_size: int = 8):
     print(f"Loaded {len(train_data)} train, {len(val_data)} val samples")
     print(f"Number of labels: {num_labels}")
     print(f"Starting Modal training with {epochs} epochs...")
+    if push_to_hub:
+        print(f"Will push to Hugging Face: {hf_repo}")
 
     # Run training on Modal
     results = train.remote(
         train_data=train_data,
         val_data=val_data,
         num_labels=num_labels,
+        label_mapping=label_mapping,
         epochs=epochs,
         batch_size=batch_size,
+        push_to_hub=push_to_hub,
+        hf_repo=hf_repo,
     )
 
     # Save results locally
@@ -309,8 +390,10 @@ def main(epochs: int = 2, batch_size: int = 8):
         f.write("=" * 60 + "\n\n")
         f.write(f"Timestamp: {results['timestamp']}\n")
         f.write(f"Model: {results['model']}\n")
-        f.write(f"GPU: {results['gpu']}\n\n")
-        f.write("Configuration:\n")
+        f.write(f"GPU: {results['gpu']}\n")
+        if results.get('huggingface_url'):
+            f.write(f"Hugging Face: {results['huggingface_url']}\n")
+        f.write("\nConfiguration:\n")
         for k, v in results['config'].items():
             f.write(f"  {k}: {v}\n")
         f.write("\nTraining Metrics:\n")
