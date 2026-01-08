@@ -12,7 +12,7 @@ on:
       model:
         description: "Model to fine-tune"
         required: false
-        default: "microsoft/deberta-v3-base"
+        default: "microsoft/deberta-v3-small"
         type: choice
         options:
           - "microsoft/deberta-v3-base"
