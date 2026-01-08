@@ -1,7 +1,7 @@
 {
-  "total_samples": 17554,
+  "total_samples": 17556,
   "num_classes": 277,
-  "train_samples": 14042,
+  "train_samples": 14044,
   "validation_samples": 1756,
   "test_samples": 1756,
   "class_distribution": {
@@ -20,12 +20,12 @@
     "evapEnteringTemp": 81,
     "wheelReturnTemp": 80,
     "dischargeFanSpeed": 80,
+    "zoneTemp": 79,
     "zoneCO2": 79,
     "dischargePressure": 78,
     "currentPhaseAMax": 78,
     "currentPhaseBMax": 78,
     "currentPhaseCMax": 78,
-    "zoneTemp": 77,
     "wheelSpeed": 77,
     "outsideDamper": 76,
     "zonePressureSp": 76,
@@ -286,7 +286,7 @@
   "text_length_stats": {
     "min": 2,
     "max": 36,
-    "mean": 14.695510994645096,
+    "mean": 14.69457735247209,
     "median": 14.0
   }
 }
