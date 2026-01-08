@@ -276,7 +276,11 @@
     "zoneTempMinSP": 273,
     "zoneTempSp": 274,
     "zoneTempSpOffset": 275,
-    "zoneVOC": 276
+    "zoneVOC": 276,
+    "zoneVOCLevelAlarm": 277,
+    "zoneVOCMaxSp": 278,
+    "zoneVOCMinSp": 279,
+    "zoneVOCSp": 280
   },
   "id2label": {
     "0": "airPressure",
@@ -555,7 +559,11 @@
     "273": "zoneTempMinSP",
     "274": "zoneTempSp",
     "275": "zoneTempSpOffset",
-    "276": "zoneVOC"
+    "276": "zoneVOC",
+    "277": "zoneVOCLevelAlarm",
+    "278": "zoneVOCMaxSp",
+    "279": "zoneVOCMinSp",
+    "280": "zoneVOCSp"
   },
-  "num_labels": 277
+  "num_labels": 281
 }
