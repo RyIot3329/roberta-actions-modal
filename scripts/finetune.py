@@ -39,7 +39,7 @@ volume_path = Path("/root") / "data"
 app = modal.App("deberta-finetune", image=image, volumes={volume_path: volume})
 
 # Training configuration
-TRAIN_TIMEOUT = 120 * 60  # 120 minutes
+TRAIN_TIMEOUT = 180 * 60  # 120 minutes
 
 # Available models
 AVAILABLE_MODELS = {

@@ -6,17 +6,17 @@
 
 model: "microsoft/deberta-v3-base"
 epochs: 10
-batch_size: 2
+batch_size: 4
 learning_rate: "1e-5"
 max_seq_length: 27
 optimizer: "adamw_torch"
-scheduler: "linear"
-gradient_accumulation: 8
+scheduler: "cosine"
+gradient_accumulation: 16
 mixed_precision: "fp16"
-weight_decay: "0.075"
+weight_decay: "0.01"
 warmup_ratio: "0.1"
 push_to_hub: true
 hf_repo: "RyIoT33/haystack-autotagging"
 
 # GPU Options: "T4", "L4", "A10", "A100", "A100-40GB", "A100-80GB", "L40S", "H100", "H200", "B200"
-gpu: "T4"
+gpu: "A10"
