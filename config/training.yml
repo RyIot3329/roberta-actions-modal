@@ -4,9 +4,9 @@
 # These values are used when the workflow is triggered by a push event.
 # For manual runs via GitHub Actions UI, you can override these with workflow_dispatch inputs.
 
-model: "microsoft/deberta-v3-small"
-epochs: 9
-batch_size: 2
+model: "microsoft/deberta-v3-base"
+epochs: 10
+batch_size: 15
 learning_rate: "1e-5"
 max_seq_length: 25
 optimizer: "adamw_torch"
