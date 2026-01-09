@@ -6,9 +6,9 @@
 
 model: "microsoft/deberta-v3-base"
 epochs: 10
-batch_size: 15
+batch_size: 2
 learning_rate: "1e-5"
-max_seq_length: 25
+max_seq_length: 27
 optimizer: "adamw_torch"
 scheduler: "linear"
 gradient_accumulation: 8
