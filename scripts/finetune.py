@@ -39,20 +39,7 @@ volume_path = Path("/root") / "data"
 app = modal.App("deberta-finetune", image=image, volumes={volume_path: volume})
 
 # Training configuration
-DEFAULT_GPU = "T4"
 TRAIN_TIMEOUT = 120 * 60  # 120 minutes
-
-# Available GPU types for Modal
-# Maps user-friendly names to Modal GPU specifications
-AVAILABLE_GPUS = {
-    "T4": "T4",
-    "L4": "L4", 
-    "A10G": "A10G",
-    "A100-40GB": "A100-40GB",
-    "A100-80GB": "A100-80GB",
-    "A100": "A100-40GB",  # Alias
-    "H100": "H100",
-}
 
 # Available models
 AVAILABLE_MODELS = {
@@ -64,11 +51,7 @@ AVAILABLE_MODELS = {
 }
 
 
-@app.function(
-    gpu=DEFAULT_GPU,
-    timeout=TRAIN_TIMEOUT,
-)
-def train(
+def _train_impl(
     train_data: list[dict],
     val_data: list[dict],
     num_labels: int,
@@ -92,29 +75,7 @@ def train(
     """
     Fine-tune a transformer model on the provided data.
     
-    Args:
-        train_data: List of {"text": str, "label_id": int} dicts
-        val_data: Validation data in same format
-        num_labels: Number of classification labels
-        label2id: Dict mapping label names to IDs
-        id2label: Dict mapping IDs to label names
-        model_name: HuggingFace model identifier
-        epochs: Training epochs
-        batch_size: Batch size per device
-        learning_rate: Learning rate
-        max_seq_length: Maximum sequence length for tokenization
-        optimizer: Optimizer type (adamw_torch, adamw_hf, sgd, adafactor)
-        scheduler: LR scheduler type (linear, cosine, etc.)
-        gradient_accumulation: Gradient accumulation steps
-        mixed_precision: Mixed precision mode (fp16, bf16, no)
-        weight_decay: Weight decay for regularization
-        warmup_ratio: Ratio of total steps for warmup
-        push_to_hub: Whether to push model to Hugging Face Hub
-        hf_repo: Hugging Face repo ID (username/model-name)
-        hf_token: Hugging Face API token
-    
-    Returns:
-        Dictionary with training results and metrics
+    This is the shared implementation called by GPU-specific wrapper functions.
     """
     import json
     import torch
@@ -282,6 +243,7 @@ def train(
     all_preds = []
     all_labels = []
     
+    import torch
     with torch.no_grad():
         for sample in val_data:
             # Tokenize single sample
@@ -463,6 +425,53 @@ def train(
     return results
 
 
+# =============================================================================
+# GPU-specific wrapper functions
+# Each function runs on a different GPU type but calls the same implementation
+# =============================================================================
+
+@app.function(gpu="T4", timeout=TRAIN_TIMEOUT)
+def train_t4(**kwargs) -> dict:
+    """Training function for T4 GPU (budget option)."""
+    return _train_impl(**kwargs)
+
+
+@app.function(gpu="L4", timeout=TRAIN_TIMEOUT)
+def train_l4(**kwargs) -> dict:
+    """Training function for L4 GPU (balanced price/performance)."""
+    return _train_impl(**kwargs)
+
+
+@app.function(gpu="A10G", timeout=TRAIN_TIMEOUT)
+def train_a10g(**kwargs) -> dict:
+    """Training function for A10G GPU (good for medium models)."""
+    return _train_impl(**kwargs)
+
+
+@app.function(gpu="A100", timeout=TRAIN_TIMEOUT)
+def train_a100(**kwargs) -> dict:
+    """Training function for A100-40GB GPU (large models, fast training)."""
+    return _train_impl(**kwargs)
+
+
+@app.function(gpu="H100", timeout=TRAIN_TIMEOUT)
+def train_h100(**kwargs) -> dict:
+    """Training function for H100 GPU (maximum performance)."""
+    return _train_impl(**kwargs)
+
+
+# Mapping from GPU name to training function
+GPU_FUNCTIONS = {
+    "T4": train_t4,
+    "L4": train_l4,
+    "A10G": train_a10g,
+    "A100": train_a100,
+    "A100-40GB": train_a100,
+    "A100-80GB": train_a100,  # Modal will handle the specific variant
+    "H100": train_h100,
+}
+
+
 @app.local_entrypoint()
 def main(
     model: str = "microsoft/deberta-v3-base",
@@ -485,7 +494,7 @@ def main(
     
     Args:
         model: Model to fine-tune (e.g., microsoft/deberta-v3-base, FacebookAI/roberta-base)
-        gpu: GPU type for Modal (T4, L4, A10G, A100-40GB, A100-80GB, H100)
+        gpu: GPU type for Modal (T4, L4, A10G, A100, H100)
         epochs: Number of training epochs
         batch_size: Training batch size per device
         learning_rate: Learning rate
@@ -513,14 +522,13 @@ def main(
         model_name = model
     
     # Resolve GPU type
-    gpu_type = AVAILABLE_GPUS.get(gpu, gpu)
-    if gpu in AVAILABLE_GPUS:
-        print(f"Using GPU: {gpu} -> {gpu_type}")
-    else:
-        print(f"Using GPU: {gpu_type} (custom)")
+    gpu_upper = gpu.upper()
+    if gpu_upper not in GPU_FUNCTIONS:
+        print(f"WARNING: Unknown GPU '{gpu}', falling back to T4")
+        gpu_upper = "T4"
     
     print(f"Model: {model_name}")
-    print(f"GPU: {gpu_type}")
+    print(f"GPU: {gpu_upper}")
     print("=" * 60)
 
     print("\nLoading training data...")
@@ -554,7 +562,7 @@ def main(
     print(f"Number of labels: {num_labels}")
     print(f"\nTraining config:")
     print(f"  Model: {model_name}")
-    print(f"  GPU: {gpu_type}")
+    print(f"  GPU: {gpu_upper}")
     print(f"  Epochs: {epochs}")
     print(f"  Batch size: {batch_size} (effective: {batch_size * gradient_accumulation})")
     print(f"  Learning rate: {learning_rate}")
@@ -565,9 +573,12 @@ def main(
 
     print("\nStarting Modal training...")
 
-    # Run training on Modal with dynamic GPU selection
-    # Use with_options to override the GPU specified in the decorator
-    results = train.with_options(gpu=gpu_type).remote(
+    # Select the appropriate training function based on GPU type
+    train_fn = GPU_FUNCTIONS[gpu_upper]
+    print(f"Using training function for GPU: {gpu_upper}")
+
+    # Run training on Modal
+    results = train_fn.remote(
         train_data=train_data,
         val_data=val_data,
         num_labels=num_labels,
@@ -644,7 +655,7 @@ def main(
     print("FINAL RESULTS SUMMARY")
     print("=" * 60)
     print(f"Model: {model_name}")
-    print(f"GPU: {gpu_type}")
+    print(f"GPU: {gpu_upper}")
     print(f"F1 (weighted): {results['eval_metrics']['f1_weighted']:.4f}")
     print(f"F1 (macro): {results['eval_metrics']['f1_macro']:.4f}")
     print(f"Accuracy: {results['eval_metrics']['accuracy']:.4f}")
