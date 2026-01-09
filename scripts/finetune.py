@@ -8,7 +8,7 @@ Usage:
     modal run finetune.py
     modal run finetune.py --model microsoft/deberta-v3-base
     modal run finetune.py --model FacebookAI/roberta-base
-    modal run finetune.py --epochs 9 --push-to-hub --hf-repo username/model-name
+    modal run finetune.py --gpu A10G --epochs 9 --push-to-hub --hf-repo username/model-name
 """
 
 from datetime import datetime
@@ -39,8 +39,20 @@ volume_path = Path("/root") / "data"
 app = modal.App("deberta-finetune", image=image, volumes={volume_path: volume})
 
 # Training configuration
-TRAIN_GPU = "T4"  # Options: "T4", "A10G", "A100"
-TRAIN_TIMEOUT = 120 * 60  # 90 minutes (DeBERTa may take longer)
+DEFAULT_GPU = "T4"
+TRAIN_TIMEOUT = 120 * 60  # 120 minutes
+
+# Available GPU types for Modal
+# Maps user-friendly names to Modal GPU specifications
+AVAILABLE_GPUS = {
+    "T4": "T4",
+    "L4": "L4", 
+    "A10G": "A10G",
+    "A100-40GB": "A100-40GB",
+    "A100-80GB": "A100-80GB",
+    "A100": "A100-40GB",  # Alias
+    "H100": "H100",
+}
 
 # Available models
 AVAILABLE_MODELS = {
@@ -53,7 +65,7 @@ AVAILABLE_MODELS = {
 
 
 @app.function(
-    gpu=TRAIN_GPU,
+    gpu=DEFAULT_GPU,
     timeout=TRAIN_TIMEOUT,
 )
 def train(
@@ -454,6 +466,7 @@ def train(
 @app.local_entrypoint()
 def main(
     model: str = "microsoft/deberta-v3-base",
+    gpu: str = "T4",
     epochs: int = 9,
     batch_size: int = 2,
     learning_rate: float = 1e-5,
@@ -472,6 +485,7 @@ def main(
     
     Args:
         model: Model to fine-tune (e.g., microsoft/deberta-v3-base, FacebookAI/roberta-base)
+        gpu: GPU type for Modal (T4, L4, A10G, A100-40GB, A100-80GB, H100)
         epochs: Number of training epochs
         batch_size: Training batch size per device
         learning_rate: Learning rate
@@ -498,7 +512,15 @@ def main(
     else:
         model_name = model
     
+    # Resolve GPU type
+    gpu_type = AVAILABLE_GPUS.get(gpu, gpu)
+    if gpu in AVAILABLE_GPUS:
+        print(f"Using GPU: {gpu} -> {gpu_type}")
+    else:
+        print(f"Using GPU: {gpu_type} (custom)")
+    
     print(f"Model: {model_name}")
+    print(f"GPU: {gpu_type}")
     print("=" * 60)
 
     print("\nLoading training data...")
@@ -532,6 +554,7 @@ def main(
     print(f"Number of labels: {num_labels}")
     print(f"\nTraining config:")
     print(f"  Model: {model_name}")
+    print(f"  GPU: {gpu_type}")
     print(f"  Epochs: {epochs}")
     print(f"  Batch size: {batch_size} (effective: {batch_size * gradient_accumulation})")
     print(f"  Learning rate: {learning_rate}")
@@ -542,8 +565,9 @@ def main(
 
     print("\nStarting Modal training...")
 
-    # Run training on Modal
-    results = train.remote(
+    # Run training on Modal with dynamic GPU selection
+    # Use with_options to override the GPU specified in the decorator
+    results = train.with_options(gpu=gpu_type).remote(
         train_data=train_data,
         val_data=val_data,
         num_labels=num_labels,
@@ -620,6 +644,7 @@ def main(
     print("FINAL RESULTS SUMMARY")
     print("=" * 60)
     print(f"Model: {model_name}")
+    print(f"GPU: {gpu_type}")
     print(f"F1 (weighted): {results['eval_metrics']['f1_weighted']:.4f}")
     print(f"F1 (macro): {results['eval_metrics']['f1_macro']:.4f}")
     print(f"Accuracy: {results['eval_metrics']['accuracy']:.4f}")

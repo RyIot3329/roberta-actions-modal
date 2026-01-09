@@ -3,6 +3,10 @@
 # Fine-tune BERT on Modal with data preprocessing
 # Creates a pull request with training results
 # Pushes model to Hugging Face Hub
+#
+# Configuration:
+# - Push events: Reads settings from config/training.yml
+# - Manual runs: Uses workflow_dispatch inputs (overrides config file)
 
 name: Fine-tune Transformer
 
@@ -12,36 +16,51 @@ on:
       model:
         description: "Model to fine-tune"
         required: false
-        default: "microsoft/deberta-v3-small"
+        default: ""
         type: choice
         options:
+          - ""
           - "microsoft/deberta-v3-base"
           - "microsoft/deberta-v3-small"
           - "microsoft/deberta-v3-large"
           - "FacebookAI/roberta-base"
           - "FacebookAI/roberta-large"
+      gpu:
+        description: "GPU type for Modal"
+        required: false
+        default: ""
+        type: choice
+        options:
+          - ""
+          - "T4"
+          - "L4"
+          - "A10G"
+          - "A100-40GB"
+          - "A100-80GB"
+          - "H100"
       epochs:
         description: "Number of training epochs"
         required: false
-        default: "9"
+        default: ""
       batch_size:
         description: "Batch size"
         required: false
-        default: "2"
+        default: ""
       learning_rate:
         description: "Learning rate"
         required: false
-        default: "1e-5"
+        default: ""
       max_seq_length:
         description: "Maximum sequence length"
         required: false
-        default: "25"
+        default: ""
       optimizer:
         description: "Optimizer"
         required: false
-        default: "adamw_torch"
+        default: ""
         type: choice
         options:
+          - ""
           - "adamw_torch"
           - "adamw_hf"
           - "sgd"
@@ -49,9 +68,10 @@ on:
       scheduler:
         description: "Learning rate scheduler"
         required: false
-        default: "linear"
+        default: ""
         type: choice
         options:
+          - ""
           - "linear"
           - "cosine"
           - "cosine_with_restarts"
@@ -61,59 +81,48 @@ on:
       gradient_accumulation:
         description: "Gradient accumulation steps"
         required: false
-        default: "8"
+        default: ""
       mixed_precision:
         description: "Mixed precision training"
         required: false
-        default: "fp16"
+        default: ""
         type: choice
         options:
+          - ""
           - "fp16"
           - "bf16"
           - "no"
       weight_decay:
         description: "Weight decay"
         required: false
-        default: "0.075"
+        default: ""
       warmup_ratio:
         description: "Warmup ratio"
         required: false
-        default: "0.1"
+        default: ""
       push_to_hub:
         description: "Push model to Hugging Face Hub"
         required: false
-        default: "true"
+        default: ""
         type: choice
         options:
+          - ""
           - "true"
           - "false"
       hf_repo:
         description: "Hugging Face repo (username/model-name)"
         required: false
-        default: "RyIoT33/haystack-autotagging"
+        default: ""
 
   push:
     branches: [main]
     paths:
       - "data/**"
       - "scripts/**"
+      - "config/training.yml"
 
 env:
   PYTHON_VERSION: "3.10"
-  HF_REPO: ${{ github.event.inputs.hf_repo || 'RyIoT33/haystack-autotagging' }}
-  PUSH_TO_HUB: ${{ github.event.inputs.push_to_hub || 'true' }}
-  # Training defaults
-  MODEL: ${{ github.event.inputs.model || 'microsoft/deberta-v3-base' }}
-  EPOCHS: ${{ github.event.inputs.epochs || '9' }}
-  BATCH_SIZE: ${{ github.event.inputs.batch_size || '2' }}
-  LEARNING_RATE: ${{ github.event.inputs.learning_rate || '1e-5' }}
-  MAX_SEQ_LENGTH: ${{ github.event.inputs.max_seq_length || '25' }}
-  OPTIMIZER: ${{ github.event.inputs.optimizer || 'adamw_torch' }}
-  SCHEDULER: ${{ github.event.inputs.scheduler || 'linear' }}
-  GRADIENT_ACCUMULATION: ${{ github.event.inputs.gradient_accumulation || '8' }}
-  MIXED_PRECISION: ${{ github.event.inputs.mixed_precision || 'fp16' }}
-  WEIGHT_DECAY: ${{ github.event.inputs.weight_decay || '0.075' }}
-  WARMUP_RATIO: ${{ github.event.inputs.warmup_ratio || '0.1' }}
 
 jobs:
   train:
@@ -132,6 +141,92 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+
+      # ============================================
+      # Load Configuration
+      # ============================================
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Load training configuration
+        id: config
+        run: |
+          echo "Loading configuration..."
+          echo "Event: ${{ github.event_name }}"
+
+          # Function to get value: workflow_dispatch input takes priority, then config file
+          get_config() {
+            local input_value="$1"
+            local config_key="$2"
+            local default_value="$3"
+            
+            if [ -n "$input_value" ]; then
+              echo "$input_value"
+            elif [ -f "config/training.yml" ]; then
+              value=$(yq ".$config_key" config/training.yml)
+              if [ "$value" != "null" ] && [ -n "$value" ]; then
+                echo "$value"
+              else
+                echo "$default_value"
+              fi
+            else
+              echo "$default_value"
+            fi
+          }
+
+          # Load all config values
+          MODEL=$(get_config "${{ github.event.inputs.model }}" "model" "microsoft/deberta-v3-base")
+          GPU=$(get_config "${{ github.event.inputs.gpu }}" "gpu" "T4")
+          EPOCHS=$(get_config "${{ github.event.inputs.epochs }}" "epochs" "9")
+          BATCH_SIZE=$(get_config "${{ github.event.inputs.batch_size }}" "batch_size" "2")
+          LEARNING_RATE=$(get_config "${{ github.event.inputs.learning_rate }}" "learning_rate" "1e-5")
+          MAX_SEQ_LENGTH=$(get_config "${{ github.event.inputs.max_seq_length }}" "max_seq_length" "25")
+          OPTIMIZER=$(get_config "${{ github.event.inputs.optimizer }}" "optimizer" "adamw_torch")
+          SCHEDULER=$(get_config "${{ github.event.inputs.scheduler }}" "scheduler" "linear")
+          GRADIENT_ACCUMULATION=$(get_config "${{ github.event.inputs.gradient_accumulation }}" "gradient_accumulation" "8")
+          MIXED_PRECISION=$(get_config "${{ github.event.inputs.mixed_precision }}" "mixed_precision" "fp16")
+          WEIGHT_DECAY=$(get_config "${{ github.event.inputs.weight_decay }}" "weight_decay" "0.075")
+          WARMUP_RATIO=$(get_config "${{ github.event.inputs.warmup_ratio }}" "warmup_ratio" "0.1")
+          PUSH_TO_HUB=$(get_config "${{ github.event.inputs.push_to_hub }}" "push_to_hub" "true")
+          HF_REPO=$(get_config "${{ github.event.inputs.hf_repo }}" "hf_repo" "RyIoT33/haystack-autotagging")
+
+          # Export to GITHUB_OUTPUT
+          echo "model=$MODEL" >> $GITHUB_OUTPUT
+          echo "gpu=$GPU" >> $GITHUB_OUTPUT
+          echo "epochs=$EPOCHS" >> $GITHUB_OUTPUT
+          echo "batch_size=$BATCH_SIZE" >> $GITHUB_OUTPUT
+          echo "learning_rate=$LEARNING_RATE" >> $GITHUB_OUTPUT
+          echo "max_seq_length=$MAX_SEQ_LENGTH" >> $GITHUB_OUTPUT
+          echo "optimizer=$OPTIMIZER" >> $GITHUB_OUTPUT
+          echo "scheduler=$SCHEDULER" >> $GITHUB_OUTPUT
+          echo "gradient_accumulation=$GRADIENT_ACCUMULATION" >> $GITHUB_OUTPUT
+          echo "mixed_precision=$MIXED_PRECISION" >> $GITHUB_OUTPUT
+          echo "weight_decay=$WEIGHT_DECAY" >> $GITHUB_OUTPUT
+          echo "warmup_ratio=$WARMUP_RATIO" >> $GITHUB_OUTPUT
+          echo "push_to_hub=$PUSH_TO_HUB" >> $GITHUB_OUTPUT
+          echo "hf_repo=$HF_REPO" >> $GITHUB_OUTPUT
+
+          # Print loaded configuration
+          echo "========================================"
+          echo "Loaded Configuration:"
+          echo "  Model: $MODEL"
+          echo "  GPU: $GPU"
+          echo "  Epochs: $EPOCHS"
+          echo "  Batch size: $BATCH_SIZE"
+          echo "  Learning rate: $LEARNING_RATE"
+          echo "  Max seq length: $MAX_SEQ_LENGTH"
+          echo "  Optimizer: $OPTIMIZER"
+          echo "  Scheduler: $SCHEDULER"
+          echo "  Gradient accumulation: $GRADIENT_ACCUMULATION"
+          echo "  Mixed precision: $MIXED_PRECISION"
+          echo "  Weight decay: $WEIGHT_DECAY"
+          echo "  Warmup ratio: $WARMUP_RATIO"
+          echo "  Push to Hub: $PUSH_TO_HUB"
+          echo "  HF Repo: $HF_REPO"
+          echo "========================================"
 
       - name: Install dependencies
         run: |
@@ -183,36 +278,38 @@ jobs:
           echo "Starting Modal training..."
           echo "========================================"
           echo "Training Configuration:"
-          echo "  Model: ${{ env.MODEL }}"
-          echo "  Epochs: ${{ env.EPOCHS }}"
-          echo "  Batch size: ${{ env.BATCH_SIZE }}"
-          echo "  Learning rate: ${{ env.LEARNING_RATE }}"
-          echo "  Max seq length: ${{ env.MAX_SEQ_LENGTH }}"
-          echo "  Optimizer: ${{ env.OPTIMIZER }}"
-          echo "  Scheduler: ${{ env.SCHEDULER }}"
-          echo "  Gradient accumulation: ${{ env.GRADIENT_ACCUMULATION }}"
-          echo "  Mixed precision: ${{ env.MIXED_PRECISION }}"
-          echo "  Weight decay: ${{ env.WEIGHT_DECAY }}"
-          echo "  Warmup ratio: ${{ env.WARMUP_RATIO }}"
+          echo "  Model: ${{ steps.config.outputs.model }}"
+          echo "  GPU: ${{ steps.config.outputs.gpu }}"
+          echo "  Epochs: ${{ steps.config.outputs.epochs }}"
+          echo "  Batch size: ${{ steps.config.outputs.batch_size }}"
+          echo "  Learning rate: ${{ steps.config.outputs.learning_rate }}"
+          echo "  Max seq length: ${{ steps.config.outputs.max_seq_length }}"
+          echo "  Optimizer: ${{ steps.config.outputs.optimizer }}"
+          echo "  Scheduler: ${{ steps.config.outputs.scheduler }}"
+          echo "  Gradient accumulation: ${{ steps.config.outputs.gradient_accumulation }}"
+          echo "  Mixed precision: ${{ steps.config.outputs.mixed_precision }}"
+          echo "  Weight decay: ${{ steps.config.outputs.weight_decay }}"
+          echo "  Warmup ratio: ${{ steps.config.outputs.warmup_ratio }}"
           echo "========================================"
 
           # Build the command
           CMD="modal run ./scripts/finetune.py"
-          CMD="$CMD --model '${{ env.MODEL }}'"
-          CMD="$CMD --epochs ${{ env.EPOCHS }}"
-          CMD="$CMD --batch-size ${{ env.BATCH_SIZE }}"
-          CMD="$CMD --learning-rate ${{ env.LEARNING_RATE }}"
-          CMD="$CMD --max-seq-length ${{ env.MAX_SEQ_LENGTH }}"
-          CMD="$CMD --optimizer ${{ env.OPTIMIZER }}"
-          CMD="$CMD --scheduler ${{ env.SCHEDULER }}"
-          CMD="$CMD --gradient-accumulation ${{ env.GRADIENT_ACCUMULATION }}"
-          CMD="$CMD --mixed-precision ${{ env.MIXED_PRECISION }}"
-          CMD="$CMD --weight-decay ${{ env.WEIGHT_DECAY }}"
-          CMD="$CMD --warmup-ratio ${{ env.WARMUP_RATIO }}"
+          CMD="$CMD --model '${{ steps.config.outputs.model }}'"
+          CMD="$CMD --gpu '${{ steps.config.outputs.gpu }}'"
+          CMD="$CMD --epochs ${{ steps.config.outputs.epochs }}"
+          CMD="$CMD --batch-size ${{ steps.config.outputs.batch_size }}"
+          CMD="$CMD --learning-rate ${{ steps.config.outputs.learning_rate }}"
+          CMD="$CMD --max-seq-length ${{ steps.config.outputs.max_seq_length }}"
+          CMD="$CMD --optimizer ${{ steps.config.outputs.optimizer }}"
+          CMD="$CMD --scheduler ${{ steps.config.outputs.scheduler }}"
+          CMD="$CMD --gradient-accumulation ${{ steps.config.outputs.gradient_accumulation }}"
+          CMD="$CMD --mixed-precision ${{ steps.config.outputs.mixed_precision }}"
+          CMD="$CMD --weight-decay ${{ steps.config.outputs.weight_decay }}"
+          CMD="$CMD --warmup-ratio ${{ steps.config.outputs.warmup_ratio }}"
 
           # Add HF Hub flags if pushing
-          if [ "${{ env.PUSH_TO_HUB }}" == "true" ]; then
-            CMD="$CMD --push-to-hub --hf-repo ${{ env.HF_REPO }}"
+          if [ "${{ steps.config.outputs.push_to_hub }}" == "true" ]; then
+            CMD="$CMD --push-to-hub --hf-repo ${{ steps.config.outputs.hf_repo }}"
           fi
 
           echo "Running: $CMD"
@@ -225,15 +322,16 @@ jobs:
 
           # Add to workflow summary
           echo "## Training Results" >> $GITHUB_STEP_SUMMARY
-          echo "**Model:** ${{ env.MODEL }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Model:** ${{ steps.config.outputs.model }}" >> $GITHUB_STEP_SUMMARY
+          echo "**GPU:** ${{ steps.config.outputs.gpu }}" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           cat "$OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
-          if [ "${{ env.PUSH_TO_HUB }}" == "true" ]; then
+          if [ "${{ steps.config.outputs.push_to_hub }}" == "true" ]; then
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "## Hugging Face Model" >> $GITHUB_STEP_SUMMARY
-            echo "🤗 https://huggingface.co/${{ env.HF_REPO }}" >> $GITHUB_STEP_SUMMARY
+            echo "🤗 https://huggingface.co/${{ steps.config.outputs.hf_repo }}" >> $GITHUB_STEP_SUMMARY
           fi
 
       # ============================================
@@ -250,41 +348,47 @@ jobs:
           commit-message: |
             Add training results and processed data
 
-            - Model: ${{ env.MODEL }}
+            - Model: ${{ steps.config.outputs.model }}
+            - GPU: ${{ steps.config.outputs.gpu }}
             - Training results: ${{ steps.train.outputs.output_filename }}
-            - Epochs: ${{ env.EPOCHS }}
-            - Batch size: ${{ env.BATCH_SIZE }}
-            - Learning rate: ${{ env.LEARNING_RATE }}
-            - Model pushed to: ${{ env.HF_REPO }}
+            - Epochs: ${{ steps.config.outputs.epochs }}
+            - Batch size: ${{ steps.config.outputs.batch_size }}
+            - Learning rate: ${{ steps.config.outputs.learning_rate }}
+            - Model pushed to: ${{ steps.config.outputs.hf_repo }}
           branch: training-results-${{ github.run_id }}
           delete-branch: true
-          title: "🤖 Training Results - ${{ env.MODEL }} - ${{ steps.train.outputs.output_filename }}"
+          title: "🤖 Training Results - ${{ steps.config.outputs.model }} - ${{ steps.train.outputs.output_filename }}"
           body: |
             ## Automated Training Results
 
             Training completed successfully on Modal.
 
+            ### Trigger
+            **Event:** `${{ github.event_name }}`
+            **Config Source:** ${{ github.event_name == 'push' && 'config/training.yml' || 'workflow_dispatch inputs' }}
+
             ### Model
-            **${{ env.MODEL }}**
+            **${{ steps.config.outputs.model }}**
 
             ### Configuration
             | Parameter | Value |
             |-----------|-------|
-            | Model | ${{ env.MODEL }} |
-            | Epochs | ${{ env.EPOCHS }} |
-            | Batch size | ${{ env.BATCH_SIZE }} |
-            | Effective batch size | ${{ env.BATCH_SIZE }} × ${{ env.GRADIENT_ACCUMULATION }} = $(( ${{ env.BATCH_SIZE }} * ${{ env.GRADIENT_ACCUMULATION }} )) |
-            | Learning rate | ${{ env.LEARNING_RATE }} |
-            | Max seq length | ${{ env.MAX_SEQ_LENGTH }} |
-            | Optimizer | ${{ env.OPTIMIZER }} |
-            | Scheduler | ${{ env.SCHEDULER }} |
-            | Gradient accumulation | ${{ env.GRADIENT_ACCUMULATION }} |
-            | Mixed precision | ${{ env.MIXED_PRECISION }} |
-            | Weight decay | ${{ env.WEIGHT_DECAY }} |
-            | Warmup ratio | ${{ env.WARMUP_RATIO }} |
+            | Model | ${{ steps.config.outputs.model }} |
+            | GPU | ${{ steps.config.outputs.gpu }} |
+            | Epochs | ${{ steps.config.outputs.epochs }} |
+            | Batch size | ${{ steps.config.outputs.batch_size }} |
+            | Effective batch size | ${{ steps.config.outputs.batch_size }} × ${{ steps.config.outputs.gradient_accumulation }} |
+            | Learning rate | ${{ steps.config.outputs.learning_rate }} |
+            | Max seq length | ${{ steps.config.outputs.max_seq_length }} |
+            | Optimizer | ${{ steps.config.outputs.optimizer }} |
+            | Scheduler | ${{ steps.config.outputs.scheduler }} |
+            | Gradient accumulation | ${{ steps.config.outputs.gradient_accumulation }} |
+            | Mixed precision | ${{ steps.config.outputs.mixed_precision }} |
+            | Weight decay | ${{ steps.config.outputs.weight_decay }} |
+            | Warmup ratio | ${{ steps.config.outputs.warmup_ratio }} |
 
             ### Hugging Face
-            🤗 **Model:** https://huggingface.co/${{ env.HF_REPO }}
+            🤗 **Model:** https://huggingface.co/${{ steps.config.outputs.hf_repo }}
 
             ### Files Updated
             - `data/cleaned_data.csv` - Cleaned training data
@@ -305,8 +409,10 @@ jobs:
           echo "=========================================="
           echo "PIPELINE COMPLETE"
           echo "=========================================="
-          echo "Model: ${{ env.MODEL }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Model: ${{ steps.config.outputs.model }}"
+          echo "GPU: ${{ steps.config.outputs.gpu }}"
           echo "Output: ${{ steps.train.outputs.output_file }}"
-          echo "HF Model: https://huggingface.co/${{ env.HF_REPO }}"
+          echo "HF Model: https://huggingface.co/${{ steps.config.outputs.hf_repo }}"
           echo "PR created for branch: training-results-${{ github.run_id }}"
           echo "=========================================="
