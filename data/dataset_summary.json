@@ -1,9 +1,9 @@
 {
-  "total_samples": 17556,
-  "num_classes": 277,
-  "train_samples": 14044,
-  "validation_samples": 1756,
-  "test_samples": 1756,
+  "total_samples": 17855,
+  "num_classes": 281,
+  "train_samples": 14283,
+  "validation_samples": 1786,
+  "test_samples": 1786,
   "class_distribution": {
     "chillerEnable": 100,
     "zoneTempSp": 98,
@@ -22,6 +22,7 @@
     "dischargeFanSpeed": 80,
     "zoneTemp": 79,
     "zoneCO2": 79,
+    "zoneVOCLevelAlarm": 79,
     "dischargePressure": 78,
     "currentPhaseAMax": 78,
     "currentPhaseBMax": 78,
@@ -33,6 +34,8 @@
     "dischargeTemp": 75,
     "zoneHumidityMaxSp": 74,
     "dehumidifierFault": 74,
+    "zoneVOCMinSp": 74,
+    "zoneVOCMaxSp": 74,
     "zoneTempMinSP": 73,
     "dischargeFanSpeedFb": 73,
     "dischargeFlow": 73,
@@ -50,6 +53,7 @@
     "evapLeavingTemp": 70,
     "zoneCoolSp": 70,
     "zoneHeatSp": 70,
+    "zoneVOCSp": 70,
     "boilerEnable": 69,
     "wheelRuntime": 69,
     "coolingStatus": 69,
@@ -270,11 +274,11 @@
     "coolingEnableSp": 53,
     "wheelStatus": 53,
     "wheelReturnEnthalpy": 53,
+    "kFactor": 53,
     "dehumidEnableSp": 52,
     "humidifier": 52,
     "dischargeDamperFb": 51,
     "dischargeDamperOvr": 51,
-    "kFactor": 51,
     "wheelOutsideTemp": 50,
     "outsideTempLoSp": 50,
     "condPumpRuntime": 49,
@@ -286,7 +290,7 @@
   "text_length_stats": {
     "min": 2,
     "max": 36,
-    "mean": 14.69457735247209,
+    "mean": 14.683842061047326,
     "median": 14.0
   }
 }
