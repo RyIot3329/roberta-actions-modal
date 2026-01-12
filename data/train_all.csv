@@ -18307,7 +18307,7 @@ ZN-T-LOW-LIMIT-SP,zoneTempMinSp
 Space_Temp_Min_SP,zoneTempMinSp
 Min_Zone_Temp_SP,zoneTempMinSp
 zn-temp-min-sp,zoneTempMinSp
-RM-T-MIN-SP,zoneTempSpMin
+RM-T-MIN-SP,zoneTempMinSp
 zone_min_temp_setpoint,zoneTempMinSp
 ZN-SP-MIN,zoneTempMinSp
 SpaceMinSP,zoneTempMinSp

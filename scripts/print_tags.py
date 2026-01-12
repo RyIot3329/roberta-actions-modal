@@ -10,7 +10,7 @@ Output: Console output (label distribution)
 import pandas as pd
 import sys
 
-def print_tags(input_file='data/cleaned_data.csv'):
+def print_tags(input_file='../data/cleaned_data.csv'):
     """Print unique target values and their counts."""
     try:
         print(f"Loading {input_file}...")

@@ -10,7 +10,7 @@ Output: data/cleaned_data.csv
 import pandas as pd
 import sys
 
-def clean_data(input_file='data/train_all.csv', output_file='data/cleaned_data.csv'):
+def clean_data(input_file='../data/train_all.csv', output_file='../data/cleaned_data.csv'):
     """Remove spaces from all string columns."""
     try:
         print(f"Loading {input_file}...")
