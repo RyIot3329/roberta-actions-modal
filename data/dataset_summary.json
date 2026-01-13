@@ -1,9 +1,9 @@
 {
-  "total_samples": 18596,
-  "num_classes": 294,
-  "train_samples": 14876,
-  "validation_samples": 1860,
-  "test_samples": 1860,
+  "total_samples": 19337,
+  "num_classes": 307,
+  "train_samples": 15469,
+  "validation_samples": 1934,
+  "test_samples": 1934,
   "class_distribution": {
     "chillerEnable": 100,
     "zoneTempSp": 98,
@@ -266,6 +266,19 @@
     "zoneTempAvg": 57,
     "zoneStatus": 57,
     "zoneSO2": 57,
+    "zoneTempAvgSp": 57,
+    "zoneSO2LevelAlarm": 57,
+    "zonePurge": 57,
+    "zonePurgeStatus": 57,
+    "zoneTempDelta": 57,
+    "zoneTempHeatDb": 57,
+    "zoneTempCoolDb": 57,
+    "zoneVOCLoSp": 57,
+    "zoneVOCLoAlarm": 57,
+    "zoneVOCHiSp": 57,
+    "zoneVOCHiAlarm": 57,
+    "zonePressureMinSp": 57,
+    "zonePressureMaxSp": 57,
     "bypassSwitch": 56,
     "bypassDamper": 56,
     "wheelReturnFanStatus": 56,
@@ -303,7 +316,7 @@
   "text_length_stats": {
     "min": 2,
     "max": 36,
-    "mean": 14.632985588298558,
+    "mean": 14.657961421109789,
     "median": 14.0
   }
 }
