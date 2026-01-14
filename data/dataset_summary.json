@@ -1,10 +1,12 @@
 {
-  "total_samples": 19337,
-  "num_classes": 307,
-  "train_samples": 15469,
-  "validation_samples": 1934,
-  "test_samples": 1934,
+  "total_samples": 20242,
+  "num_classes": 321,
+  "train_samples": 16192,
+  "validation_samples": 2025,
+  "test_samples": 2025,
   "class_distribution": {
+    "zonePressureHiAlarm": 114,
+    "zonePM25": 113,
     "chillerEnable": 100,
     "zoneTempSp": 98,
     "condEnteringTemp": 89,
@@ -279,6 +281,12 @@
     "zoneVOCHiAlarm": 57,
     "zonePressureMinSp": 57,
     "zonePressureMaxSp": 57,
+    "zonePressureLoSp": 57,
+    "zonePressureLoAlarm": 57,
+    "zonePressureHiSp": 57,
+    "zonePowerReal": 57,
+    "zonePressureDb": 57,
+    "zonePM4": 57,
     "bypassSwitch": 56,
     "bypassDamper": 56,
     "wheelReturnFanStatus": 56,
@@ -286,6 +294,12 @@
     "wheelOutsideFanStatus": 56,
     "dischargeTempDehumidSp": 56,
     "dischargeFlowStandbyCoolSp": 56,
+    "zonePM10": 56,
+    "zonePM1": 56,
+    "zoneO3": 56,
+    "zoneO2": 56,
+    "zoneO2Alarm": 56,
+    "zoneNoiseLevel": 56,
     "condPump": 55,
     "condPumpSpeedSp": 55,
     "condStatus": 54,
@@ -316,7 +330,7 @@
   "text_length_stats": {
     "min": 2,
     "max": 36,
-    "mean": 14.657961421109789,
+    "mean": 14.621183677502223,
     "median": 14.0
   }
 }
