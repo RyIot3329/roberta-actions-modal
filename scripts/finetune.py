@@ -18,16 +18,17 @@ import os
 import modal
 
 # Define the container image with all dependencies
+# Versions are pinned so runs are reproducible and comparable
 image = (
     modal.Image.debian_slim(python_version="3.10")
     .pip_install(
-        "torch",
-        "transformers",
-        "datasets",
-        "scikit-learn",
-        "accelerate",
-        "huggingface_hub",
-        "sentencepiece",  # Required for DeBERTa tokenizer
+        "torch==2.5.1",
+        "transformers==4.46.3",
+        "datasets==3.1.0",
+        "scikit-learn==1.5.2",
+        "accelerate==1.1.1",
+        "huggingface_hub==0.26.2",
+        "sentencepiece==0.2.0",  # Required for DeBERTa tokenizer
     )
 )
 
@@ -54,14 +55,15 @@ AVAILABLE_MODELS = {
 def _train_impl(
     train_data: list[dict],
     val_data: list[dict],
+    test_data: list[dict],
     num_labels: int,
     label2id: dict,
     id2label: dict,
     model_name: str = "microsoft/deberta-v3-base",
     epochs: int = 9,
-    batch_size: int = 2,
+    batch_size: int = 128,
     learning_rate: float = 1e-5,
-    max_seq_length: int = 25,
+    max_seq_length: int = 32,
     optimizer: str = "adamw_torch",
     scheduler: str = "linear",
     gradient_accumulation: int = 8,
@@ -85,10 +87,20 @@ def _train_impl(
         TrainingArguments,
         Trainer,
         EarlyStoppingCallback,
+        DataCollatorWithPadding,
     )
     from datasets import Dataset
     from sklearn.metrics import accuracy_score, f1_score, classification_report
     import numpy as np
+
+    # TF32 is free speedup on Ampere+ (A100/L4/H100) with no accuracy cost
+    torch.backends.cuda.matmul.allow_tf32 = True
+    torch.backends.cudnn.allow_tf32 = True
+
+    # bf16 is preferred on Ampere+ but unsupported on T4: fall back to fp16
+    if mixed_precision == "bf16" and torch.cuda.is_available() and not torch.cuda.is_bf16_supported():
+        print("WARNING: bf16 not supported on this GPU, falling back to fp16")
+        mixed_precision = "fp16"
 
     print("=" * 60)
     print("Transformer Fine-tuning on Modal")
@@ -100,6 +112,7 @@ def _train_impl(
         print(f"GPU Memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB")
     print(f"Train samples: {len(train_data)}")
     print(f"Val samples: {len(val_data)}")
+    print(f"Test samples: {len(test_data)}")
     print(f"Num labels: {num_labels}")
     print("-" * 60)
     print("Training Parameters:")
@@ -130,6 +143,10 @@ def _train_impl(
         "text": [d["text"] for d in val_data],
         "label": [d["label_id"] for d in val_data],
     })
+    test_dataset = Dataset.from_dict({
+        "text": [d["text"] for d in test_data],
+        "label": [d["label_id"] for d in test_data],
+    })
 
     # Load tokenizer and model
     print(f"\nLoading model: {model_name}")
@@ -155,11 +172,10 @@ def _train_impl(
     model.config.id2label = id2label_int
     model.config.label2id = label2id
 
-    # Tokenize datasets
+    # Tokenize datasets (no padding here; the collator pads per batch)
     def tokenize_function(examples):
         return tokenizer(
             examples["text"],
-            padding="max_length",
             truncation=True,
             max_length=max_seq_length,
         )
@@ -167,6 +183,17 @@ def _train_impl(
     print("\nTokenizing datasets...")
     train_dataset = train_dataset.map(tokenize_function, batched=True)
     val_dataset = val_dataset.map(tokenize_function, batched=True)
+    test_dataset = test_dataset.map(tokenize_function, batched=True)
+
+    # Warn if any sample loses tokens to truncation
+    n_truncated = sum(
+        1 for ds in (train_dataset, val_dataset, test_dataset)
+        for ids in ds["input_ids"] if len(ids) >= max_seq_length
+    )
+    if n_truncated > 0:
+        print(f"WARNING: {n_truncated} samples hit max_seq_length={max_seq_length} and may be truncated")
+
+    data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
     # Define metrics
     def compute_metrics(eval_pred):
@@ -198,7 +225,7 @@ def _train_impl(
         output_dir=str(output_dir),
         num_train_epochs=epochs,
         per_device_train_batch_size=batch_size,
-        per_device_eval_batch_size=batch_size,
+        per_device_eval_batch_size=max(batch_size, 128),
         learning_rate=learning_rate,
         weight_decay=weight_decay,
         gradient_accumulation_steps=gradient_accumulation,
@@ -223,6 +250,7 @@ def _train_impl(
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=val_dataset,
+        data_collator=data_collator,
         compute_metrics=compute_metrics,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
     )
@@ -235,61 +263,47 @@ def _train_impl(
     print("\nEvaluating...")
     eval_result = trainer.evaluate()
 
-    # Run validation inference - test each sample individually
-    print("\nRunning validation inference...")
-    
-    model.eval()
-    predictions_list = []
-    all_preds = []
-    all_labels = []
-    
-    import torch
-    with torch.no_grad():
-        for sample in val_data:
-            # Tokenize single sample
-            inputs = tokenizer(
-                sample["text"],
-                padding="max_length",
-                truncation=True,
-                max_length=max_seq_length,
-                return_tensors="pt"
-            )
-            inputs = {k: v.to(model.device) for k, v in inputs.items()}
-            
-            # Get prediction
-            outputs = model(**inputs)
-            pred_id = torch.argmax(outputs.logits, dim=1).item()
-            confidence = torch.softmax(outputs.logits, dim=1).max().item()
-            
-            # Use id2label for predicted label name
-            pred_label = id2label_int.get(pred_id, f"unknown_{pred_id}")
-            actual_label = sample["label"]
-            is_correct = pred_id == sample["label_id"]
-            
-            all_preds.append(pred_id)
-            all_labels.append(sample["label_id"])
-            
-            predictions_list.append({
+    # Batched inference on validation and held-out test sets
+    def run_inference(dataset, samples, name):
+        print(f"\nRunning {name} inference...")
+        output = trainer.predict(dataset)
+        logits = torch.from_numpy(output.predictions)
+        probs = torch.softmax(logits, dim=1)
+        confidences, pred_ids = probs.max(dim=1)
+
+        predictions = []
+        for sample, pred_id, confidence in zip(samples, pred_ids.tolist(), confidences.tolist()):
+            predictions.append({
                 "text": sample["text"],
-                "actual_label": actual_label,
+                "actual_label": sample["label"],
                 "actual_id": sample["label_id"],
-                "predicted_label": pred_label,
+                "predicted_label": id2label_int.get(pred_id, f"unknown_{pred_id}"),
                 "predicted_id": pred_id,
                 "confidence": confidence,
-                "correct": is_correct,
+                "correct": pred_id == sample["label_id"],
             })
-    
-    # Calculate validation accuracy
+        return predictions, output.metrics
+
+    predictions_list, _ = run_inference(val_dataset, val_data, "validation")
     val_correct = sum(1 for p in predictions_list if p["correct"])
     val_total = len(predictions_list)
     val_accuracy = val_correct / val_total if val_total > 0 else 0
 
-    # Generate classification report
-    print("\nClassification Report:")
+    # Test set was never seen during training or model selection, so these
+    # are the headline metrics
+    test_predictions, test_metrics = run_inference(test_dataset, test_data, "test")
+    test_correct = sum(1 for p in test_predictions if p["correct"])
+    test_total = len(test_predictions)
+    test_accuracy = test_correct / test_total if test_total > 0 else 0
+
+    all_labels = [p["actual_id"] for p in test_predictions]
+    all_preds = [p["predicted_id"] for p in test_predictions]
+    print("\nTest Set Classification Report:")
     print(classification_report(
-        all_labels, 
-        all_preds, 
-        target_names=[id2label_int[i] for i in sorted(id2label_int.keys()) if i in set(all_labels + all_preds)],
+        all_labels,
+        all_preds,
+        labels=sorted(set(all_labels + all_preds)),
+        target_names=[id2label_int[i] for i in sorted(set(all_labels + all_preds))],
         zero_division=0
     ))
 
@@ -343,7 +357,7 @@ def _train_impl(
                     folder_path=str(final_model_path),
                     repo_id=hf_repo,
                     repo_type="model",
-                    commit_message=f"{model_short_name}: {epochs}ep, bs{batch_size}x{gradient_accumulation}, lr{learning_rate}, F1:{eval_result.get('eval_f1_weighted', 0):.4f}",
+                    commit_message=f"{model_short_name}: {epochs}ep, bs{batch_size}x{gradient_accumulation}, lr{learning_rate}, testF1:{test_metrics.get('test_f1_weighted', 0):.4f}",
                 )
                 
                 hf_url = f"https://huggingface.co/{hf_repo}"
@@ -377,6 +391,7 @@ def _train_impl(
             "num_labels": num_labels,
             "train_samples": len(train_data),
             "val_samples": len(val_data),
+            "test_samples": len(test_data),
         },
         "train_metrics": {
             "loss": train_result.metrics.get("train_loss"),
@@ -391,11 +406,24 @@ def _train_impl(
             "f1_micro": eval_result.get("eval_f1_micro"),
             "loss": eval_result.get("eval_loss"),
         },
+        "test_metrics": {
+            "accuracy": test_metrics.get("test_accuracy"),
+            "f1_weighted": test_metrics.get("test_f1_weighted"),
+            "f1_macro": test_metrics.get("test_f1_macro"),
+            "f1_micro": test_metrics.get("test_f1_micro"),
+            "loss": test_metrics.get("test_loss"),
+        },
         "validation_inference": {
             "accuracy": val_accuracy,
             "correct": val_correct,
             "total": val_total,
             "predictions": predictions_list,
+        },
+        "test_inference": {
+            "accuracy": test_accuracy,
+            "correct": test_correct,
+            "total": test_total,
+            "predictions": test_predictions,
         },
         "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU",
         "huggingface_url": hf_url,
@@ -414,9 +442,11 @@ def _train_impl(
     print(f"Model: {model_name}")
     print(f"Training time: {results['train_metrics']['runtime_seconds']:.2f}s")
     print(f"Epochs completed: {results['train_metrics']['epochs_completed']}")
-    print(f"Final F1 (weighted): {eval_result.get('eval_f1_weighted', 0):.4f}")
-    print(f"Final F1 (macro): {eval_result.get('eval_f1_macro', 0):.4f}")
-    print(f"Final Accuracy: {eval_result.get('eval_accuracy', 0):.4f}")
+    print(f"Validation F1 (weighted): {eval_result.get('eval_f1_weighted', 0):.4f}")
+    print(f"Validation Accuracy: {eval_result.get('eval_accuracy', 0):.4f}")
+    print(f"Test F1 (weighted): {test_metrics.get('test_f1_weighted', 0):.4f}")
+    print(f"Test F1 (macro): {test_metrics.get('test_f1_macro', 0):.4f}")
+    print(f"Test Accuracy: {test_metrics.get('test_accuracy', 0):.4f}")
     print(f"Results saved to Modal volume")
     if hf_url:
         print(f"Model available at: {hf_url}")
@@ -477,12 +507,12 @@ def main(
     model: str = "microsoft/deberta-v3-base",
     gpu: str = "T4",
     epochs: int = 9,
-    batch_size: int = 2,
+    batch_size: int = 128,
     learning_rate: float = 1e-5,
-    max_seq_length: int = 25,
+    max_seq_length: int = 32,
     optimizer: str = "adamw_torch",
     scheduler: str = "linear",
-    gradient_accumulation: int = 8,
+    gradient_accumulation: int = 1,
     mixed_precision: str = "fp16",
     weight_decay: float = 0.075,
     warmup_ratio: float = 0.1,
@@ -548,6 +578,7 @@ def main(
 
     train_data = load_jsonl("data/train.jsonl")
     val_data = load_jsonl("data/validation.jsonl")
+    test_data = load_jsonl("data/test.jsonl")
 
     # Load label mapping (contains label2id, id2label, num_labels)
     with open("data/label_mapping.json", "r") as f:
@@ -558,7 +589,7 @@ def main(
     id2label = label_mapping["id2label"]
     num_labels = label_mapping["num_labels"]
 
-    print(f"Loaded {len(train_data)} train, {len(val_data)} val samples")
+    print(f"Loaded {len(train_data)} train, {len(val_data)} val, {len(test_data)} test samples")
     print(f"Number of labels: {num_labels}")
     print(f"\nTraining config:")
     print(f"  Model: {model_name}")
@@ -581,6 +612,7 @@ def main(
     results = train_fn.remote(
         train_data=train_data,
         val_data=val_data,
+        test_data=test_data,
         num_labels=num_labels,
         label2id=label2id,
         id2label=id2label,
@@ -625,25 +657,30 @@ def main(
                     f.write(f"  {k}: {v:.4f}\n")
                 else:
                     f.write(f"  {k}: {v}\n")
-        f.write("\nEvaluation Metrics:\n")
+        f.write("\nEvaluation Metrics (validation set, used for model selection):\n")
         for k, v in results['eval_metrics'].items():
             if v is not None:
                 f.write(f"  {k}: {v:.4f}\n")
-        
-        # Add validation inference results
-        f.write("\n" + "=" * 60 + "\n")
-        f.write("Validation Inference Results\n")
-        f.write("=" * 60 + "\n")
-        val_inf = results.get('validation_inference', {})
-        f.write(f"Accuracy: {val_inf.get('correct', 0)}/{val_inf.get('total', 0)} ({val_inf.get('accuracy', 0):.2%})\n\n")
-        f.write("Predictions:\n")
-        f.write("-" * 60 + "\n")
-        for pred in val_inf.get('predictions', []):
-            status = "✓" if pred['correct'] else "✗"
-            f.write(f"{status} Input: '{pred['text']}'\n")
-            f.write(f"   Predicted: {pred['predicted_label']} (confidence: {pred['confidence']:.2%})\n")
-            f.write(f"   Actual:    {pred['actual_label']}\n\n")
-        
+        f.write("\nTest Metrics (held-out, headline numbers):\n")
+        for k, v in results['test_metrics'].items():
+            if v is not None:
+                f.write(f"  {k}: {v:.4f}\n")
+
+        # Add inference results for both sets
+        for title, key in [("Validation", 'validation_inference'), ("Test", 'test_inference')]:
+            f.write("\n" + "=" * 60 + "\n")
+            f.write(f"{title} Inference Results\n")
+            f.write("=" * 60 + "\n")
+            inf = results.get(key, {})
+            f.write(f"Accuracy: {inf.get('correct', 0)}/{inf.get('total', 0)} ({inf.get('accuracy', 0):.2%})\n\n")
+            f.write("Predictions:\n")
+            f.write("-" * 60 + "\n")
+            for pred in inf.get('predictions', []):
+                status = "✓" if pred['correct'] else "✗"
+                f.write(f"{status} Input: '{pred['text']}'\n")
+                f.write(f"   Predicted: {pred['predicted_label']} (confidence: {pred['confidence']:.2%})\n")
+                f.write(f"   Actual:    {pred['actual_label']}\n\n")
+
         f.write("=" * 60 + "\n")
         f.write("Raw JSON:\n")
         f.write(json.dumps(results, indent=2, default=str))
@@ -656,9 +693,10 @@ def main(
     print("=" * 60)
     print(f"Model: {model_name}")
     print(f"GPU: {gpu_upper}")
-    print(f"F1 (weighted): {results['eval_metrics']['f1_weighted']:.4f}")
-    print(f"F1 (macro): {results['eval_metrics']['f1_macro']:.4f}")
-    print(f"Accuracy: {results['eval_metrics']['accuracy']:.4f}")
+    print(f"Validation F1 (weighted): {results['eval_metrics']['f1_weighted']:.4f}")
+    print(f"Test F1 (weighted): {results['test_metrics']['f1_weighted']:.4f}")
+    print(f"Test F1 (macro): {results['test_metrics']['f1_macro']:.4f}")
+    print(f"Test Accuracy: {results['test_metrics']['accuracy']:.4f}")
     print("=" * 60)
     
     return results

@@ -14,17 +14,32 @@ A proof-of-concept for fine-tuning `FacebookAI/roberta-base` using Modal and Git
 ## Pipeline Steps
 
 ```
-┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
-│  Clean Data │──▶│ Print Tags  │──▶│ Train/Valid │──▶│ Convert to  │
-│             │   │             │   │   Split     │   │   JSONL     │
-└─────────────┘   └─────────────┘   └─────────────┘   └─────────────┘
-                                                             │
-                                                             ▼
-┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
-│  Create PR  │◀──│   Commit    │◀──│  Validate   │◀──│ Fine-tune   │
-│             │   │   Results   │   │   Model     │   │  on Modal   │
-└─────────────┘   └─────────────┘   └─────────────┘   └─────────────┘
+┌─────────────┐   ┌─────────────┐   ┌──────────────────┐
+│  Clean Data │──▶│ Print Tags  │──▶│ Dedupe, Split &  │
+│ (normalize) │   │             │   │ Convert to JSONL │
+└─────────────┘   └─────────────┘   └──────────────────┘
+                                             │
+                                             ▼
+┌─────────────┐   ┌─────────────┐   ┌──────────────────┐
+│  Create PR  │◀──│   Commit    │◀──│   Fine-tune on   │
+│             │   │   Results   │   │ Modal + Test Eval│
+└─────────────┘   └─────────────┘   └──────────────────┘
 ```
+
+Key data-quality guarantees:
+
+- **Normalization preserves word boundaries**: `CDK_DMPR_STATUS` → `cdk dmpr status`,
+  `zoneCO2Sp` → `zone co2 sp` (instead of stripping spaces).
+- **No train/val/test leakage**: data is deduplicated to one row per unique text
+  before splitting, and the split is assert-checked for overlap.
+- **Conflicting labels are resolved**: texts mapped to multiple targets keep the
+  majority label (ties dropped) and are logged to `data/label_conflicts.csv`.
+- **Manual overrides**: to fix conflicts (or any mislabel) by hand, edit the
+  `resolution` column of `data/label_conflicts.csv` (set the correct label, or
+  `DROP` to exclude) and save it as `data/label_overrides.csv`. Overrides always
+  win over majority-vote resolution and pushing the file triggers retraining.
+- **Held-out test set**: validation drives early stopping / model selection;
+  the test set is only touched once at the end and provides the headline metrics.
 
 ## Project Structure
 
@@ -36,18 +51,16 @@ roberta-poc/
 │   └── train_all.csv          # Input: Raw training data (text, target)
 │   # Generated files:
 │   ├── cleaned_data.csv       # Step 1 output
-│   ├── train.csv              # Step 3 output
-│   ├── valid.csv              # Step 3 output
-│   ├── train.jsonl            # Step 4 output
-│   ├── validation.jsonl       # Step 4 output
-│   ├── test.jsonl             # Step 4 output
-│   ├── label_mapping.json     # Step 4 output
-│   └── dataset_summary.json   # Step 4 output
+│   ├── train.jsonl            # Step 3 output
+│   ├── validation.jsonl       # Step 3 output
+│   ├── test.jsonl             # Step 3 output
+│   ├── label_mapping.json     # Step 3 output
+│   ├── dataset_summary.json   # Step 3 output
+│   └── label_conflicts.csv    # Step 3 output (conflicting labels for review)
 ├── scripts/
-│   ├── clean_data.py          # Step 1: Remove spaces
+│   ├── clean_data.py          # Step 1: Normalize point names
 │   ├── print_tags.py          # Step 2: Show label distribution
-│   ├── train_split.py         # Step 3: Split into train/valid
-│   ├── convert_to_jsonl.py    # Step 4: Convert to JSONL
+│   ├── convert_to_jsonl.py    # Step 3: Dedupe, split, convert to JSONL
 │   └── finetune.py            # Modal fine-tuning script
 ├── output/                     # Training results (auto-generated)
 ├── requirements.txt           # Python dependencies
@@ -117,7 +130,6 @@ pip install modal
 # Run preprocessing locally
 python scripts/clean_data.py
 python scripts/print_tags.py
-python scripts/train_split.py
 python scripts/convert_to_jsonl.py
 
 # Run training on Modal
@@ -171,12 +183,11 @@ RAT,returnTemp
 
 ## Preprocessing Scripts
 
-| Script                | Input              | Output                   | Description                 |
-| --------------------- | ------------------ | ------------------------ | --------------------------- |
-| `clean_data.py`       | `train_all.csv`    | `cleaned_data.csv`       | Removes spaces from strings |
-| `print_tags.py`       | `cleaned_data.csv` | Console                  | Shows label distribution    |
-| `train_split.py`      | `cleaned_data.csv` | `train.csv`, `valid.csv` | 80/20 stratified split      |
-| `convert_to_jsonl.py` | `cleaned_data.csv` | `*.jsonl` + mappings     | Creates training files      |
+| Script                | Input              | Output                   | Description                                        |
+| --------------------- | ------------------ | ------------------------ | -------------------------------------------------- |
+| `clean_data.py`       | `train_all.csv`    | `cleaned_data.csv`       | Normalizes point names (word-boundary preserving)  |
+| `print_tags.py`       | `cleaned_data.csv` | Console                  | Shows label distribution                           |
+| `convert_to_jsonl.py` | `cleaned_data.csv` | `*.jsonl` + mappings     | Dedupes, resolves conflicts, 80/10/10 split        |
 
 ## Notes
 

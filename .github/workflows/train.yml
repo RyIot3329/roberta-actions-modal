@@ -117,7 +117,10 @@ on:
   push:
     branches: [main]
     paths:
-      - "data/**"
+      # Only the raw input data triggers retraining -- generated data files
+      # (cleaned_data.csv, *.jsonl, etc.) merged back via results PRs do not.
+      - "data/train_all.csv"
+      - "data/label_overrides.csv"
       - "scripts/**"
       - "config/training.yml"
 
@@ -182,12 +185,12 @@ jobs:
           MODEL=$(get_config "${{ github.event.inputs.model }}" "model" "microsoft/deberta-v3-base")
           GPU=$(get_config "${{ github.event.inputs.gpu }}" "gpu" "T4")
           EPOCHS=$(get_config "${{ github.event.inputs.epochs }}" "epochs" "9")
-          BATCH_SIZE=$(get_config "${{ github.event.inputs.batch_size }}" "batch_size" "2")
+          BATCH_SIZE=$(get_config "${{ github.event.inputs.batch_size }}" "batch_size" "128")
           LEARNING_RATE=$(get_config "${{ github.event.inputs.learning_rate }}" "learning_rate" "1e-5")
-          MAX_SEQ_LENGTH=$(get_config "${{ github.event.inputs.max_seq_length }}" "max_seq_length" "25")
+          MAX_SEQ_LENGTH=$(get_config "${{ github.event.inputs.max_seq_length }}" "max_seq_length" "32")
           OPTIMIZER=$(get_config "${{ github.event.inputs.optimizer }}" "optimizer" "adamw_torch")
           SCHEDULER=$(get_config "${{ github.event.inputs.scheduler }}" "scheduler" "linear")
-          GRADIENT_ACCUMULATION=$(get_config "${{ github.event.inputs.gradient_accumulation }}" "gradient_accumulation" "8")
+          GRADIENT_ACCUMULATION=$(get_config "${{ github.event.inputs.gradient_accumulation }}" "gradient_accumulation" "1")
           MIXED_PRECISION=$(get_config "${{ github.event.inputs.mixed_precision }}" "mixed_precision" "fp16")
           WEIGHT_DECAY=$(get_config "${{ github.event.inputs.weight_decay }}" "weight_decay" "0.075")
           WARMUP_RATIO=$(get_config "${{ github.event.inputs.warmup_ratio }}" "warmup_ratio" "0.1")
@@ -254,12 +257,7 @@ jobs:
           echo "Printing label distribution..."
           python scripts/print_tags.py
 
-      - name: "Step 3: Train/Valid Split"
-        run: |
-          echo "Splitting data..."
-          python scripts/train_split.py
-
-      - name: "Step 4: Convert to JSONL"
+      - name: "Step 3: Convert to JSONL"
         run: |
           echo "Converting to JSONL format..."
           python scripts/convert_to_jsonl.py
@@ -393,10 +391,10 @@ jobs:
 
             ### Files Updated
             - `data/cleaned_data.csv` - Cleaned training data
-            - `data/train.csv` / `data/valid.csv` - Train/validation CSV splits
-            - `data/train.jsonl` / `data/validation.jsonl` / `data/test.jsonl` - JSONL format
+            - `data/train.jsonl` / `data/validation.jsonl` / `data/test.jsonl` - JSONL format (deduplicated, leakage-free)
             - `data/label_mapping.json` - Label ID mappings
             - `data/dataset_summary.json` - Dataset statistics
+            - `data/label_conflicts.csv` - Texts with conflicting labels (review these)
             - `${{ steps.train.outputs.output_file }}` - Training results
 
             ### Results

@@ -1,0 +1,131 @@
+text,resolution
+blr1 cmd,boilerEnable
+blr2 cmd,boilerEnable
+byp dmpr pos,bypassDamperFb
+bypass damper pos,DROPPED (tie)
+bypass dmpr pos,bypassDamperFb
+ch1 alarm,chillerAlarm
+chiller alarm,chillerAlarm
+chilleralarm,chillerAlarm
+chw pos,coolingValveFb
+clg req,zoneCoolingReq
+clg request,zoneCoolingReq
+clgrequest,zoneCoolingReq
+cmp error,compFault
+cmp fault,compFault
+cmp flt,compFault
+cmp start,compEnable
+cmpfault,compFault
+cmpflt,compFault
+cold deck damper pos,coldDeckDamperFb
+comp error,compFault
+comp fault,compFault
+comp flt,compFault
+comp start,compEnable
+comperror,compAlarm
+compfault,compFault
+compflt,compFault
+compressor fault,compFault
+compressor flt,compFault
+compressor start,compEnable
+compressorfault,compFault
+compressorflt,compFault
+cool valve position,coolingValveFb
+cooling req,zoneCoolingReq
+cooling request,zoneCoolingReq
+cws t,condEnteringTemp
+da dehum sp,dischargeDehumidSp
+dehum enable,dehumidEnable
+dehum setpoint,dehumidSp
+dehum status,dehumidifierStatus
+dehumid enable,dehumidEnable
+dehumidifier enable,dehumidEnable
+dehumidifier status,dehumidifierStatus
+dis fan cmd,dischargeFanEnable
+disch dehum sp,dischargeDehumidSp
+discharge dpt hi thresh,dischargeDewpointHiSp
+econ mode,econMode
+econ state,econStatus
+econ status,econStatus
+econo state,econStatus
+econo status,econStatus
+economizer mode,econMode
+economizer state,econStatus
+economizer status,econStatus
+emerg shutdown,emergencyShutdown
+emergency shutdown,emergencyShutdown
+enable freeze protection,freezeProtectEnable
+enable frost protection,freezeProtectEnable
+enable frz pro,freezeProtectEnable
+enable frz protect,freezeProtectEnable
+exhaust cmd,exhaustFanEnable
+freeze protect enable,freezeProtectEnable
+frost prot enable,freezeProtectEnable
+frz prot enable,freezeProtectEnable
+frz protect enable,freezeProtectEnable
+heating req,zoneHeatingReq
+heating request,zoneHeatingReq
+htg req,zoneHeatingReq
+htg request,zoneHeatingReq
+htgrequest,zoneHeatingReq
+humid en cmd,humidifierEnable
+humidifier en cmd,humidifierEnable
+humidifier enable cmd,humidifierEnable
+l1 current,currentPhaseA
+l2 current,currentPhaseB
+l3 current,currentPhaseC
+min oa cfm sp,minOutsideFlowSp
+minoa flow sp,minOutsideFlowSp
+oa cfm min sp,minOutsideFlowSp
+oa min cfm setpt,minOutsideFlowSp
+oa min cfm target,minOutsideFlowSp
+oa min flow spt,minOutsideFlowSp
+oa min setpoint,minOutsideFlowSp
+oa min setting,minOutsideFlowSp
+oa min spt,minOutsideFlowSp
+oa minflow sp,minOutsideFlowSp
+oa minimum setpoint,minOutsideFlowSp
+ra fan out,returnFanSpeed
+sa dehum cmd sp,DROPPED (tie)
+sa dehum sp,DROPPED (tie)
+sa dehumid sp,DROPPED (tie)
+sa temp clg lo sp,DROPPED (tie)
+shutdown emergency,emergencyShutdown
+space hum spt,dehumidSp
+space press max setpoint,DROPPED (tie)
+space press min setpoint,DROPPED (tie)
+space temp max sp,zoneTempMaxSP
+space voc max sp,zoneVOCMaxSp
+space voc min sp,zoneVOCMinSp
+spc temp max sp,zoneTempMaxSP
+sup dehum sp,DROPPED (tie)
+sup dpt hi limit,DROPPED (tie)
+supply air dpt hi limit,DROPPED (tie)
+supply dehumid sp,dischargeDehumidSp
+supply fan hz,dischargeFanFrequency
+zn clg req,DROPPED (tie)
+zn hi co2 trip,DROPPED (tie)
+zn htg req,DROPPED (tie)
+zn purge active,DROPPED (tie)
+zn purge stat,zonePurgeStatus
+zn temp max sp,zoneTempMaxSp
+zn temp min sp,DROPPED (tie)
+zn voc alm,zoneVOCLevelAlarm
+zn voc max setpoint,zoneVOCMaxSp
+zn voc max sp,zoneVOCMaxSp
+zn voc min setpoint,zoneVOCMinSp
+zn voc min sp,zoneVOCMinSp
+zntm sp,DROPPED (tie)
+zntm spt,DROPPED (tie)
+zone cooling request,DROPPED (tie)
+zone energy,zoneEnergy
+zone heating request,DROPPED (tie)
+zone hum sp,dehumidSp
+zone purge status,zonePurgeStatus
+zone temp low sp,zoneTempMinSP
+zone temp max sp,zoneTempMaxSP
+zone temp min sp,zoneTempMinSP
+zone temperature low setpoint,DROPPED (tie)
+zone voc alarm,zoneVOCLevelAlarm
+zone voc max setpoint,zoneVOCMaxSp
+zone voc min setpoint,zoneVOCMinSp
