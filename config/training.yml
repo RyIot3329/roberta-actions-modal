@@ -5,9 +5,12 @@
 # For manual runs via GitHub Actions UI, you can override these with workflow_dispatch inputs.
 
 model: "microsoft/deberta-v3-base"
-epochs: 12
+# At batch_size 128 an epoch is only ~97 optimizer steps (~16s on A100), so
+# epochs is a ceiling -- early stopping (patience 3) halts training at the
+# plateau. LR is sqrt-scaled for the 4x batch increase (2e-5 @ bs32 -> 4e-5).
+epochs: 60
 batch_size: 128
-learning_rate: "2e-5"
+learning_rate: "4e-5"
 max_seq_length: 32
 optimizer: "adamw_torch"
 scheduler: "cosine"
