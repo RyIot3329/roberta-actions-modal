@@ -70,9 +70,11 @@ def _train_impl(
     mixed_precision: str = "fp16",
     weight_decay: float = 0.075,
     warmup_ratio: float = 0.1,
+    label_smoothing: float = 0.0,
     push_to_hub: bool = False,
     hf_repo: str = None,
     hf_token: str = None,
+    baseline_f1: float = None,
 ) -> dict:
     """
     Fine-tune a transformer model on the provided data.
@@ -127,8 +129,11 @@ def _train_impl(
     print(f"  Mixed precision: {mixed_precision}")
     print(f"  Weight decay: {weight_decay}")
     print(f"  Warmup ratio: {warmup_ratio}")
+    print(f"  Label smoothing: {label_smoothing}")
     print("-" * 60)
     print(f"Push to Hub: {push_to_hub}")
+    if push_to_hub and baseline_f1 is not None:
+        print(f"Quality gate: push only if test f1_weighted >= {baseline_f1:.4f}")
     if push_to_hub:
         print(f"HF Repo: {hf_repo}")
         print(f"HF Token: {'provided' if hf_token else 'NOT PROVIDED'}")
@@ -239,6 +244,7 @@ def _train_impl(
         logging_steps=10,
         fp16=fp16,
         bf16=bf16,
+        label_smoothing_factor=label_smoothing,
         report_to="none",
         warmup_ratio=warmup_ratio,
         save_total_limit=2,  # Keep only best 2 checkpoints
@@ -306,6 +312,22 @@ def _train_impl(
         target_names=[id2label_int[i] for i in sorted(set(all_labels + all_preds))],
         zero_division=0
     ))
+
+    # Quality gate: never overwrite the production model with a worse one.
+    # The baseline comes from output/best_metrics.json in the repo (written
+    # only after a successful gated push), so regressions cannot ship.
+    gate = None
+    if push_to_hub and hf_repo and baseline_f1 is not None:
+        new_f1 = test_metrics.get("test_f1_weighted") or 0.0
+        if new_f1 < baseline_f1:
+            print("\n" + "=" * 60)
+            print(f"QUALITY GATE FAILED: test f1_weighted {new_f1:.4f} < "
+                  f"previous best {baseline_f1:.4f} -- skipping Hub push")
+            print("=" * 60)
+            push_to_hub = False
+            gate = {"passed": False, "baseline_f1": baseline_f1, "new_f1": new_f1}
+        else:
+            gate = {"passed": True, "baseline_f1": baseline_f1, "new_f1": new_f1}
 
     # Push to Hugging Face Hub if requested
     hf_url = None
@@ -388,6 +410,7 @@ def _train_impl(
             "mixed_precision": mixed_precision,
             "weight_decay": weight_decay,
             "warmup_ratio": warmup_ratio,
+            "label_smoothing": label_smoothing,
             "num_labels": num_labels,
             "train_samples": len(train_data),
             "val_samples": len(val_data),
@@ -427,6 +450,7 @@ def _train_impl(
         },
         "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU",
         "huggingface_url": hf_url,
+        "quality_gate": gate,
     }
 
     # Save results to volume
@@ -516,6 +540,7 @@ def main(
     mixed_precision: str = "fp16",
     weight_decay: float = 0.075,
     warmup_ratio: float = 0.1,
+    label_smoothing: float = 0.0,
     push_to_hub: bool = False,
     hf_repo: str = None,
 ):
@@ -591,6 +616,16 @@ def main(
 
     print(f"Loaded {len(train_data)} train, {len(val_data)} val, {len(test_data)} test samples")
     print(f"Number of labels: {num_labels}")
+
+    # Quality-gate baseline: best test f1 of any previously pushed model
+    best_metrics_path = "output/best_metrics.json"
+    baseline_f1 = None
+    if push_to_hub and os.path.exists(best_metrics_path):
+        with open(best_metrics_path, "r") as f:
+            baseline_f1 = json.load(f).get("test_f1_weighted")
+        if baseline_f1 is not None:
+            print(f"Quality gate baseline (from {best_metrics_path}): "
+                  f"test f1_weighted {baseline_f1:.4f}")
     print(f"\nTraining config:")
     print(f"  Model: {model_name}")
     print(f"  GPU: {gpu_upper}")
@@ -627,10 +662,23 @@ def main(
         mixed_precision=mixed_precision,
         weight_decay=weight_decay,
         warmup_ratio=warmup_ratio,
+        label_smoothing=label_smoothing,
         push_to_hub=push_to_hub,
         hf_repo=hf_repo,
         hf_token=hf_token,
+        baseline_f1=baseline_f1,
     )
+
+    # A successful gated push establishes the new baseline
+    if results.get("huggingface_url"):
+        with open(best_metrics_path, "w") as f:
+            json.dump({
+                "test_f1_weighted": results["test_metrics"].get("f1_weighted"),
+                "test_accuracy": results["test_metrics"].get("accuracy"),
+                "model": results["model"],
+                "timestamp": results["timestamp"],
+            }, f, indent=2)
+        print(f"Updated quality-gate baseline: {best_metrics_path}")
 
     # Save results locally
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -665,6 +713,10 @@ def main(
         for k, v in results['test_metrics'].items():
             if v is not None:
                 f.write(f"  {k}: {v:.4f}\n")
+        if results.get('quality_gate'):
+            g = results['quality_gate']
+            f.write(f"\nQuality Gate: {'PASSED' if g['passed'] else 'FAILED -- Hub push skipped'} "
+                    f"(test f1 {g['new_f1']:.4f} vs previous best {g['baseline_f1']:.4f})\n")
 
         # Add inference results for both sets
         for title, key in [("Validation", 'validation_inference'), ("Test", 'test_inference')]:

@@ -1,0 +1,1145 @@
+point_name,text,label,predicted,confidence,correct,weight
+AirCondMode,air cond mode,unitStatus,condStatus,0.7112659215927124,False,55
+AirFlow,air flow,dischargeFlow,dischargeFlow,0.9995037317276001,True,6
+AirFlw,air flw,dischargeFlow,dischargeFlow,0.9993884563446045,True,19
+BldgCHWRTmp,bldg chwr tmp,secEnteringTemp,evapEnteringTemp,0.9997826218605042,False,1
+BldgCHWSTmp,bldg chws tmp,secLeavingTemp,evapLeavingTemp,0.9987689852714539,False,1
+BldgHWFlwTot,bldg hw flw tot,secLeavingFlow,heatingCoilEnteringTemp,0.94736647605896,False,1
+BldgHWRT,bldg hwrt,secEnteringTemp,heatingCoilEnteringTemp,0.9972745776176453,False,1
+BldgHWST,bldg hwst,secLeavingTemp,heatingCoilLeavingTemp,0.4133751094341278,False,1
+Blr1Cmd,blr cmd,boiler,boilerEnable,0.9997969269752502,False,1
+Blr1HWSup,blr hw sup,priLeavingTemp,heatingCoilLeavingTemp,0.9992848038673401,False,2
+Blr1HWSupTmp,blr hw sup tmp,priLeavingTempSp,heatingCoilLeavingTemp,0.9998379945755005,False,2
+Blr1IsoVlv,blr iso vlv,priLeavingIsoValve,dischargeIsoDamper,0.9837930798530579,False,2
+Blr1SS,blr ss,boilerEnable,boilerEnable,0.999736487865448,True,2
+Blr1_Sts,blr sts,Blr1_Sts,boilerStatus,0.9998070597648621,False,1
+Blr2Cmd,blr cmd,boiler,boilerEnable,0.9997969269752502,False,1
+Blr2HWSup,blr hw sup,priLeavingTemp,heatingCoilLeavingTemp,0.9992848038673401,False,2
+Blr2HWSupTmp,blr hw sup tmp,priLeavingTempSp,heatingCoilLeavingTemp,0.9998379945755005,False,2
+Blr2IsoVlv,blr iso vlv,priLeavingIsoValve,dischargeIsoDamper,0.9837930798530579,False,2
+Blr2SS,blr ss,boilerEnable,boilerEnable,0.999736487865448,True,2
+Blr2_Sts,blr sts,Blr2_Sts,boilerStatus,0.9998070597648621,False,1
+Blr3Cmd,blr cmd,boiler,boilerEnable,0.9997969269752502,False,1
+Blr3HWSup,blr hw sup,priLeavingTemp,heatingCoilLeavingTemp,0.9992848038673401,False,2
+Blr3HWSupTmp,blr hw sup tmp,priLeavingTempSp,heatingCoilLeavingTemp,0.9998379945755005,False,2
+Blr3IsoVlv,blr iso vlv,priLeavingIsoValve,dischargeIsoDamper,0.9837930798530579,False,2
+Blr3SS,blr ss,boilerEnable,boilerEnable,0.999736487865448,True,2
+Blr3_Sts,blr sts,Blr3_Sts,boilerStatus,0.9998070597648621,False,1
+Blr4_Sts,blr sts,Blr4_Sts,boilerStatus,0.9998070597648621,False,1
+Blr4thFlCO,blr th fl co,zoneCO,zoneCO2Alarm,0.5457836985588074,False,1
+Blr5thFlCO,blr th fl co,zoneCO,zoneCO2Alarm,0.5457836985588074,False,1
+BlrCmd,blr cmd,boiler,boilerEnable,0.9997969269752502,False,10
+BlrEWTmp,blr ew tmp,priEnteringTemp,heatingCoilEnteringTemp,0.9949026107788086,False,10
+BlrEna,blr ena,boiler,boilerEnable,0.999809205532074,False,3
+BlrEna,blr ena,boilerEnable,boilerEnable,0.999809205532074,True,10
+BlrHWSTmp,blr hws tmp,priLeavingTemp,heatingCoilLeavingTemp,0.999819815158844,False,3
+BlrLWTmp,blr lw tmp,priLeavingTemp,heatingCoilLeavingTemp,0.9939717650413513,False,10
+BlrRmCOLvl,blr rm co lvl,zoneCO,zoneCO,0.9607979655265808,True,1
+BlrSts,blr sts,boiler01Status,boilerStatus,0.9998070597648621,False,3
+BlrSts,blr sts,boilerStatus,boilerStatus,0.9998070597648621,True,10
+BypDmpCmd,byp dmp cmd,bypassDamper,bypassDamper,0.999601423740387,True,9
+BypDmpPos,byp dmp pos,bypassDamperFb,bypassDamperFb,0.9995512366294861,True,9
+BypVlv,byp vlv,bypassValve,bypassValve,0.9994285702705383,True,2
+CCVlvCmd,cc vlv cmd,coolingValve,condBypassValve,0.5027207136154175,False,130
+CCVlvSp,cc vlv sp,dischargeTempSp,condPumpSpeed,0.3727422058582306,False,2
+CH1CHWIsoVlvCmd,ch chw iso vlv cmd,evapLeavingIsoValve,coolingValve,0.33578944206237793,False,1
+CH1CWIsoHxVlvCmd,ch cw iso hx vlv cmd,condLeavingIsoValve,coolingValveFb,0.6932465434074402,False,1
+CH1CWIsoVlvCmd,ch cw iso vlv cmd,condLeavingIsoValve,coolingValve,0.719886839389801,False,1
+CH1Cmd,ch cmd,chiller,coolingValve,0.6153041124343872,False,1
+CH2CHWIsoVlvCmd,ch chw iso vlv cmd,evapLeavingIsoValve,coolingValve,0.33578944206237793,False,1
+CH2CWIsoHxVlvCmd,ch cw iso hx vlv cmd,condLeavingIsoValve,coolingValveFb,0.6932465434074402,False,1
+CH2CWIsoVlvCmd,ch cw iso vlv cmd,condLeavingIsoValve,coolingValve,0.719886839389801,False,1
+CH2Cmd,ch cmd,chiller,coolingValve,0.6153041124343872,False,1
+CHL01_ChlrEna,chl chlr ena,chiller,coolingValve,0.7422263622283936,False,1
+CHL01_ChlrSts,chl chlr sts,chillerStatus,coolingStatus,0.6835293769836426,False,1
+CHL02_ChlrEna,chl chlr ena,chiller,coolingValve,0.7422263622283936,False,1
+CHL02_ChlrSts,chl chlr sts,chillerStatus,coolingStatus,0.6835293769836426,False,1
+CHL03_ChlrEna,chl chlr ena,chiller,coolingValve,0.7422263622283936,False,1
+CHL03_ChlrSts,chl chlr sts,chillerStatus,coolingStatus,0.6835293769836426,False,1
+CHL04_ChlrEna,chl chlr ena,chiller,coolingValve,0.7422263622283936,False,1
+CHL04_ChlrSts,chl chlr sts,chillerStatus,coolingStatus,0.6835293769836426,False,1
+CHWBypVlvCmd,chw byp vlv cmd,secBypassValve,condBypassValve,0.7104442119598389,False,1
+CHWBypVlvPos,chw byp vlv pos,secBypassValveFb,bypassValveFb,0.5469353199005127,False,1
+CHWDifPrs1,chw dif prs,secPressureDelta,coolingValve,0.9692376255989075,False,1
+CHWDifPrs2,chw dif prs,secPressureDelta,coolingValve,0.9692376255989075,False,1
+CHWDifPrs3,chw dif prs,secPressureDelta,coolingValve,0.9692376255989075,False,1
+CHWDiffPrsSp,chw diff prs sp,secPressureDeltaSp,zonePressureSp,0.3272959589958191,False,1
+CHWFlow,chw flow,secLeavingFlow,evapEnteringFlow,0.9819589257240295,False,1
+CHWFlw,chw flw,secLeavingFlow,evapEnteringFlow,0.9993818998336792,False,1
+CHWIsoVlv,chw iso vlv,evapLeavingIsoValve,dischargeIsoDamper,0.9802606701850891,False,3
+CHWP11_PriCHWPCmd,chwp pri chwp cmd,priPump,evapPumpEnable,0.9995673298835754,False,1
+CHWP11_PriCHWPSts,chwp pri chwp sts,priPumpStatus,evapPumpStatus,0.9996724128723145,False,1
+CHWP12_PriCHWPCmd,chwp pri chwp cmd,priPump,evapPumpEnable,0.9995673298835754,False,1
+CHWP12_PriCHWPSts,chwp pri chwp sts,priPumpStatus,evapPumpStatus,0.9996724128723145,False,1
+CHWP13_PriCHWPCmd,chwp pri chwp cmd,priPump,evapPumpEnable,0.9995673298835754,False,1
+CHWP13_PriCHWPSts,chwp pri chwp sts,priPumpStatus,evapPumpStatus,0.9996724128723145,False,1
+CHWP14_PriCHWPCmd,chwp pri chwp cmd,priPump,evapPumpEnable,0.9995673298835754,False,1
+CHWP14_PriCHWPSts,chwp pri chwp sts,priPumpStatus,evapPumpStatus,0.9996724128723145,False,1
+CHWP15_CHWPCmd,chwp chwp cmd,priPump,evapPumpEnable,0.9994481205940247,False,1
+CHWP15_CHWPSts,chwp chwp sts,priPumpStatus,evapPumpStatus,0.9998626708984375,False,1
+CHWPCmd,chwp cmd,evapPump,evapPumpEnable,0.999721348285675,False,1
+CHWPSpdCmd,chwp spd cmd,evapPumpSpeed,evapPumpEnable,0.8059685826301575,False,1
+CHWPSts,chwp sts,evapPumpStatus,evapPumpStatus,0.9997245669364929,True,1
+CHWPmp1Sts,chw pmp sts,condPumpStatus,evapPumpStatus,0.9998663663864136,False,2
+CHWPmp2Sts,chw pmp sts,condPumpStatus,evapPumpStatus,0.9998663663864136,False,2
+CHWPmp3Sts,chw pmp sts,condPumpStatus,evapPumpStatus,0.9998663663864136,False,2
+CHWPmp4Sts,chw pmp sts,condPumpStatus,evapPumpStatus,0.9998663663864136,False,1
+CHWPmpSts,chw pmp sts,heatingCoilPumpStatus,evapPumpStatus,0.9998663663864136,False,1
+CHWPrs,chw prs,secLeavingPressure,coolingStatus,0.9254767298698425,False,1
+CHWPrsSp,chw prs sp,secLeavingPressureSp,chillerEnableSp,0.2938431203365326,False,1
+CHWR,chwr,evapEnteringTemp,evapEnteringFlow,0.8183630704879761,False,3
+CHWRTmp,chwr tmp,evapEnteringTemp,evapEnteringTemp,0.9998482465744019,True,5
+CHWRTmp,chwr tmp,secEnteringTemp,evapEnteringTemp,0.9998482465744019,False,1
+CHWReq,chw req,coolingEnable,coolingValve,0.9762536883354187,False,18
+CHWRetTmp,chw ret tmp,secEnteringTemp,evapEnteringTemp,0.9998908042907715,False,1
+CHWS,chws,evapLeavingTemp,evapLeavingTemp,0.8753722310066223,True,3
+CHWSBypVlvCmd,chws byp vlv cmd,secEnteringBypassValve,coolingValve,0.6378291845321655,False,1
+CHWSEna,chws ena,systemEnable,evapLeavingTemp,0.9101073741912842,False,1
+CHWSFlw,chws flw,secLeavingFlow,evapLeavingFlow,0.9998910427093506,False,1
+CHWSFlwSp,chws flw sp,secLeavingFlowSp,evapLeavingFlow,0.9703617095947266,False,1
+CHWSTmp,chws tmp,evapLeavingTemp,evapLeavingTemp,0.999797523021698,True,5
+CHWSupTmp,chw sup tmp,secLeavingTemp,evapLeavingTemp,0.9996956586837769,False,1
+CHWVlv,chw vlv,coolingValve,coolingValve,0.9998266100883484,True,1
+CO2Lvl,co2 lvl,zoneCO,zoneCO2,0.9991130232810974,False,1
+CO2LvlSp,co2 lvl sp,zoneCOSp,zoneCO2HiSp,0.9950202703475952,False,1
+CO2Sp,co2 sp,zoneCO2Sp,zoneCO2HiSp,0.9846209287643433,False,1
+CT11_BasinWtrTmp,ct basin wtr tmp,sumpTemp,condLeavingTemp,0.999785840511322,False,1
+CT11_CTFCmd,ct ctf cmd,twrFan,condPump,0.5045322179794312,False,1
+CT11_CTFSpd,ct ctf spd,twrFanSpeed,condPumpRuntime,0.44672057032585144,False,1
+CT11_CTFSts,ct ctf sts,twrFanStatus,condStatus,0.9547173976898193,False,1
+CT12_BasinWtrTmp,ct basin wtr tmp,sumpTemp,condLeavingTemp,0.999785840511322,False,1
+CT12_CTFCmd,ct ctf cmd,twrFan,condPump,0.5045322179794312,False,1
+CT12_CTFSpd,ct ctf spd,twrFanSpeed,condPumpRuntime,0.44672057032585144,False,1
+CT12_CTFSts,ct ctf sts,twrFanStatus,condStatus,0.9547173976898193,False,1
+CT13_BasinWtrTmp,ct basin wtr tmp,sumpTemp,condLeavingTemp,0.999785840511322,False,1
+CT13_CTFCmd,ct ctf cmd,twrFan,condPump,0.5045322179794312,False,1
+CT13_CTFSpd,ct ctf spd,twrFanSpeed,condPumpRuntime,0.44672057032585144,False,1
+CT13_CTFSts,ct ctf sts,twrFanStatus,condStatus,0.9547173976898193,False,1
+CT1ABsnHtrCmd,ct a bsn htr cmd,sumpHeater,heatingEnable,0.9577221870422363,False,1
+CT1ABypVlvCmd,ct a byp vlv cmd,twrBypassValve,condBypassValve,0.9990485310554504,False,1
+CT1ACWSTemp,ct acws temp,twrLeavingTemp,condLeavingTemp,0.9997625946998596,False,1
+CT1ACWSTmpSp,ct acws tmp sp,twrLeavingTempSp,condLeavingTemp,0.6100948452949524,False,1
+CT1AFCmd,ct af cmd,twrFan,condAlarm,0.5350494980812073,False,1
+CT1AFSpd,ct af spd,twrFanSpeed,dischargeFanSpeed,0.8905624747276306,False,1
+CT1AFSts,ct af sts,twrFanStatus,unitStatus,0.6419936418533325,False,1
+CT1AFanSS,ct a fan ss,twrFan,dischargeFan,0.9972621202468872,False,2
+CT1AIsoOutVlv,ct a iso out vlv,twrLeavingIsoValve,dischargeIsoDamper,0.9996272325515747,False,2
+CT1AIsoOutVlvSts,ct a iso out vlv sts,twrLeavingIsoValveFb,dischargeIsoDamper,0.999536395072937,False,2
+CT1AIsoVlv,ct a iso vlv,twrEnteringIsoValve,dischargeIsoDamper,0.9995152950286865,False,2
+CT1AIsoVlvSts,ct a iso vlv sts,twrEnteringIsoValveFb,dischargeIsoDamper,0.9993353486061096,False,2
+CT1ASysEna,ct a sys ena,twrEnable,chillerStatus,0.5577151775360107,False,1
+CT1AVFDOut,ct avfd out,twrFanSpeed,dischargeTempFault,0.4183115065097809,False,2
+CT1BBsnHtrCmd,ct b bsn htr cmd,sumpHeater,buildingPressure,0.6353132128715515,False,1
+CT1BBypVlvCmd,ct b byp vlv cmd,twrBypassValve,condBypassValve,0.9990882873535156,False,1
+CT1BCWSTemp,ct bcws temp,twrLeavingTemp,heatingCoilLeavingTemp,0.9927331209182739,False,1
+CT1BCWSTmpSp,ct bcws tmp sp,twrLeavingTempSp,dischargeTempCoolMinSp,0.2964516580104828,False,1
+CT1BFCmd,ct bf cmd,twrFan,condPump,0.8681595325469971,False,1
+CT1BFSpd,ct bf spd,twrFanSpeed,condPumpSpeedFb,0.7053290605545044,False,1
+CT1BFSts,ct bf sts,twrFanStatus,condStatus,0.9833501577377319,False,1
+CT1BFanSS,ct b fan ss,twrFan,dischargeFan,0.47825145721435547,False,2
+CT1BSysEna,ct b sys ena,twrEnable,buildingPressure,0.7200259566307068,False,1
+CT1BVFDOut,ct bvfd out,twrFanSpeed,condPump,0.9959180951118469,False,2
+CT1BsnHtrSts,ct bsn htr sts,sumpHeater,heatingStatus,0.8676305413246155,False,1
+CT1CBsnHtrCmd,ct c bsn htr cmd,sumpHeater,buildingPressure,0.6455289125442505,False,1
+CT1CBypVlvCmd,ct c byp vlv cmd,twrBypassValve,condBypassValve,0.9989781379699707,False,1
+CT1CCWSTemp,ct ccws temp,twrLeavingTemp,condLeavingTemp,0.946397066116333,False,1
+CT1CCWSTmpSp,ct ccws tmp sp,twrLeavingTempSp,condLeavingTemp,0.8793152570724487,False,1
+CT1CFCmd,ct cf cmd,twrFan,condBypassFlowSp,0.38260042667388916,False,1
+CT1CFSpd,ct cf spd,twrFanSpeed,zoneDCVReqCount,0.26275625824928284,False,1
+CT1CFSts,ct cf sts,twrFanStatus,condStatus,0.7568668127059937,False,1
+CT1CSysEna,ct c sys ena,twrEnable,coolingEnable,0.5028165578842163,False,1
+CT1CWSTmp,ct cws tmp,twrLeavingTemp,condLeavingTemp,0.9997866749763489,False,1
+CT1Cmd,ct cmd,twrFan,cond,0.5376819372177124,False,1
+CT1DBsnHtrCmd,ct d bsn htr cmd,sumpHeater,buildingPressure,0.6952680349349976,False,1
+CT1DBypVlvCmd,ct d byp vlv cmd,twrBypassValve,condBypassValve,0.9985309839248657,False,1
+CT1DCWSTemp,ct dcws temp,twrLeavingTemp,condLeavingTemp,0.9976657629013062,False,1
+CT1DCWSTmpSp,ct dcws tmp sp,twrLeavingTempSp,condLeavingTemp,0.8988063335418701,False,1
+CT1DFCmd,ct df cmd,twrFan,condPump,0.821241021156311,False,1
+CT1DFSpd,ct df spd,twrFanSpeed,dischargeFanSpeedFb,0.8323490023612976,False,1
+CT1DFSts,ct df sts,twrFanStatus,condStatus,0.3360446095466614,False,1
+CT1DSysEna,ct d sys ena,twrEnable,chillerEnable,0.7509685754776001,False,1
+CT1EBsnHtrCmd,ct e bsn htr cmd,sumpHeater,heatingEnable,0.33447539806365967,False,1
+CT1EBypVlvCmd,ct e byp vlv cmd,twrBypassValve,condBypassValve,0.9335491061210632,False,1
+CT1ECWSTemp,ct ecws temp,twrLeavingTemp,evapLeavingTemp,0.9154571890830994,False,1
+CT1ECWSTmpSp,ct ecws tmp sp,twrLeavingTempSp,condLeavingTemp,0.6746299266815186,False,1
+CT1EFCmd,ct ef cmd,twrFan,condAlarm,0.28838980197906494,False,1
+CT1EFSpd,ct ef spd,twrFanSpeed,dischargeFanMotorTemp,0.9162176251411438,False,1
+CT1EFSts,ct ef sts,twrFanStatus,coolingStatus,0.33062678575515747,False,1
+CT1ESysEna,ct e sys ena,twrEnable,dischargeEnthalpy,0.5225310325622559,False,1
+CT1FBsnHtrCmd,ct f bsn htr cmd,sumpHeater,heatingEnable,0.6787962317466736,False,1
+CT1FBypVlvCmd,ct f byp vlv cmd,twrBypassValve,condBypassValve,0.9977655410766602,False,1
+CT1FCWSTemp,ct fcws temp,twrLeavingTemp,evapLeavingTemp,0.9640761613845825,False,1
+CT1FCWSTmpSp,ct fcws tmp sp,twrLeavingTempSp,condLeavingTemp,0.30221256613731384,False,1
+CT1FFCmd,ct ff cmd,twrFan,condAlarm,0.243834987282753,False,1
+CT1FFSpd,ct ff spd,twrFanSpeed,dischargeFanSpeed,0.5941214561462402,False,1
+CT1FFSts,ct ff sts,twrFanStatus,wheelReturnFanStatus,0.21881282329559326,False,1
+CT1FSysEna,ct f sys ena,twrEnable,exhaustFanEnable,0.5275580286979675,False,1
+CT1FanSpd,ct fan spd,twrFanSpeed,dischargeFanSpeed,0.997972309589386,False,1
+CT1Flw,ct flw,twrLeavingFlow,condEnteringFlow,0.9802113771438599,False,1
+CT1GBsnHtrCmd,ct g bsn htr cmd,sumpHeater,heatingEnable,0.9875735640525818,False,1
+CT1GBypVlvCmd,ct g byp vlv cmd,twrBypassValve,condBypassValve,0.9882311224937439,False,1
+CT1GCWSTemp,ct gcws temp,twrLeavingTemp,evapLeavingTemp,0.9669166207313538,False,1
+CT1GCWSTmpSp,ct gcws tmp sp,twrLeavingTempSp,condLeavingTemp,0.5083778500556946,False,1
+CT1GFCmd,ct gf cmd,twrFan,condPump,0.9522436857223511,False,1
+CT1GFSpd,ct gf spd,twrFanSpeed,condPumpSpeed,0.7855392694473267,False,1
+CT1GFSts,ct gf sts,twrFanStatus,bypassFanStatus,0.4065243601799011,False,1
+CT1GSysEna,ct g sys ena,twrEnable,coolingEnable,0.7679502964019775,False,1
+CT1HBsnHtrCmd,ct h bsn htr cmd,sumpHeater,heatingEnable,0.907859206199646,False,1
+CT1HBypVlvCmd,ct h byp vlv cmd,twrBypassValve,condBypassValve,0.9569745063781738,False,1
+CT1HCWSTemp,ct hcws temp,twrLeavingTemp,heatingCoilLeavingTemp,0.7404446601867676,False,1
+CT1HCWSTmpSp,ct hcws tmp sp,twrLeavingTempSp,heatingCoilLeavingTemp,0.4033452272415161,False,1
+CT1HFCmd,ct hf cmd,twrFan,heatingEnable,0.9963473677635193,False,1
+CT1HFSpd,ct hf spd,twrFanSpeed,dischargeFanFrequency,0.9575880169868469,False,1
+CT1HFSts,ct hf sts,twrFanStatus,heatingStatus,0.9898808002471924,False,1
+CT1HSysEna,ct h sys ena,twrEnable,heatingEnable,0.3011109530925751,False,1
+CT1IBsnHtrCmd,ct i bsn htr cmd,sumpHeater,buildingPressure,0.6580483317375183,False,1
+CT1IBypVlvCmd,ct i byp vlv cmd,twrBypassValve,condBypassValve,0.9990496039390564,False,1
+CT1ICWSTemp,ct icws temp,twrLeavingTemp,condLeavingTemp,0.8456230163574219,False,1
+CT1ICWSTmpSp,ct icws tmp sp,twrLeavingTempSp,condLeavingTemp,0.9435120224952698,False,1
+CT1IFCmd,ct if cmd,twrFan,coolingEnable,0.9429388046264648,False,1
+CT1IFSpd,ct if spd,twrFanSpeed,coolingEnableSp,0.523698627948761,False,1
+CT1IFSts,ct if sts,twrFanStatus,coolingStatus,0.5730639100074768,False,1
+CT1ISysEna,ct i sys ena,twrEnable,compEnable,0.5423957705497742,False,1
+CT1IsoVlv,ct iso vlv,twrEnteringIsoValve,dischargeIsoDamper,0.9948170781135559,False,1
+CT1JBsnHtrCmd,ct j bsn htr cmd,sumpHeater,heatingEnable,0.9391513466835022,False,1
+CT1JBypVlvCmd,ct j byp vlv cmd,twrBypassValve,condBypassValve,0.9982353448867798,False,1
+CT1JCWSTemp,ct jcws temp,twrLeavingTemp,condLeavingTemp,0.9893723130226135,False,1
+CT1JCWSTmpSp,ct jcws tmp sp,twrLeavingTempSp,occupiedCoolSpOffset,0.5162591338157654,False,1
+CT1JFCmd,ct jf cmd,twrFan,condPump,0.8022230267524719,False,1
+CT1JFSpd,ct jf spd,twrFanSpeed,dischargeFanFrequency,0.9929630160331726,False,1
+CT1JFSts,ct jf sts,twrFanStatus,dischargeFanCurrent,0.43844524025917053,False,1
+CT1JSysEna,ct j sys ena,twrEnable,coolingEnable,0.6811696887016296,False,1
+CT1KBsnHtrCmd,ct k bsn htr cmd,sumpHeater,evapEnteringTemp,0.2335435003042221,False,1
+CT1KBypVlvCmd,ct k byp vlv cmd,twrBypassValve,condBypassFlow,0.842103898525238,False,1
+CT1KCWSTemp,ct kcws temp,twrLeavingTemp,condLeavingTemp,0.9864701628684998,False,1
+CT1KCWSTmpSp,ct kcws tmp sp,twrLeavingTempSp,condLeavingTemp,0.9989349246025085,False,1
+CT1KFCmd,ct kf cmd,twrFan,kFactor,0.9893504977226257,False,1
+CT1KFSpd,ct kf spd,twrFanSpeed,kFactor,0.5938367247581482,False,1
+CT1KFSts,ct kf sts,twrFanStatus,kFactor,0.7896481156349182,False,1
+CT1KSysEna,ct k sys ena,twrEnable,kFactor,0.8521659970283508,False,1
+CT1LBsnHtrCmd,ct l bsn htr cmd,sumpHeater,heatingEnable,0.985171914100647,False,1
+CT1LBypVlvCmd,ct l byp vlv cmd,twrBypassValve,condBypassValve,0.9969156980514526,False,1
+CT1LCWSTemp,ct lcws temp,twrLeavingTemp,condLeavingTemp,0.9997771382331848,False,1
+CT1LCWSTmpSp,ct lcws tmp sp,twrLeavingTempSp,condLeavingTemp,0.9558722972869873,False,1
+CT1LFCmd,ct lf cmd,twrFan,coolingEnable,0.881117045879364,False,1
+CT1LFSpd,ct lf spd,twrFanSpeed,zoneCoolSp,0.5075121521949768,False,1
+CT1LFSts,ct lf sts,twrFanStatus,condLeavingTemp,0.9148239493370056,False,1
+CT1LSysEna,ct l sys ena,twrEnable,condLeavingTemp,0.5419265031814575,False,1
+CT1NzlVlvCmd,ct nzl vlv cmd,twrEnteringIsoValve,coolingValve,0.9911963939666748,False,1
+CT1Sts,ct sts,twrFanStatus,condStatus,0.9689396023750305,False,1
+CT2AFanSS,ct a fan ss,twrFan,dischargeFan,0.9972621202468872,False,2
+CT2AIsoOutVlv,ct a iso out vlv,twrLeavingIsoValve,dischargeIsoDamper,0.9996272325515747,False,2
+CT2AIsoOutVlvSts,ct a iso out vlv sts,twrLeavingIsoValveFb,dischargeIsoDamper,0.999536395072937,False,2
+CT2AIsoVlv,ct a iso vlv,twrEnteringIsoValve,dischargeIsoDamper,0.9995152950286865,False,2
+CT2AIsoVlvSts,ct a iso vlv sts,twrEnteringIsoValveFb,dischargeIsoDamper,0.9993353486061096,False,2
+CT2AVFDOut,ct avfd out,twrFanSpeed,dischargeTempFault,0.4183115065097809,False,2
+CT2BFanSS,ct b fan ss,twrFan,dischargeFan,0.47825145721435547,False,2
+CT2BVFDOut,ct bvfd out,twrFanSpeed,condPump,0.9959180951118469,False,2
+CT2CWSTmp,ct cws tmp,twrLeavingTemp,condLeavingTemp,0.9997866749763489,False,1
+CT2FanCmd,ct fan cmd,twrFan,dischargeFan,0.7313969135284424,False,1
+CT2FanSpd,ct fan spd,twrFanSpeed,dischargeFanSpeed,0.997972309589386,False,1
+CT2Flw,ct flw,twrLeavingFlow,condEnteringFlow,0.9802113771438599,False,1
+CT2HtrSts,ct htr sts,sumpHeater,heatingStatus,0.9989346861839294,False,1
+CT2NzlVlvCmd,ct nzl vlv cmd,twrEnteringIsoValve,coolingValve,0.9911963939666748,False,1
+CT2RecirculationVlvCmd,ct recirculation vlv cmd,twrEnteringIsoValve,coolingValve,0.9655202627182007,False,1
+CT2Sts,ct sts,twrFanStatus,condStatus,0.9689396023750305,False,1
+CT3AFanSS,ct a fan ss,twrFan,dischargeFan,0.9972621202468872,False,2
+CT3AIsoOutVlv,ct a iso out vlv,twrLeavingIsoValve,dischargeIsoDamper,0.9996272325515747,False,2
+CT3AIsoOutVlvSts,ct a iso out vlv sts,twrLeavingIsoValveFb,dischargeIsoDamper,0.999536395072937,False,2
+CT3AIsoVlv,ct a iso vlv,twrEnteringIsoValve,dischargeIsoDamper,0.9995152950286865,False,2
+CT3AIsoVlvSts,ct a iso vlv sts,twrEnteringIsoValveFb,dischargeIsoDamper,0.9993353486061096,False,2
+CT3AVFDOut,ct avfd out,twrFanSpeed,dischargeTempFault,0.4183115065097809,False,2
+CT3BFanSS,ct b fan ss,twrFan,dischargeFan,0.47825145721435547,False,2
+CT3BVFDOut,ct bvfd out,twrFanSpeed,condPump,0.9959180951118469,False,2
+CTBypVlvCmd,ct byp vlv cmd,twrBypassValve,condBypassValve,0.9989579916000366,False,1
+CTF11_CTFanEna,ctf ct fan ena,twrEnable,returnFan,0.4210994839668274,False,1
+CTF12_CTFanEna,ctf ct fan ena,twrEnable,returnFan,0.4210994839668274,False,1
+CTF13_CTFanEna,ctf ct fan ena,twrEnable,returnFan,0.4210994839668274,False,1
+CWFlw,cw flw,condLeavingFlow,condLeavingFlow,0.9998841285705566,True,1
+CWIsoVlvCmd,cw iso vlv cmd,condLeavingIsoValve,dischargeIsoDamper,0.6379939317703247,False,4
+CWP12_CWPmpCmd,cwp cw pmp cmd,condPump,condPump,0.9985872507095337,True,1
+CWP12_CWPmpSts,cwp cw pmp sts,condPumpStatus,condPumpSpeedFb,0.4571196436882019,False,1
+CWP13_CWPmpCmd,cwp cw pmp cmd,condPump,condPump,0.9985872507095337,True,1
+CWP13_CWPmpSts,cwp cw pmp sts,condPumpStatus,condPumpSpeedFb,0.4571196436882019,False,1
+CWP14_CWPmpCmd,cwp cw pmp cmd,condPump,condPump,0.9985872507095337,True,1
+CWP14_CWPmpSts,cwp cw pmp sts,condPumpStatus,condPumpSpeedFb,0.4571196436882019,False,1
+CWP16_CWPmpCmd,cwp cw pmp cmd,condPump,condPump,0.9985872507095337,True,1
+CWP16_CWPmpSts,cwp cw pmp sts,condPumpStatus,condPumpSpeedFb,0.4571196436882019,False,1
+CWP1Cmd,cwp cmd,condPump,condPump,0.9995470643043518,True,1
+CWP1Sts,cwp sts,condPumpStatus,dischargeDamperFb,0.31288760900497437,False,1
+CWP2Cmd,cwp cmd,condPump,condPump,0.9995470643043518,True,1
+CWP2Sts,cwp sts,condPumpStatus,dischargeDamperFb,0.31288760900497437,False,1
+CWP3Cmd,cwp cmd,condPump,condPump,0.9995470643043518,True,1
+CWP3Spd,cwp spd,condPumpSpeed,condPumpSpeed,0.9931208491325378,True,1
+CWP3SpdFbk,cwp spd fbk,condPumpSpeedFb,condPumpSpeedFb,0.9990156888961792,True,1
+CWP3Sts,cwp sts,condPumpStatus,dischargeDamperFb,0.31288760900497437,False,1
+CWR,cwr,condEnteringTemp,condEnteringTemp,0.9964097142219543,True,3
+CWRPrs,cwr prs,condEnteringPressure,condEnteringTemp,0.9838376641273499,False,1
+CWRTmp,cwr tmp,condEnteringTemp,evapEnteringTemp,0.8229056596755981,False,8
+CWRVlv11_1200Cmd,cwr vlv cmd,twrEnteringIsoValve,coolingValve,0.9986531734466553,False,1
+CWRVlv11_600Cmd,cwr vlv cmd,twrEnteringIsoValve,coolingValve,0.9986531734466553,False,1
+CWRVlv12_1200Cmd,cwr vlv cmd,twrEnteringIsoValve,coolingValve,0.9986531734466553,False,1
+CWRVlv12_600Cmd,cwr vlv cmd,twrEnteringIsoValve,coolingValve,0.9986531734466553,False,1
+CWRVlv13_1200Cmd,cwr vlv cmd,twrEnteringIsoValve,coolingValve,0.9986531734466553,False,1
+CWRVlv13_600Cmd,cwr vlv cmd,twrEnteringIsoValve,coolingValve,0.9986531734466553,False,1
+CWS,cws,condLeavingTemp,condEnteringTemp,0.8200874328613281,False,3
+CWSPrs,cws prs,condLeavingPressure,condEnteringTemp,0.9919962286949158,False,1
+CWSTmp,cws tmp,condLeavingTemp,condLeavingTemp,0.9997794032096863,True,8
+CWSTmpSp,cws tmp sp,condLeavingTempSp,condLeavingTemp,0.7321800589561462,False,5
+CWSVlv11_1200Cmd,cws vlv cmd,twrLeavingIsoValve,coolingValve,0.9470505118370056,False,1
+CWSVlv11_600Cmd,cws vlv cmd,twrLeavingIsoValve,coolingValve,0.9470505118370056,False,1
+CWSVlv12_1200Cmd,cws vlv cmd,twrLeavingIsoValve,coolingValve,0.9470505118370056,False,1
+CWSVlv12_600Cmd,cws vlv cmd,twrLeavingIsoValve,coolingValve,0.9470505118370056,False,1
+CWSVlv13_1200Cmd,cws vlv cmd,twrLeavingIsoValve,coolingValve,0.9470505118370056,False,1
+CWSVlv13_600Cmd,cws vlv cmd,twrLeavingIsoValve,coolingValve,0.9470505118370056,False,1
+ChillerCapacity,chiller capacity,chillerDemand,chillerEnable,0.9020592570304871,False,2
+ChillerEnable,chiller enable,chillerEnable,chillerEnable,0.9997512698173523,True,2
+Chlr1CHWIsoVlv,chlr chw iso vlv,evapLeavingIsoValve,coolingValveFb,0.36167585849761963,False,1
+Chlr1CHWRTmp,chlr chwr tmp,evapEnteringTemp,evapEnteringTemp,0.9998451471328735,True,1
+Chlr1CHWSTmp,chlr chws tmp,evapLeavingTemp,evapLeavingTemp,0.9997327923774719,True,1
+Chlr1CWPmpSts,chlr cw pmp sts,condPumpStatus,coolingValveFb,0.6061339974403381,False,1
+Chlr1CWRTmp,chlr cwr tmp,condEnteringTemp,evapEnteringTemp,0.9996753931045532,False,1
+Chlr1CWSTmp,chlr cws tmp,condLeavingTemp,condLeavingTemp,0.7580511569976807,True,1
+Chlr1Run,chlr run,chiller,chillerStatus,0.9907985925674438,False,1
+Chlr1Sts,chlr sts,chillerStatus,chillerStatus,0.9995871186256409,True,1
+Chlr2CHWFlwRat,chlr chw flw rat,evapLeavingFlow,evapEnteringFlow,0.9996769428253174,False,1
+Chlr2CHWIsoVlv,chlr chw iso vlv,evapLeavingIsoValve,coolingValveFb,0.36167585849761963,False,1
+Chlr2CHWRTmp,chlr chwr tmp,evapEnteringTemp,evapEnteringTemp,0.9998451471328735,True,1
+Chlr2CHWSTmp,chlr chws tmp,evapLeavingTemp,evapLeavingTemp,0.9997327923774719,True,1
+Chlr2CWFlwRat,chlr cw flw rat,condEnteringFlow,condEnteringFlow,0.9944954514503479,True,1
+Chlr2CWIsoVlvCmd,chlr cw iso vlv cmd,condEnteringIsoValve,coolingValve,0.8854920268058777,False,1
+Chlr2CWIsoVlvPos,chlr cw iso vlv pos,condEnteringIsoValveFb,coolingValveFb,0.9915505647659302,False,1
+Chlr2CWPmpSts,chlr cw pmp sts,condPumpStatus,coolingValveFb,0.6061339974403381,False,1
+Chlr2CWRTmp,chlr cwr tmp,condEnteringTemp,evapEnteringTemp,0.9996753931045532,False,1
+Chlr2CWSTmp,chlr cws tmp,condLeavingTemp,condLeavingTemp,0.7580511569976807,True,1
+Chlr2CdEntTmp,chlr cd ent tmp,condEnteringTemp,condEnteringTemp,0.99943608045578,True,1
+Chlr2CdLvgTmp,chlr cd lvg tmp,condLeavingTemp,evapEnteringTemp,0.48484668135643005,False,1
+Chlr2CdPmp3Cmd,chlr cd pmp cmd,condPump,coldDeckDamper,0.9230416417121887,False,1
+Chlr2CdPmp3Sts,chlr cd pmp sts,condPumpStatus,coolingValveFb,0.9423045516014099,False,1
+Chlr2EvEntTmp,chlr ev ent tmp,evapEnteringTemp,evapEnteringTemp,0.9995394945144653,True,1
+Chlr2EvLvgTmp,chlr ev lvg tmp,evapLeavingTemp,evapLeavingTemp,0.9544539451599121,True,1
+Chlr2PriCHWPmp2Cmd,chlr pri chw pmp cmd,evapPump,evapPumpEnable,0.9996838569641113,False,1
+Chlr2PriCHWPmp2Sts,chlr pri chw pmp sts,evapPumpStatus,evapPumpStatus,0.9976951479911804,True,1
+Chlr2Run,chlr run,chiller,chillerStatus,0.9907985925674438,False,1
+Chlr2Sts,chlr sts,chillerStatus,chillerStatus,0.9995871186256409,True,2
+Chlr3CHWFlwRat,chlr chw flw rat,evapLeavingFlow,evapEnteringFlow,0.9996769428253174,False,1
+Chlr3CHWIsoVlv,chlr chw iso vlv,evapLeavingIsoValve,coolingValveFb,0.36167585849761963,False,1
+Chlr3CHWRTmp,chlr chwr tmp,evapEnteringTemp,evapEnteringTemp,0.9998451471328735,True,1
+Chlr3CHWSTmp,chlr chws tmp,evapLeavingTemp,evapLeavingTemp,0.9997327923774719,True,1
+Chlr3CWFlwRat,chlr cw flw rat,condEnteringFlow,condEnteringFlow,0.9944954514503479,True,1
+Chlr3CWIsoVlvCmd,chlr cw iso vlv cmd,condEnteringIsoValve,coolingValve,0.8854920268058777,False,1
+Chlr3CWIsoVlvPos,chlr cw iso vlv pos,condEnteringIsoValveFb,coolingValveFb,0.9915505647659302,False,1
+Chlr3CWRTmp,chlr cwr tmp,condEnteringTemp,evapEnteringTemp,0.9996753931045532,False,1
+Chlr3CWSTmp,chlr cws tmp,condLeavingTemp,condLeavingTemp,0.7580511569976807,True,1
+Chlr3CdEntTmp,chlr cd ent tmp,condEnteringTemp,condEnteringTemp,0.99943608045578,True,1
+Chlr3CdLvgTmp,chlr cd lvg tmp,condLeavingTemp,evapEnteringTemp,0.48484668135643005,False,1
+Chlr3CdPmp3Cmd,chlr cd pmp cmd,condPump,coldDeckDamper,0.9230416417121887,False,1
+Chlr3CdPmp3Sts,chlr cd pmp sts,condPumpStatus,coolingValveFb,0.9423045516014099,False,1
+Chlr3CndDifPrs,chlr cnd dif prs,condPressureDelta,coolingValve,0.5857186913490295,False,1
+Chlr3CndTmp,chlr cnd tmp,secLeavingTemp,evapEnteringTemp,0.6537265181541443,False,1
+Chlr3EvDifPrs,chlr ev dif prs,evapPressureDelta,dischargeDamperOvr,0.8925477266311646,False,1
+Chlr3EvEntTmp,chlr ev ent tmp,evapEnteringTemp,evapEnteringTemp,0.9995394945144653,True,1
+Chlr3EvLvgTmp,chlr ev lvg tmp,evapLeavingTemp,evapLeavingTemp,0.9544539451599121,True,1
+Chlr3Flw,chlr flw,evapLeavingFlow,evapEnteringFlow,0.9994115829467773,False,1
+Chlr3PriCHWPmp3Cmd,chlr pri chw pmp cmd,evapPump,evapPumpEnable,0.9996838569641113,False,1
+Chlr3PriCHWPmp3Sts,chlr pri chw pmp sts,evapPumpStatus,evapPumpStatus,0.9976951479911804,True,1
+Chlr3Run,chlr run,chiller,chillerStatus,0.9907985925674438,False,1
+Chlr3Sts,chlr sts,chillerStatus,chillerStatus,0.9995871186256409,True,2
+Chlr5CHWFlwRat,chlr chw flw rat,evapLeavingFlow,evapEnteringFlow,0.9996769428253174,False,1
+Chlr5CWFlwRat,chlr cw flw rat,condEnteringFlow,condEnteringFlow,0.9944954514503479,True,1
+Chlr5CWIsoVlvCmd,chlr cw iso vlv cmd,condEnteringIsoValve,coolingValve,0.8854920268058777,False,1
+Chlr5CWIsoVlvPos,chlr cw iso vlv pos,condEnteringIsoValveFb,coolingValveFb,0.9915505647659302,False,1
+Chlr5CdEntTmp,chlr cd ent tmp,condEnteringTemp,condEnteringTemp,0.99943608045578,True,1
+Chlr5CdLvgTmp,chlr cd lvg tmp,condLeavingTemp,evapEnteringTemp,0.48484668135643005,False,1
+Chlr5CdPmp3Cmd,chlr cd pmp cmd,condPump,coldDeckDamper,0.9230416417121887,False,1
+Chlr5CdPmp3Sts,chlr cd pmp sts,condPumpStatus,coolingValveFb,0.9423045516014099,False,1
+Chlr5EvEntTmp,chlr ev ent tmp,evapEnteringTemp,evapEnteringTemp,0.9995394945144653,True,1
+Chlr5EvLvgTmp,chlr ev lvg tmp,evapLeavingTemp,evapLeavingTemp,0.9544539451599121,True,1
+Chlr5PriCHWPmp5Cmd,chlr pri chw pmp cmd,evapPump,evapPumpEnable,0.9996838569641113,False,1
+Chlr5PriCHWPmp5Sts,chlr pri chw pmp sts,evapPumpStatus,evapPumpStatus,0.9976951479911804,True,1
+Chlr5Sts,chlr sts,chillerStatus,chillerStatus,0.9995871186256409,True,1
+Chlr6CHWFlwRat,chlr chw flw rat,evapLeavingFlow,evapEnteringFlow,0.9996769428253174,False,1
+Chlr6CWFlwRat,chlr cw flw rat,condEnteringFlow,condEnteringFlow,0.9944954514503479,True,1
+Chlr6CWIsoVlvCmd,chlr cw iso vlv cmd,condEnteringIsoValve,coolingValve,0.8854920268058777,False,1
+Chlr6CWIsoVlvPos,chlr cw iso vlv pos,condEnteringIsoValveFb,coolingValveFb,0.9915505647659302,False,1
+Chlr6CdEntTmp,chlr cd ent tmp,condEnteringTemp,condEnteringTemp,0.99943608045578,True,1
+Chlr6CdLvgTmp,chlr cd lvg tmp,condLeavingTemp,evapEnteringTemp,0.48484668135643005,False,1
+Chlr6CdPmp3Cmd,chlr cd pmp cmd,condPump,coldDeckDamper,0.9230416417121887,False,1
+Chlr6CdPmp3Sts,chlr cd pmp sts,condPumpStatus,coolingValveFb,0.9423045516014099,False,1
+Chlr6EvEntTmp,chlr ev ent tmp,evapEnteringTemp,evapEnteringTemp,0.9995394945144653,True,1
+Chlr6EvLvgTmp,chlr ev lvg tmp,evapLeavingTemp,evapLeavingTemp,0.9544539451599121,True,1
+Chlr6PriCHWPmp6Cmd,chlr pri chw pmp cmd,evapPump,evapPumpEnable,0.9996838569641113,False,1
+Chlr6PriCHWPmp6Sts,chlr pri chw pmp sts,evapPumpStatus,evapPumpStatus,0.9976951479911804,True,1
+Chlr6Sts,chlr sts,chillerStatus,chillerStatus,0.9995871186256409,True,1
+ChlrCHWFlwRat,chlr chw flw rat,evapLeavingFlow,evapEnteringFlow,0.9996769428253174,False,3
+ChlrCWFlwRat,chlr cw flw rat,condEnteringFlow,condEnteringFlow,0.9944954514503479,True,3
+ChlrCWIsoVlvCmd,chlr cw iso vlv cmd,condEnteringIsoValve,coolingValve,0.8854920268058777,False,3
+ChlrCWIsoVlvPos,chlr cw iso vlv pos,condEnteringIsoValveFb,coolingValveFb,0.9915505647659302,False,3
+ChlrCdEntTmp,chlr cd ent tmp,condEnteringTemp,condEnteringTemp,0.99943608045578,True,3
+ChlrCdLvgTmp,chlr cd lvg tmp,condLeavingTemp,evapEnteringTemp,0.48484668135643005,False,3
+ChlrCdPmp3Cmd,chlr cd pmp cmd,condPump,coldDeckDamper,0.9230416417121887,False,3
+ChlrCdPmp3Sts,chlr cd pmp sts,condPumpStatus,coolingValveFb,0.9423045516014099,False,3
+ChlrEvEntTmp,chlr ev ent tmp,evapEnteringTemp,evapEnteringTemp,0.9995394945144653,True,3
+ChlrEvLvgTmp,chlr ev lvg tmp,evapLeavingTemp,evapLeavingTemp,0.9544539451599121,True,3
+ChlrPriCHWPmpCmd,chlr pri chw pmp cmd,evapPump,evapPumpEnable,0.9996838569641113,False,3
+ChlrPriCHWPmpSts,chlr pri chw pmp sts,evapPumpStatus,evapPumpStatus,0.9976951479911804,True,3
+ChlrSts,chlr sts,chillerStatus,chillerStatus,0.9995871186256409,True,3
+CirPmp3Cmd,cir pmp cmd,circPump,condPump,0.9973095655441284,False,1
+ClgVlvOut,clg vlv out,coolingValve,coolingValve,0.996833860874176,True,1
+ClgVolSpHL,clg vol sp hl,dischargeFlowCoolMaxSp,dischargeFlowCoolMaxSp,0.9998108744621277,True,153
+ClgVolSpHL1,clg vol sp hl,dischargeFlowCoolMaxSp,dischargeFlowCoolMaxSp,0.9998108744621277,True,1
+ClgVolSpLL,clg vol sp ll,dischargeFlowCoolMinSp,dischargeFlowCoolMinSp,0.9998708963394165,True,153
+ClgVolSpLL1,clg vol sp ll,dischargeFlowCoolMinSp,dischargeFlowCoolMinSp,0.9998708963394165,True,1
+ComprStsBin1,compr sts bin,compStatus,condStatus,0.7187983989715576,False,10
+ComprStsBin2,compr sts bin,compStatus,condStatus,0.7187983989715576,False,10
+ComprStsBin3,compr sts bin,compStatus,condStatus,0.7187983989715576,False,4
+ComprStsBin4,compr sts bin,compStatus,condStatus,0.7187983989715576,False,2
+ComprStsBin5,compr sts bin,compStatus,condStatus,0.7187983989715576,False,1
+CondCoilTmp1,cond coil tmp,condLeavingTemp,condLeavingTemp,0.9971272349357605,True,10
+CondCoilTmp2,cond coil tmp,condLeavingTemp,condLeavingTemp,0.9971272349357605,True,10
+CondCoilTmp3,cond coil tmp,condLeavingTemp,condLeavingTemp,0.9971272349357605,True,4
+CondCoilTmp4,cond coil tmp,condLeavingTemp,condLeavingTemp,0.9971272349357605,True,2
+CondCoilTmp5,cond coil tmp,condLeavingTemp,condLeavingTemp,0.9971272349357605,True,1
+CondPressure,cond pressure,condLeavingPressure,condEnteringTemp,0.5513740181922913,False,2
+CondSatTemp,cond sat temp,compDischargeSatTemp,condLeavingTemp,0.9983183145523071,False,2
+CondWaterFlowStatus,cond water flow status,condFlowStatus,condLeavingFlow,0.9989020824432373,False,2
+CurTotal,cur total,compCurrent,current,0.9995604157447815,False,27
+CurTotal,cur total,current,current,0.9995604157447815,True,1
+CurTotal,cur total,dischargeFanCurrent,current,0.9995604157447815,False,75
+DAT,dat,dischargeTemp,dischargeTemp,0.9448555707931519,True,1126
+DATmp,da tmp,dischargeTemp,dischargeTemp,0.9997254014015198,True,20
+DehumMode,dehum mode,dehumidMode,dehumidifier,0.9963552951812744,False,9
+DeltaPrs,delta prs,secLeavingPressure,zonePressure,0.42905306816101074,False,2
+DifPrs,dif prs,secLeavingPressure,airPressure,0.4683803617954254,False,1
+DifPrsSp,dif prs sp,secLeavingPressureSp,dischargePressureLoSp,0.33014747500419617,False,3
+DisDmpCmd,dis dmp cmd,dischargeDamper,dischargeDamper,0.9997257590293884,True,1
+DiscLinePr1,disc line pr,compDischargePressure,airPressure,0.9819530844688416,False,10
+DiscLinePr2,disc line pr,compDischargePressure,airPressure,0.9819530844688416,False,10
+DiscLinePr3,disc line pr,compDischargePressure,airPressure,0.9819530844688416,False,4
+DiscLinePr4,disc line pr,compDischargePressure,airPressure,0.9819530844688416,False,2
+DiscLinePr5,disc line pr,compDischargePressure,airPressure,0.9819530844688416,False,1
+DmpPos,dmp pos,dischargeDamper,dischargeDamperFb,0.9971407651901245,False,19
+DuctStPrs,duct st prs,dischargePressureSp,dischargePressure,0.6980215311050415,False,1
+EADmpCmd,ea dmp cmd,exhaustDamper,dischargeDamper,0.8079162836074829,False,50
+EAPrsSp,ea prs sp,exhaustPressureSp,zonePressureMinSp,0.32863470911979675,False,2
+EAStPrs,ea st prs,exhaustPressure,airPressure,0.5770900249481201,False,1
+EAStsPrs,ea sts prs,exhaustPressure,exhaustFanStatus,0.5452370047569275,False,1
+EATmp,ea tmp,exhaustTemp,dischargeTemp,0.6887098550796509,False,2
+EATmpLvg,ea tmp lvg,wheelExhaustTemp,condLeavingTemp,0.9121124744415283,False,2
+EAVol,ea vol,exhaustFlow,dischargeFlow,0.9875267148017883,False,2
+EF03_Cmd,ef cmd,exhaustFan,exhaustFanEnable,0.9794036746025085,False,1
+EF03_Sts,ef sts,exhaustFanStatus,exhaustFanStatus,0.9998360872268677,True,1
+EF1_Cmd,ef cmd,exhaustFan,exhaustFanEnable,0.9794036746025085,False,1
+EF1_Sts,ef sts,exhaustFanStatus,exhaustFanStatus,0.9998360872268677,True,1
+EF2_Cmd,ef cmd,exhaustFan,exhaustFanEnable,0.9794036746025085,False,1
+EF2_Sts,ef sts,exhaustFanStatus,exhaustFanStatus,0.9998360872268677,True,1
+EF3_Cmd,ef cmd,exhaustFan,exhaustFanEnable,0.9794036746025085,False,1
+EF3_Sts,ef sts,exhaustFanStatus,exhaustFanStatus,0.9998360872268677,True,1
+EF4Cmd,ef cmd,exhaustFan,exhaustFanEnable,0.9794036746025085,False,1
+EF4Spd,ef spd,exhaustFanSpeed,dischargeFanSpeed,0.9994899034500122,False,1
+EF4Sts,ef sts,exhaustFanStatus,exhaustFanStatus,0.9998360872268677,True,1
+EF5Cmd,ef cmd,exhaustFan,exhaustFanEnable,0.9794036746025085,False,1
+EF5Sts,ef sts,exhaustFanStatus,exhaustFanStatus,0.9998360872268677,True,1
+EF6ACmd,ef a cmd,exhaustFan,exhaustFanEnable,0.9659757614135742,False,1
+EF6ASts,ef a sts,exhaustFanStatus,exhaustFanStatus,0.9949504137039185,True,1
+EF6BCmd,ef b cmd,exhaustFan,buildingPressure,0.43200433254241943,False,1
+EF6BSts,ef b sts,exhaustFanStatus,exhaustFanStatus,0.9618579149246216,True,1
+EF9_DeconCmd,ef decon cmd,exhaustDamper,exhaustDamperOvr,0.5027492642402649,False,1
+EFBS1_EFCmd,efbs ef cmd,exhaustFan,exhaustFanEnable,0.570263147354126,False,2
+EFBS1_EFSts,efbs ef sts,exhaustFanStatus,exhaustFanStatus,0.9996621608734131,True,2
+EFBS2_EFCmd,efbs ef cmd,exhaustFan,exhaustFanEnable,0.570263147354126,False,2
+EFBS2_EFSts,efbs ef sts,exhaustFanStatus,exhaustFanStatus,0.9996621608734131,True,2
+EFCmd,ef cmd,exhaustFan,exhaustFanEnable,0.9794036746025085,False,6
+EFCmd,ef cmd,exhaustFan,exhaustFanEnable,0.9794036746025085,False,1
+EFG13Cmd,efg cmd,exhaustFan,exhaustFanEnable,0.9949823021888733,False,1
+EFG4Cmd,efg cmd,exhaustFan,exhaustFanEnable,0.9949823021888733,False,1
+EFG4Sts,efg sts,exhaustFanStatus,exhaustFanStatus,0.9988133907318115,True,1
+EFSpd,ef spd,exhaustFanSpeed,dischargeFanSpeed,0.9994899034500122,False,2
+EFSts,ef sts,exhaustFanStatus,exhaustFanStatus,0.9998360872268677,True,1
+EFSts,ef sts,exhaustFanStatus,exhaustFanStatus,0.9998360872268677,True,4
+EFVfdOut,ef vfd out,exhaustFanSpeed,dischargeFanSpeed,0.9990677237510681,False,1
+EFZnTmpSp,ef zn tmp sp,zoneTempSp,zoneTemp,0.46993058919906616,False,1
+EconDmpCmd,econ dmp cmd,outsideIsoDamper,econEnable,0.5892392992973328,False,5
+EconDmpPos,econ dmp pos,outsideIsoDamperFb,bypassDamperFb,0.8480762243270874,False,5
+EconMode,econ mode,econStatus,econMode,0.9996139407157898,False,5
+EffClgSp,eff clg sp,occupiedTempSp,zoneCoolSp,0.9998663663864136,False,17
+EffClgSp,eff clg sp,zoneCoolSp,zoneCoolSp,0.9998663663864136,True,3036
+EffClgSp1,eff clg sp,zoneCoolSp,zoneCoolSp,0.9998663663864136,True,1
+EffClgSp2,eff clg sp,zoneCoolSp,zoneCoolSp,0.9998663663864136,True,1
+EffClgSp3,eff clg sp,zoneCoolSp,zoneCoolSp,0.9998663663864136,True,1
+EffClgSp4,eff clg sp,zoneCoolSp,zoneCoolSp,0.9998663663864136,True,1
+EffClgSp5,eff clg sp,zoneCoolSp,zoneCoolSp,0.9998663663864136,True,1
+EffClgSp6,eff clg sp,zoneCoolSp,zoneCoolSp,0.9998663663864136,True,1
+EffClgSp7,eff clg sp,zoneCoolSp,zoneCoolSp,0.9998663663864136,True,1
+EffClgSp8,eff clg sp,zoneCoolSp,zoneCoolSp,0.9998663663864136,True,1
+EffDisTmpSp,eff dis tmp sp,dischargeTempSp,dischargeTempSp,0.971120297908783,True,2
+EffHtgSp,eff htg sp,occupiedHeatSp,zoneHeatSp,0.9998158812522888,False,160
+EffHtgSp,eff htg sp,zoneHeatSp,zoneHeatSp,0.9998158812522888,True,1432
+EffHtgSp1,eff htg sp,zoneHeatSp,zoneHeatSp,0.9998158812522888,True,1
+EffHtgSp2,eff htg sp,zoneHeatSp,zoneHeatSp,0.9998158812522888,True,1
+EffHtgSp3,eff htg sp,zoneHeatSp,zoneHeatSp,0.9998158812522888,True,1
+EffHtgSp4,eff htg sp,zoneHeatSp,zoneHeatSp,0.9998158812522888,True,1
+EffHtgSp5,eff htg sp,zoneHeatSp,zoneHeatSp,0.9998158812522888,True,1
+EffHtgSp6,eff htg sp,zoneHeatSp,zoneHeatSp,0.9998158812522888,True,1
+EffHtgSp7,eff htg sp,zoneHeatSp,zoneHeatSp,0.9998158812522888,True,1
+EffHtgSp8,eff htg sp,zoneHeatSp,zoneHeatSp,0.9998158812522888,True,1
+EffOcc,eff occ,occupancyStatus,occupancyMode,0.9985958933830261,False,2858
+EffPriFlwSp,eff pri flw sp,dischargeFlowSp,returnFlowSp,0.9590360522270203,False,1
+EffPriFlwSp,eff pri flw sp,dischargeFlowSp,returnFlowSp,0.9590360522270203,False,3
+EffPriFlwSp,eff pri flw sp,dischargeFlowSp,returnFlowSp,0.9590360522270203,False,1
+EffSATmpSp,eff sa tmp sp,dischargeTempSp,dischargeTempSp,0.9888972640037537,True,77
+EffVentFlwSp,eff vent flw sp,dischargeFlowSp,returnFlowSp,0.983228325843811,False,3
+EffVentFlwSp,eff vent flw sp,dischargeFlowSp,returnFlowSp,0.983228325843811,False,2
+Effective_Cool_SP,effective cool sp,zoneCoolSp,zoneCoolSp,0.9998480081558228,True,1126
+Effective_Heat_SP,effective heat sp,zoneHeatSp,zoneHeatSp,0.9997945427894592,True,1126
+EmerIsoVlv5Cmd,emer iso vlv cmd,priEnteringIsoValve,dischargeIsoDamper,0.9994078874588013,False,1
+EmerIsoVlv6Cmd,emer iso vlv cmd,priEnteringIsoValve,dischargeIsoDamper,0.9994078874588013,False,1
+EmerIsoVlv7Cmd,emer iso vlv cmd,priEnteringIsoValve,dischargeIsoDamper,0.9994078874588013,False,1
+EmerIsoVlv8Cmd,emer iso vlv cmd,priEnteringIsoValve,dischargeIsoDamper,0.9994078874588013,False,1
+EnrgTotal,enrg total,compEnergy,energyApparent,0.6678959131240845,False,28
+EnrgTotal,enrg total,energy,energyApparent,0.6678959131240845,False,53
+EnrgTotal,enrg total,energyMax,energyApparent,0.6678959131240845,False,72
+EntCondWaterTemp,ent cond water temp,condEnteringTemp,condEnteringTemp,0.9998947381973267,True,2
+EntEvapWaterTemp,ent evap water temp,evapEnteringTemp,evapEnteringTemp,0.999790608882904,True,2
+EqVlv11Cmd,eq vlv cmd,twrBypassValve,coolingValve,0.6927004456520081,False,1
+EqVlv12Cmd,eq vlv cmd,twrBypassValve,coolingValve,0.6927004456520081,False,1
+EqVlv13Cmd,eq vlv cmd,twrBypassValve,coolingValve,0.6927004456520081,False,1
+EvapPressure,evap pressure,evapLeavingPressure,evapPumpEnable,0.9106754660606384,False,2
+EvapSatTemp,evap sat temp,compSuctionSatTemp,evapLeavingTemp,0.9982942938804626,False,2
+EvapWaterFlowStatus,evap water flow status,evapFlowStatus,coolingValveFb,0.6795701384544373,False,2
+Fan,fan,dischargeFan,dischargeFan,0.9987726807594299,True,14
+FanCmd,fan cmd,dischargeFan,dischargeFan,0.9997392296791077,True,33
+FanSts,fan sts,dischargeFanStatus,dischargeFanStatus,0.5310717225074768,True,56
+FanSts,fan sts,exhaustFanStatus,dischargeFanStatus,0.5310717225074768,False,2
+Fan_Speed_Cmd,fan speed cmd,dischargeFanSpeed,dischargeFanSpeed,0.9984808564186096,True,956
+FlwSp,flw sp,dischargeFlowSp,returnFlowSp,0.736432671546936,False,19
+FreeClgSys,free clg sys,econEnable,coolingValve,0.35748741030693054,False,1
+GPMSts1,gpm sts,condLeavingFlow,current,0.5320270657539368,False,10
+GPMSts2,gpm sts,condLeavingFlow,current,0.5320270657539368,False,10
+GPMSts3,gpm sts,condLeavingFlow,current,0.5320270657539368,False,4
+GPMSts4,gpm sts,condLeavingFlow,current,0.5320270657539368,False,2
+GPMSts5,gpm sts,condLeavingFlow,current,0.5320270657539368,False,1
+GlyRTmp,gly r tmp,heatingCoilLeavingTemp,evapEnteringTemp,0.9867249727249146,False,1
+GlyRTmp,gly r tmp,secEnteringTemp,evapEnteringTemp,0.9867249727249146,False,1
+GlySTmp,gly s tmp,heatingCoilEnteringTemp,heatingCoilLeavingTemp,0.999342143535614,False,1
+GlySTmp,gly s tmp,secLeavingTemp,heatingCoilLeavingTemp,0.999342143535614,False,1
+HC112VlvCmd,hc vlv cmd,heatingValve,condPump,0.9593541622161865,False,1
+HC113VlvCmd,hc vlv cmd,heatingValve,condPump,0.9593541622161865,False,1
+HC114VlvCmd,hc vlv cmd,heatingValve,condPump,0.9593541622161865,False,1
+HCPCmd,hcp cmd,heatingCoilPump,condPump,0.816034734249115,False,69
+HCPCmd,hcp cmd,preHeatingCoilPump,condPump,0.816034734249115,False,11
+HCPSts,hcp sts,heatingCoilPumpStatus,boilerStatus,0.6864261031150818,False,69
+HCPSts,hcp sts,preHeatingCoilPumpStatus,boilerStatus,0.6864261031150818,False,11
+HCVlvCmd,hc vlv cmd,heatingValve,condPump,0.9593541622161865,False,161
+HCVlvCmd,hc vlv cmd,preHeatingValve,condPump,0.9593541622161865,False,11
+HPCEna,hpc ena,chillerEnable,boilerEnable,0.6615771055221558,False,1
+HPCSts,hpc sts,chillerStatus,unitStatus,0.8286052942276001,False,1
+HPC_HWSTmpSp,hpc hws tmp sp,evapLeavingTempSp,heatingCoilLeavingTemp,0.8087478876113892,False,1
+HPLWTmp,hplw tmp,secLeavingTemp,heatingCoilLeavingTemp,0.9752777814865112,False,1
+HVACModeSts,hvac mode sts,hvacMode,hvacMode,0.9994705319404602,True,155
+HWFlow,hw flow,evapEnteringFlow,heatingCoilEnteringTemp,0.698579728603363,False,1
+HWP1_SecHWPmpCmd,hwp sec hw pmp cmd,secPump,heatingCoilPump,0.998554527759552,False,1
+HWP1_SecHWPmpSpd,hwp sec hw pmp spd,secPumpSpeed,heatingCoilPump,0.9055768251419067,False,1
+HWP1_SecHWPmpSts,hwp sec hw pmp sts,secPumpStatus,heatingCoilPumpStatus,0.9996801614761353,False,1
+HWP1_Sts,hwp sts,secPumpStatus,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWP2_SecHWPmpCmd,hwp sec hw pmp cmd,secPump,heatingCoilPump,0.998554527759552,False,1
+HWP2_SecHWPmpSpd,hwp sec hw pmp spd,secPumpSpeed,heatingCoilPump,0.9055768251419067,False,1
+HWP2_SecHWPmpSts,hwp sec hw pmp sts,secPumpStatus,heatingCoilPumpStatus,0.9996801614761353,False,1
+HWP2_Sts,hwp sts,secPumpStatus,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWP5Cmd,hwp cmd,evapPump,condPump,0.6284145712852478,False,1
+HWP5SpdCmd,hwp spd cmd,evapPumpSpeed,condPumpSpeed,0.9971213936805725,False,1
+HWP5Sts,hwp sts,evapPumpStatus,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWPCmd,hwp cmd,secPump,condPump,0.6284145712852478,False,1
+HWPCmd,hwp cmd,secPump,condPump,0.6284145712852478,False,1
+HWPCmd,hwp cmd,secPump11-12,condPump,0.6284145712852478,False,1
+HWPCmd,hwp cmd,secPump,condPump,0.6284145712852478,False,1
+HWPCmd,hwp cmd,secPump,condPump,0.6284145712852478,False,1
+HWPCmd,hwp cmd,secPump,condPump,0.6284145712852478,False,1
+HWPCmd,hwp cmd,secPump,condPump,0.6284145712852478,False,1
+HWPCmd,hwp cmd,secPump,condPump,0.6284145712852478,False,1
+HWPCmd,hwp cmd,secPump,condPump,0.6284145712852478,False,1
+HWPCmd,hwp cmd,secPump,condPump,0.6284145712852478,False,1
+HWPSts,hwp sts,secPumpStatus,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWPSts,hwp sts,secPumpStatus,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWPSts,hwp sts,secPump11-12Status,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWPSts,hwp sts,secPumpStatus,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWPSts,hwp sts,secPumpStatus,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWPSts,hwp sts,secPumpStatus,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWPSts,hwp sts,secPumpStatus,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWPSts,hwp sts,secPumpStatus,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWPSts,hwp sts,secPumpStatus,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWPSts,hwp sts,secPumpStatus,heatingCoilPumpStatus,0.9995843768119812,False,1
+HWPmp1_PrHWPmpCmd,hw pmp pr hw pmp cmd,priPump,heatingCoilPump,0.9985635876655579,False,1
+HWPmp1_PrHWPmpSts,hw pmp pr hw pmp sts,priPumpStatus,heatingCoilPumpStatus,0.9993413090705872,False,1
+HWPmp2_PrHWPmpCmd,hw pmp pr hw pmp cmd,priPump,heatingCoilPump,0.9985635876655579,False,1
+HWPmp2_PrHWPmpSts,hw pmp pr hw pmp sts,priPumpStatus,heatingCoilPumpStatus,0.9993413090705872,False,1
+HWPmp3_PrHWPmpCmd,hw pmp pr hw pmp cmd,priPump,heatingCoilPump,0.9985635876655579,False,1
+HWPmp3_PrHWPmpSts,hw pmp pr hw pmp sts,priPumpStatus,heatingCoilPumpStatus,0.9993413090705872,False,1
+HWPmp4Cmd,hw pmp cmd,secPump,heatingCoilPump,0.999713122844696,False,1
+HWPmp4VFDOut,hw pmp vfd out,secPumpSpeed,heatingCoilPump,0.9924821257591248,False,2
+HWPmp5Cmd,hw pmp cmd,secPump,heatingCoilPump,0.999713122844696,False,1
+HWPmp5VFDOut,hw pmp vfd out,secPumpSpeed,heatingCoilPump,0.9924821257591248,False,2
+HWPmp6Cmd,hw pmp cmd,secPump,heatingCoilPump,0.999713122844696,False,1
+HWPmp6VFDOut,hw pmp vfd out,secPumpSpeed,heatingCoilPump,0.9924821257591248,False,2
+HWPmpCmd,hw pmp cmd,heatingCoilPump,heatingCoilPump,0.999713122844696,True,1
+HWPmpSts,hw pmp sts,heatingCoilPumpStatus,heatingCoilPumpStatus,0.9997764229774475,True,1
+HWRTmp,hwr tmp,evapEnteringTemp,heatingCoilEnteringTemp,0.9998917579650879,False,1
+HWRTmp,hwr tmp,priLeavingTemp,heatingCoilEnteringTemp,0.9998917579650879,False,1
+HWReq,hw req,heatingEnable,heatingCoilEnteringTemp,0.5058034658432007,False,18
+HWRetTmp,hw ret tmp,secEnteringTemp,heatingCoilEnteringTemp,0.9999123811721802,False,2
+HWRstH,hw rst h,evapLeavingTempHiSp,heatingCoilEnteringTemp,0.9534355401992798,False,1
+HWRstH,hw rst h,secLeavingTempHiSp,heatingCoilEnteringTemp,0.9534355401992798,False,10
+HWRstL,hw rst l,evapLeavingTempLoSp,heatingCoilEnteringTemp,0.9970300197601318,False,1
+HWRstL,hw rst l,secLeavingTempLoSp,heatingCoilEnteringTemp,0.9970300197601318,False,10
+HWSEnable,hws enable,systemEnable,heatingCoilLeavingTemp,0.5060544013977051,False,1
+HWSFlow,hws flow,secLeavingFlow,heatingCoilLeavingTemp,0.8924752473831177,False,1
+HWSRTmp,hwsr tmp,secEnteringTemp,heatingCoilLeavingTemp,0.9995582699775696,False,1
+HWSTmp,hws tmp,evapLeavingTemp,heatingCoilLeavingTemp,0.9998249411582947,False,1
+HWSTmp,hws tmp,priEnteringTemp,heatingCoilLeavingTemp,0.9998249411582947,False,1
+HWSTmp,hws tmp,secLeavingTemp,heatingCoilLeavingTemp,0.9998249411582947,False,1
+HWSTmpSp,hws tmp sp,secLeavingTempSp,heatingCoilLeavingTemp,0.9172574281692505,False,1
+HWSupGPM,hw sup gpm,secLeavingFlow,heatingCoilLeavingTemp,0.9928800463676453,False,2
+HWSupTmp,hw sup tmp,secLeavingTemp,heatingCoilLeavingTemp,0.999850869178772,False,2
+HWSwTmpSp,hw sw tmp sp,secLeavingTempSp,heatingCoilLeavingTemp,0.9661334156990051,False,10
+HWVlv,hw vlv,heatingValve,heatingCoilPump,0.8868285417556763,False,19
+HW_Valve_Cmd,hw valve cmd,heatingValve,heatingCoilPump,0.8141311407089233,False,1002
+HX1ACHWIsoVlvCmd,hx achw iso vlv cmd,priLeavingIsoValve,dischargeIsoDamper,0.9597111940383911,False,1
+HX1ACWIsoVlvCmd,hx acw iso vlv cmd,condLeavingIsoValve,dischargeIsoDamper,0.9978246688842773,False,1
+HX1AColdCWRTmp,hx a cold cwr tmp,condEnteringTemp,heatingCoilEnteringTemp,0.49011480808258057,False,1
+HX1AColdCWSTmp,hx a cold cws tmp,condLeavingTemp,heatingCoilLeavingTemp,0.9255291819572449,False,1
+HX1AHotCHWRTmp,hx a hot chwr tmp,priEnteringTemp,evapEnteringTemp,0.9273183345794678,False,1
+HX1AHotCHWSTmp,hx a hot chws tmp,priLeavingTemp,evapLeavingTemp,0.8053670525550842,False,1
+HX1BCHWIsoVlvCmd,hx bchw iso vlv cmd,priLeavingIsoValve,dischargeIsoDamper,0.7574313282966614,False,1
+HX1BCWIsoVlvCmd,hx bcw iso vlv cmd,condLeavingIsoValve,dischargeIsoDamper,0.9887552857398987,False,1
+HX1BColdCWRTmp,hx b cold cwr tmp,condEnteringTemp,heatingCoilEnteringTemp,0.4833832085132599,False,1
+HX1BColdCWSTmp,hx b cold cws tmp,condLeavingTemp,heatingCoilLeavingTemp,0.7910359501838684,False,1
+HX1BHotCHWRTmp,hx b hot chwr tmp,priEnteringTemp,evapEnteringTemp,0.9051705002784729,False,1
+HX1BHotCHWSTmp,hx b hot chws tmp,priLeavingTemp,evapLeavingTemp,0.9034916162490845,False,1
+HX1CHWP1Cmd,hx chwp cmd,secPump,evapPumpEnable,0.9894824028015137,False,1
+HX1CHWP1Sts,hx chwp sts,secPumpStatus,heatingCoilPumpStatus,0.8399896621704102,False,1
+HX1CHWP2Cmd,hx chwp cmd,secPump,evapPumpEnable,0.9894824028015137,False,1
+HX1CHWP2Sts,hx chwp sts,secPumpStatus,heatingCoilPumpStatus,0.8399896621704102,False,1
+HX1CHWP3Cmd,hx chwp cmd,secPump,evapPumpEnable,0.9894824028015137,False,1
+HX1CHWP3Sts,hx chwp sts,secPumpStatus,heatingCoilPumpStatus,0.8399896621704102,False,1
+HX1CWIsoVlvCmd,hx cw iso vlv cmd,priEnteringIsoValve,steamValve,0.4356006681919098,False,1
+HX1CWP1Cmd,hx cwp cmd,priPump,heatingCoilPump,0.7452722191810608,False,1
+HX1CWP1Sts,hx cwp sts,priPumpStatus,heatingCoilPumpStatus,0.9977779984474182,False,1
+HX1CWP2Cmd,hx cwp cmd,priPump,heatingCoilPump,0.7452722191810608,False,1
+HX1CWP2Sts,hx cwp sts,priPumpStatus,heatingCoilPumpStatus,0.9977779984474182,False,1
+HX1CWP3Cmd,hx cwp cmd,priPump,heatingCoilPump,0.7452722191810608,False,1
+HX1CWP3Sts,hx cwp sts,priPumpStatus,heatingCoilPumpStatus,0.9977779984474182,False,1
+HXCHWSFlw,hxchws flw,secEnteringFlow,evapLeavingFlow,0.9996720552444458,False,2
+HXCHWSTmp,hxchws tmp,secLeavingTemp,evapLeavingTemp,0.997066080570221,False,2
+HXCHWSVlvOut,hxchws vlv out,secEnteringIsoValve,evapLeavingTemp,0.6991056799888611,False,2
+HXColdCWRTmp,hx cold cwr tmp,priEnteringTemp,heatingCoilEnteringTemp,0.8330416679382324,False,1
+HXColdCWSTmp,hx cold cws tmp,priLeavingTemp,heatingCoilLeavingTemp,0.7112924456596375,False,1
+HXFlwSp,hx flw sp,secEnteringFlowSp,dischargeFlowCoolMaxSp,0.8633514642715454,False,1
+HXHotCHWRTmp,hx hot chwr tmp,secEnteringTemp,evapEnteringTemp,0.5538302063941956,False,1
+HXHotCHWSTmp,hx hot chws tmp,secLeavingTemp,heatingCoilLeavingTemp,0.5909409523010254,False,1
+HXIsoVlv2Cmd,hx iso vlv cmd,priEnteringIsoValve,dischargeIsoDamper,0.7136279940605164,False,1
+HXIsoVlv3Cmd,hx iso vlv cmd,priLeavingIsoValve,dischargeIsoDamper,0.7136279940605164,False,1
+HXIsoVlvSts,hx iso vlv sts,secEnteringIsoValveFb,heatingCoilPumpStatus,0.8706748485565186,False,2
+HXSp,hx sp,secLeavingTempSp,zoneTempHeatDb,0.6533852219581604,False,1
+HtgModCmd,htg mod cmd,heatingStage,heatingEnable,0.9995856881141663,False,8
+HtgVlvOut,htg vlv out,heatingValve,heatingValveFb,0.7579867839813232,False,2
+HtgVlvPos,htg vlv pos,heatingValve,heatingValveFb,0.976466953754425,False,22
+HtgVolSpHL,htg vol sp hl,dischargeFlowHeatMaxSp,dischargeFlowHeatMaxSp,0.9956018924713135,True,153
+HtgVolSpHL1,htg vol sp hl,dischargeFlowHeatMaxSp,dischargeFlowHeatMaxSp,0.9956018924713135,True,1
+HtgVolSpLL,htg vol sp ll,dischargeFlowHeatMinSp,dischargeFlowHeatMinSp,0.9997609257698059,True,153
+HtgVolSpLL1,htg vol sp ll,dischargeFlowHeatMinSp,dischargeFlowHeatMinSp,0.9997609257698059,True,1
+HumCmd,hum cmd,humidifier,dischargeHumidity,0.937211811542511,False,1
+HumCmd,hum cmd,humidifierValve,dischargeHumidity,0.937211811542511,False,8
+HumEna,hum ena,humidifier,dischargeHumidity,0.9921901822090149,False,9
+HumEna,hum ena,humidifierEnable,dischargeHumidity,0.9921901822090149,False,9
+HumSp,hum sp,returnHumiditySp,zoneHumiditySp,0.9754106998443604,False,9
+HumVlvCmd,hum vlv cmd,humidifierValve,dischargeHumidity,0.636445939540863,False,11
+HxCHWRTmp,hx chwr tmp,secEnteringTemp,evapEnteringTemp,0.9995385408401489,False,1
+HxCHWSPrs,hx chws prs,secLeavingPressure,evapLeavingTemp,0.9944306015968323,False,1
+HxCHWSTmp,hx chws tmp,secLeavingTemp,evapLeavingTemp,0.9989864230155945,False,1
+HxCWFlw,hx cw flw,priFlow,condLeavingFlow,0.9472742676734924,False,1
+HxCWRPrs,hx cwr prs,priEnteringPressure,coldDeckDischargePressure,0.8302302956581116,False,1
+HxCWRTmp,hx cwr tmp,priEnteringTemp,evapEnteringTemp,0.9141911864280701,False,1
+HxCWSPrs,hx cws prs,priLeavingPressure,coldDeckDischargePressure,0.9952367544174194,False,1
+HxCWSTmp,hx cws tmp,priLeavingTemp,heatingCoilLeavingTemp,0.5328792333602905,False,1
+HxPmpCmd,hx pmp cmd,secPump,heatingCoilPump,0.9988462924957275,False,1
+HxPmpSpd,hx pmp spd,secPumpSpeed,heatingCoilPump,0.7282800674438477,False,1
+HxPmpSts,hx pmp sts,secPumpStatus,heatingCoilPumpStatus,0.9996451139450073,False,1
+InletAirVol,inlet air vol,dischargeFlow,dischargeFlow,0.9625490307807922,True,3024
+InletAirVolSp,inlet air vol sp,dischargeFlowSp,minOutsideFlowSp,0.6103940606117249,False,3013
+InletDmpCmd,inlet dmp cmd,dischargeDamper,dischargeDamper,0.9883244037628174,True,3013
+InletDmpPos,inlet dmp pos,dischargeDamper,dischargeDamperFb,0.8823285102844238,False,17
+InletVolSp,inlet vol sp,dischargeFlowSp,minOutsideFlowSp,0.8788660168647766,False,17
+IsoVlvCmd,iso vlv cmd,priEnteringIsoValve,dischargeIsoDamper,0.9988419413566589,False,3
+IsoVlvOpenPos,iso vlv open pos,priEnteringIsoValveFb,dischargeIsoDamper,0.9995899796485901,False,3
+JudgesPkngCOLvl,judges pkng co lvl,zoneCO,zoneCO,0.9627882838249207,True,1
+Kilowatts,kilowatts,powerReal,current,0.7905717492103577,False,2
+LiquidLinePress,liquid line press,compLeavingPressure,airPressure,0.9345687627792358,False,2
+LiquidLineTemp,liquid line temp,compLiquidLineTemp,heatingCoilEnteringTemp,0.4431547224521637,False,2
+LoopDiffPrs,loop diff prs,priPressureDelta,zoneHumidity,0.2514258921146393,False,1
+LoopDiffPrsSp,loop diff prs sp,priPressureDeltaSp,zonePressureSp,0.7172797918319702,False,1
+LvgAirTmpSp,lvg air tmp sp,dischargeTempSp,dischargeTempHeatSp,0.5854395627975464,False,1
+LvgCondWaterTemp,lvg cond water temp,condLeavingTemp,condLeavingTemp,0.9990322589874268,True,2
+M1BypDmpCmd,m1 byp dmp cmd,bypassDamper,bypassDamper,0.9995121955871582,True,1
+M2FltDmpCmd,m2 flt dmp cmd,exhaustDamper,coldDeckDamper,0.29931578040122986,False,1
+M3DeconDmpCmd,m3 decon dmp cmd,dischargeDamper,coldDeckDamper,0.9113080501556396,False,1
+MATmp,ma tmp,mixedTemp,mixedTemp,0.9998689889907837,True,91
+MOAVol,moa vol,minOutsideFlow,minOutsideFlow,0.6455902457237244,True,45
+MOAVolSp,moa vol sp,minOutsideFlowSp,minOutsideFlowSp,0.9988254904747009,True,1
+MaxCOLvl,max co lvl,zoneCO2MaxSp,currentPhaseCMax,0.6754369735717773,False,1
+MinCOLvl,min co lvl,zoneCO2MinSp,zoneLightLevelMinSp,0.8361219167709351,False,1
+MinOccAirFlw,min occ air flw,dischargeFlowMinSp,zoneLightLevelMinSp,0.950613796710968,False,19
+OADmpCmd,oa dmp cmd,oursideDamper,outsideDamper,0.990373969078064,False,2
+OADmpCmd,oa dmp cmd,outsideDamper,outsideDamper,0.990373969078064,True,94
+OADmpMinCmd,oa dmp min cmd,minOutsideDamper,minOutsideDamper,0.9998339414596558,True,50
+OADmpPos,oa dmp pos,outsideDamperFb,outsideDamper,0.8079785704612732,False,11
+OADmpSts,oa dmp sts,outsideDamperFb,outsideDamper,0.8115958571434021,False,1
+OADmpSts,oa dmp sts,outsideDamperStatus,outsideDamper,0.8115958571434021,False,4
+OADmprCmd,oa dmpr cmd,outsideDamper,outsideDamper,0.9946148991584778,True,1
+OAFCmd,oaf cmd,outsideFan,wheelOutsideFanSpeed,0.964247465133667,False,1
+OAFSts,oaf sts,outsideFanStatus,wheelOutsideFanStatus,0.9997015595436096,False,2
+OAFlw,oa flw,outsideFlow,minOutsideFlow,0.9098283052444458,False,1
+OAHum,oa hum,outsideHumidity,outsideHumidity,0.9998406171798706,True,2
+OAMaxVol,oa max vol,outsideFlow,minOutsideFlowSp,0.3997292220592499,False,1
+OAMinDmpPos,oa min dmp pos,outsideDamperFb,minOutsideDamperFb,0.9998564720153809,False,2
+OAMinVol,oa min vol,outsideFlow,minOutsideFlow,0.9995243549346924,False,1
+OARelHumMaster,oa rel hum master,outsideHumidity,outsideHumidity,0.9990997314453125,True,1
+OARstH,oa rst h,outsideTempHiSp,heatingEnable,0.2545699179172516,False,1
+OARstH,oa rst h,outsideTempHiSp,heatingEnable,0.2545699179172516,False,10
+OARstL,oa rst l,outsideTempLoSp,outsideTempFault,0.6723756194114685,False,1
+OARstL,oa rst l,outsideTempLoSp,outsideTempFault,0.6723756194114685,False,10
+OATmp,oa tmp,outsideTemp,outsideTemp,0.9997662901878357,True,2
+OATmpNew,oa tmp new,outsideTemp,outsideTemp,0.9978147745132446,True,1
+OAVol,oa vol,outsideFlow,minOutsideFlow,0.7988239526748657,False,38
+OAVolMin,oa vol min,outsideFlow,minOutsideFlow,0.9995465874671936,False,1
+OAVolSp,oa vol sp,outsideFlowSp,minOutsideFlowSp,0.9992713332176208,False,2
+OccClgMaxFlwSp,occ clg max flw sp,dischargeFlowCoolMaxSp,dischargeFlowCoolMaxSp,0.9978165626525879,True,2858
+OccClgMinFlwSp,occ clg min flw sp,dischargeFlowCoolMinSp,dischargeFlowCoolMinSp,0.9997465014457703,True,2858
+OccClgSp,occ clg sp,occupiedCoolSp,occupiedCoolSp,0.9997281432151794,True,190
+OccCmd,occ cmd,occupancyMode,occupancyMode,0.9996044039726257,True,250
+OccHeatSp,occ heat sp,occupiedHeatSp,occupiedHeatSp,0.9997047781944275,True,22
+OccHtgSp,occ htg sp,occupiedHeatSp,occupiedHeatSp,0.9997226595878601,True,190
+OccSnsrSts,occ snsr sts,occupancySensor,occupancyMode,0.9998635053634644,False,1
+OccStatus,occ status,occupancyMode,occupancyMode,0.9998815059661865,True,1126
+Occ_Zone_DB_SP,occ zone db sp,occupiedHeatSp,zoneTempDb,0.9917389154434204,False,1126
+Occ_Zone_SP,occ zone sp,occupiedCoolSp,zoneTempSpLocal,0.8741658329963684,False,1126
+Occupancy,occupancy,occupancyMode,occupancyMode,0.9995681643486023,True,1
+P11ACmd,p11 a cmd,secPump,wheelStatus,0.3569277822971344,False,1
+P11ASpdCmd,p11 a spd cmd,secPumpSpeed,condPumpSpeed,0.3419019877910614,False,1
+P11ASts,p11 a sts,secPumpStatus,bypassPressure,0.5617864727973938,False,1
+P11BCmd,p11 b cmd,secPump,buildingPressure,0.9934095144271851,False,1
+P11BSpdCmd,p11 b spd cmd,secPumpSpeed,dischargeSmokeDamper,0.38303062319755554,False,1
+P11BSts,p11 b sts,secPumpStatus,bypassPressure,0.41749677062034607,False,1
+P12ACmd,p12 a cmd,secPump,dischargePressure,0.34654098749160767,False,1
+P12ASpdCmd,p12 a spd cmd,secPumpSpeed,condPumpSpeedSp,0.597468912601471,False,1
+P12ASts,p12 a sts,secPumpStatus,zonePM1,0.6238412261009216,False,1
+P12BCmd,p12 b cmd,secPump,buildingPressure,0.9627177119255066,False,1
+P12BSpdCmd,p12 b spd cmd,secPumpSpeed,condPumpSpeed,0.6563097834587097,False,1
+P12BSts,p12 b sts,secPumpStatus,bypassPressure,0.6989513039588928,False,1
+PACmd,pa cmd,secPump,returnDamper,0.6607264280319214,False,1
+PACmd,pa cmd,secPump,returnDamper,0.6607264280319214,False,1
+PACmd,pa cmd,secPump,returnDamper,0.6607264280319214,False,1
+PACmd,pa cmd,secPump,returnDamper,0.6607264280319214,False,1
+PACmd,pa cmd,secPump,returnDamper,0.6607264280319214,False,1
+PACmd,pa cmd,secPump,returnDamper,0.6607264280319214,False,1
+PACmd,pa cmd,secPump,returnDamper,0.6607264280319214,False,1
+PACmd,pa cmd,secPump,returnDamper,0.6607264280319214,False,1
+PACmd,pa cmd,secPump,returnDamper,0.6607264280319214,False,1
+PASpdCmd,pa spd cmd,secPumpSpeed,condPumpSpeed,0.5882556438446045,False,1
+PASpdCmd,pa spd cmd,secPumpSpeed,condPumpSpeed,0.5882556438446045,False,1
+PASpdCmd,pa spd cmd,secPumpSpeed,condPumpSpeed,0.5882556438446045,False,1
+PASpdCmd,pa spd cmd,secPumpSpeed,condPumpSpeed,0.5882556438446045,False,1
+PASpdCmd,pa spd cmd,secPumpSpeed,condPumpSpeed,0.5882556438446045,False,1
+PASpdCmd,pa spd cmd,secPumpSpeed,condPumpSpeed,0.5882556438446045,False,1
+PASpdCmd,pa spd cmd,secPumpSpeed,condPumpSpeed,0.5882556438446045,False,1
+PASpdCmd,pa spd cmd,secPumpSpeed,condPumpSpeed,0.5882556438446045,False,1
+PASpdCmd,pa spd cmd,secPumpSpeed,condPumpSpeed,0.5882556438446045,False,1
+PASts,pa sts,secPumpStatus,bypassFanStatus,0.56178218126297,False,1
+PASts,pa sts,secPumpStatus,bypassFanStatus,0.56178218126297,False,1
+PASts,pa sts,secPumpStatus,bypassFanStatus,0.56178218126297,False,1
+PASts,pa sts,secPumpStatus,bypassFanStatus,0.56178218126297,False,1
+PASts,pa sts,secPumpStatus,bypassFanStatus,0.56178218126297,False,1
+PASts,pa sts,secPumpStatus,bypassFanStatus,0.56178218126297,False,1
+PASts,pa sts,secPumpStatus,bypassFanStatus,0.56178218126297,False,1
+PASts,pa sts,secPumpStatus,bypassFanStatus,0.56178218126297,False,1
+PASts,pa sts,secPumpStatus,bypassFanStatus,0.56178218126297,False,1
+PBCmd,pb cmd,secPump,buildingPressure,0.5225975513458252,False,1
+PBCmd,pb cmd,secPump,buildingPressure,0.5225975513458252,False,1
+PBCmd,pb cmd,secPump,buildingPressure,0.5225975513458252,False,1
+PBCmd,pb cmd,secPump,buildingPressure,0.5225975513458252,False,1
+PBCmd,pb cmd,secPump,buildingPressure,0.5225975513458252,False,1
+PBCmd,pb cmd,secPump,buildingPressure,0.5225975513458252,False,1
+PBCmd,pb cmd,secPump,buildingPressure,0.5225975513458252,False,1
+PBCmd,pb cmd,secPump,buildingPressure,0.5225975513458252,False,1
+PBCmd,pb cmd,secPump,buildingPressure,0.5225975513458252,False,1
+PBSpdCmd,pb spd cmd,secPumpSpeed,condPumpSpeed,0.9949154853820801,False,1
+PBSpdCmd,pb spd cmd,secPumpSpeed,condPumpSpeed,0.9949154853820801,False,1
+PBSpdCmd,pb spd cmd,secPumpSpeed,condPumpSpeed,0.9949154853820801,False,1
+PBSpdCmd,pb spd cmd,secPumpSpeed,condPumpSpeed,0.9949154853820801,False,1
+PBSpdCmd,pb spd cmd,secPumpSpeed,condPumpSpeed,0.9949154853820801,False,1
+PBSpdCmd,pb spd cmd,secPumpSpeed,condPumpSpeed,0.9949154853820801,False,1
+PBSpdCmd,pb spd cmd,secPumpSpeed,condPumpSpeed,0.9949154853820801,False,1
+PBSpdCmd,pb spd cmd,secPumpSpeed,condPumpSpeed,0.9949154853820801,False,1
+PBSpdCmd,pb spd cmd,secPumpSpeed,condPumpSpeed,0.9949154853820801,False,1
+PBSts,pb sts,secPumpStatus,bypassFanStatus,0.9958498477935791,False,1
+PBSts,pb sts,secPumpStatus,bypassFanStatus,0.9958498477935791,False,1
+PBSts,pb sts,secPumpStatus,bypassFanStatus,0.9958498477935791,False,1
+PBSts,pb sts,secPumpStatus,bypassFanStatus,0.9958498477935791,False,1
+PBSts,pb sts,secPumpStatus,bypassFanStatus,0.9958498477935791,False,1
+PBSts,pb sts,secPumpStatus,bypassFanStatus,0.9958498477935791,False,1
+PBSts,pb sts,secPumpStatus,bypassFanStatus,0.9958498477935791,False,1
+PBSts,pb sts,secPumpStatus,bypassFanStatus,0.9958498477935791,False,1
+PBSts,pb sts,secPumpStatus,bypassFanStatus,0.9958498477935791,False,1
+PHCPCmd,phcp cmd,heatingCoilPump,condPump,0.42997774481773376,False,2
+PHCPCmd,phcp cmd,preHeatingCoilPump,condPump,0.42997774481773376,False,1
+PHCPSts,phcp sts,heatingCoilPumpStatus,compStatus,0.7542977333068848,False,2
+PHCPSts,phcp sts,preHeatingCoilPumpStatus,compStatus,0.7542977333068848,False,1
+PHCPmpCmd,phc pmp cmd,preHeatingCoilPump,condPump,0.9991067051887512,False,2
+PHCVlvCmd,phc vlv cmd,preHeatingValve,coolingValve,0.7399308085441589,False,3
+PHSp,ph sp,preHeatingCoilDischargeTempSp,zoneVOCMinSp,0.585761547088623,False,1
+PHTmp,ph tmp,heatingCoilDischargeTemp,currentDC,0.2944873571395874,False,8
+PHTmp,ph tmp,preHeatingCoilDischargeTemp,currentDC,0.2944873571395874,False,3
+PHVlv,ph vlv,preHeatingValve,bypassValve,0.9769614338874817,False,1
+PHWtrPmp1,ph wtr pmp,priPump,evapPumpStatus,0.7940256595611572,False,1
+PHWtrPmp1Cmd,ph wtr pmp cmd,priPump,evapPumpEnable,0.9958565831184387,False,1
+PHWtrPmp1Sts,ph wtr pmp sts,priPumpStatus,evapPumpStatus,0.9976285099983215,False,2
+PHWtrPmp2,ph wtr pmp,priPump,evapPumpStatus,0.7940256595611572,False,1
+PHWtrPmp2Cmd,ph wtr pmp cmd,priPump,evapPumpEnable,0.9958565831184387,False,1
+PHWtrPmp2Sts,ph wtr pmp sts,priPumpStatus,evapPumpStatus,0.9976285099983215,False,2
+PHWtrPmp3,ph wtr pmp,priPump,evapPumpStatus,0.7940256595611572,False,1
+PHWtrPmp3Cmd,ph wtr pmp cmd,priPump,evapPumpEnable,0.9958565831184387,False,1
+PHWtrPmp3Sts,ph wtr pmp sts,priPumpStatus,evapPumpStatus,0.9976285099983215,False,2
+PlntHWFlwTot,plnt hw flw tot,priLeavingFlow,heatingCoilEnteringTemp,0.9342668056488037,False,1
+PlntHWRT,plnt hwrt,priEnteringTemp,heatingCoilEnteringTemp,0.9990174770355225,False,1
+PlntHWST,plnt hwst,priLeavingTemp,heatingCoilEnteringTemp,0.9913193583488464,False,1
+PowerFactor,power factor,powerFactor,kFactor,0.4808497130870819,False,1
+PriCHW1Sts,pri chw sts,priPumpStatus,coolingStatus,0.9967908263206482,False,1
+PriCHW2Sts,pri chw sts,priPumpStatus,coolingStatus,0.9967908263206482,False,1
+PriCHW3Sts,pri chw sts,priPumpStatus,coolingStatus,0.9967908263206482,False,1
+PriCHW4Sts,pri chw sts,priPumpStatus,coolingStatus,0.9967908263206482,False,1
+PriCHWP1Cmd,pri chwp cmd,priPump,evapPumpEnable,0.999737560749054,False,1
+PriCHWP1Sts,pri chwp sts,priPumpStatus,evapPumpStatus,0.9998806715011597,False,1
+PriCHWP2Cmd,pri chwp cmd,priPump,evapPumpEnable,0.999737560749054,False,1
+PriCHWP2Sts,pri chwp sts,priPumpStatus,evapPumpStatus,0.9998806715011597,False,1
+PriCHWPmpSS1,pri chw pmp ss,priPump,evapPumpEnable,0.9997434020042419,False,2
+PriCHWPmpSS2,pri chw pmp ss,priPump,evapPumpEnable,0.9997434020042419,False,2
+PriCHWPmpSS3,pri chw pmp ss,priPump,evapPumpEnable,0.9997434020042419,False,2
+PriCHWPmpSS4,pri chw pmp ss,priPump,evapPumpEnable,0.9997434020042419,False,2
+PriCHWRPrs,pri chwr prs,priEnteringPressure,evapEnteringTemp,0.997992753982544,False,1
+PriCHWRTmp,pri chwr tmp,priEnteringTemp,evapEnteringTemp,0.9998692274093628,False,2
+PriCHWSPrs,pri chws prs,priLeavingPressure,evapLeavingTemp,0.8217448592185974,False,1
+PriCHWSTmp,pri chws tmp,priLeavingTemp,evapLeavingTemp,0.9998099207878113,False,2
+PriCW1,pri cw,condPump,condEnteringTemp,0.9689942002296448,False,2
+PriCW2,pri cw,condPump,condEnteringTemp,0.9689942002296448,False,2
+PriCW3,pri cw,condPump,condEnteringTemp,0.9689942002296448,False,2
+PriCW4,pri cw,condPump,condEnteringTemp,0.9689942002296448,False,2
+PriDmpOvrdCmd,pri dmp ovrd cmd,dischargeDamper,dischargeDamperOvr,0.9997097849845886,False,5
+PriFlw,pri flw,dischargeFlow,dischargeFlow,0.9986258745193481,True,1
+PriFlw,pri flw,dischargeFlow,dischargeFlow,0.9986258745193481,True,4
+PriFlw,pri flw,priLeavingFlow,dischargeFlow,0.9986258745193481,False,2
+RA$20Enthalpy,ra enthalpy,returnEnthalpy,wheelReturnEnthalpy,0.5275045037269592,False,25
+RACO2,raco2,returnCO2,returnCO2,0.9998041987419128,True,60
+RACO2,raco2,returnCO,returnCO2,0.9998041987419128,False,16
+RADmp,ra dmp,returnDamper,returnDamper,0.9998292922973633,True,1
+RADmpCmd,ra dmp cmd,returnDamper,returnDamper,0.9998433589935303,True,74
+RADmpPos,ra dmp pos,returnDamper,returnDamper,0.9997021555900574,True,11
+RADmpSts,ra dmp sts,reliefDamperFb,returnDamper,0.9757815003395081,False,1
+RAEnth,ra enth,returnEnthalpy,dischargeEnthalpy,0.5131048560142517,False,5
+RARelHum,ra rel hum,returnHumidity,returnHumidity,0.999749481678009,True,80
+RAStPrs,ra st prs,returnPressure,returnDamper,0.9321073293685913,False,40
+RAStPrsSp,ra st prs sp,returnPressureSp,returnTempSp,0.9760860204696655,False,31
+RATmp,ra tmp,returnTemp,returnTemp,0.9995775818824768,True,93
+RAVol,ra vol,returnFlow,returnFlow,0.9997673630714417,True,56
+RAVol,ra vol,returnFlow,returnFlow,0.9997673630714417,True,1
+RFACmd,rfa cmd,returnFan,returnFan,0.9600610136985779,True,2
+RFASts,rfa sts,returnFanStatus,bypassFanStatus,0.7352235317230225,False,26
+RFBCmd,rfb cmd,returnFan,returnFan,0.9965972304344177,True,2
+RFBSts,rfb sts,returnFanStatus,returnFanStatus,0.978408932685852,True,26
+RFCmd,rf cmd,returnFan,returnFan,0.9959610104560852,True,56
+RFSpd,rf spd,returnFanSpeed,returnFanSpeed,0.9995104074478149,True,37
+RFSts,rf sts,returnFanStatus,returnFanStatus,0.9993512034416199,True,32
+RHCVlvCmd,rhc vlv cmd,reHeatingValve,reHeatingValveFb,0.9876064658164978,False,1400
+RHCVlvCmd1,rhc vlv cmd,reHeatingValve,reHeatingValveFb,0.9876064658164978,False,1
+RHCVlvCmd2,rhc vlv cmd,reHeatingValve,reHeatingValveFb,0.9876064658164978,False,1
+RHCVlvCmd3,rhc vlv cmd,reHeatingValve,reHeatingValveFb,0.9876064658164978,False,1
+RHCVlvCmd4,rhc vlv cmd,reHeatingValve,reHeatingValveFb,0.9876064658164978,False,1
+RHCVlvCmd5,rhc vlv cmd,reHeatingValve,reHeatingValveFb,0.9876064658164978,False,1
+RHCVlvCmd6,rhc vlv cmd,reHeatingValve,reHeatingValveFb,0.9876064658164978,False,1
+RHCVlvCmd7,rhc vlv cmd,reHeatingValve,reHeatingValveFb,0.9876064658164978,False,1
+RHCVlvCmd8,rhc vlv cmd,reHeatingValve,reHeatingValveFb,0.9876064658164978,False,1
+RHCVlvPos,rhc vlv pos,heatingValve,reHeatingValveFb,0.9994350075721741,False,147
+RLFCmd,rlf cmd,exhuastFan,returnFan,0.6355587840080261,False,1
+RLFCmd,rlf cmd,returnFan,returnFan,0.6355587840080261,True,1
+RLFDmpCmd,rlf dmp cmd,reliefDamper,dischargeDamper,0.9769277572631836,False,3
+RLFDmpSts,rlf dmp sts,exhaustDamper,dischargeDamperFb,0.7508969306945801,False,1
+RLFDmpSts,rlf dmp sts,reliefDamperStatus,dischargeDamperFb,0.7508969306945801,False,1
+RLFSts,rlf sts,exhuastFanStatus,exhaustFanStatus,0.4254213869571686,False,1
+RLFSts,rlf sts,returnFanStatus,exhaustFanStatus,0.4254213869571686,False,1
+RadFlrFlw,rad flr flw,secFlowStatus,dischargeFlow,0.5941812992095947,False,1
+RadHWSupTmp,rad hw sup tmp,secLeavingTemp,heatingCoilLeavingTemp,0.9996927976608276,False,1
+RadPmpCmd,rad pmp cmd,secPump,condPump,0.9711934924125671,False,1
+RadPmpSts,rad pmp sts,secPumpStatus,heatingCoilPumpStatus,0.901911735534668,False,1
+RadVlvOut,rad vlv out,secEnteringBypassValve,dischargeFlowStatus,0.6884601712226868,False,1
+RelPwrTotal,rel pwr total,compPowerReal,zonePowerReal,0.8508920669555664,False,27
+RelPwrTotal,rel pwr total,powerReal,zonePowerReal,0.8508920669555664,False,53
+RelPwrTotal,rel pwr total,powerRealMax,zonePowerReal,0.8508920669555664,False,72
+RemRmTmpSp,rem rm tmp sp,zoneTempSpBAS,returnTempSp,0.9519953727722168,False,15
+RlfDmpCmd,rlf dmp cmd,reliefDamper,dischargeDamper,0.9769277572631836,False,1
+RlfFCmd,rlf f cmd,returnFan,returnFan,0.9952701926231384,True,2
+RlfFSts,rlf f sts,returnFanStatus,returnFanStatus,0.9269345998764038,True,2
+Rm1Tmp,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,2
+Rm1Tmp,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,22
+Rm1TmpSp,rm tmp sp,zoneTempSp,zoneTempSp,0.9997838139533997,True,1
+Rm2Tmp,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,21
+Rm2TmpSp,rm tmp sp,zoneTempSp,zoneTempSp,0.9997838139533997,True,1
+Rm3Tmp,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,11
+Rm3TmpSp,rm tmp sp,zoneTempSp,zoneTempSp,0.9997838139533997,True,1
+Rm4Tmp,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,8
+RmCO2,rm co2,zoneCO2,zoneCO2,0.9993312358856201,True,370
+RmCO2,rm co2,zoneCO2Sp,zoneCO2,0.9993312358856201,False,1
+RmCO2,rm co2,zoneCO,zoneCO2,0.9993312358856201,False,4
+RmCO2d,rm co2 d,zoneCO2,zoneCO2,0.9995168447494507,True,1
+RmIntDmpOut,rm int dmp out,RmIntDmpOut,condLeavingFlow,0.4964666962623596,False,2
+RmRelHum,rm rel hum,zoneHumidity,returnHumidity,0.6338895559310913,False,449
+RmRelHumd,rm rel humd,zoneHumidity,zoneHumidity,0.5537001490592957,True,4
+RmTmp,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,3104
+RmTmp1,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,3
+RmTmp2,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,1
+RmTmp3,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,1
+RmTmp4,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,1
+RmTmp5,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,1
+RmTmp6,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,1
+RmTmp7,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,1
+RmTmp8,rm tmp,zoneTemp,zoneTemp,0.9998800754547119,True,1
+RmTmpSp,rm tmp sp,zoneTempSp,zoneTempSp,0.9997838139533997,True,3083
+RmTmpSp1,rm tmp sp,zoneTempSp,zoneTempSp,0.9997838139533997,True,1
+RmTmpSp2,rm tmp sp,zoneTempSp,zoneTempSp,0.9997838139533997,True,1
+RmTmpSp3,rm tmp sp,zoneTempSp,zoneTempSp,0.9997838139533997,True,1
+RmTmpSp4,rm tmp sp,zoneTempSp,zoneTempSp,0.9997838139533997,True,1
+RmTmpSp5,rm tmp sp,zoneTempSp,zoneTempSp,0.9997838139533997,True,1
+RmTmpSp6,rm tmp sp,zoneTempSp,zoneTempSp,0.9997838139533997,True,1
+RmTmpSp7,rm tmp sp,zoneTempSp,zoneTempSp,0.9997838139533997,True,1
+RmTmpSp8,rm tmp sp,zoneTempSp,zoneTempSp,0.9997838139533997,True,1
+RmTmpSpHL,rm tmp sp hl,zoneTempMaxSp,zoneTempMaxSp,0.9694119095802307,True,13
+RmTmpSpLL,rm tmp sp ll,zoneTempMinSp,zoneTempMinSp,0.9649035334587097,True,13
+Run,run,chiller,current,0.4602524936199188,False,2
+SA1StPrs,sa st prs,dischargePressure,dischargePressure,0.9998570680618286,True,2
+SA2StPrs,sa st prs,dischargePressure,dischargePressure,0.9998570680618286,True,2
+SAFlw,sa flw,dischargeFlow,dischargeFlow,0.9999295473098755,True,1
+SARelHum,sa rel hum,dischargeHumidity,dischargeHumidity,0.9992088675498962,True,11
+SARelHumSp,sa rel hum sp,dischargeHumiditySp,dischargeHumiditySp,0.9997583031654358,True,10
+SAStPrs,sa st prs,dischargePressure,dischargePressure,0.9998570680618286,True,53
+SAStPrsSp,sa st prs sp,dischargePressureSp,dischargePressureSp,0.9998225569725037,True,54
+SATmp,sa tmp,dischargeTemp,dischargeTemp,0.9996858835220337,True,1771
+SATmp1,sa tmp,dischargeTemp,dischargeTemp,0.9996858835220337,True,1
+SATmp2,sa tmp,dischargeTemp,dischargeTemp,0.9996858835220337,True,1
+SATmp3,sa tmp,dischargeTemp,dischargeTemp,0.9996858835220337,True,1
+SATmp4,sa tmp,dischargeTemp,dischargeTemp,0.9996858835220337,True,1
+SATmp5,sa tmp,dischargeTemp,dischargeTemp,0.9996858835220337,True,1
+SATmp6,sa tmp,dischargeTemp,dischargeTemp,0.9996858835220337,True,1
+SATmp7,sa tmp,dischargeTemp,dischargeTemp,0.9996858835220337,True,1
+SATmp8,sa tmp,dischargeTemp,dischargeTemp,0.9996858835220337,True,1
+SATmpSp,sa tmp sp,dischargeTempSp,dischargeTempSp,0.9997746348381042,True,28
+SAVol,sa vol,dischargeFlow,dischargeFlow,0.9999059438705444,True,46
+SCHWSPrs,schws prs,secLeavingPressure,evapLeavingFlow,0.6467498540878296,False,1
+SF,sf,dischargeFan,dischargeFan,0.9981673955917358,True,1
+SFACmd,sfa cmd,dischargeFan,dischargeFan,0.9998505115509033,True,2
+SFASpd,sfa spd,dischargeFanSpeed,dischargeFanSpeed,0.9998071789741516,True,1
+SFBCmd,sfb cmd,dischargeFan,dischargeFan,0.9996967315673828,True,2
+SFBSpd,sfb spd,dischargeFanSpeed,dischargeFanSpeed,0.9995972514152527,True,1
+SFCmd,sf cmd,dischargeFan,dischargeFan,0.9998455047607422,True,113
+SFSpd,sf spd,dischargeFanSpeed,dischargeFanSpeed,0.9997572302818298,True,62
+SFSts,sf sts,dischargeFanStatus,dischargeFanStatus,0.9996615648269653,True,36
+SFVFDOut,sfvfd out,dischargeFanSpeed,dischargeFanSpeed,0.9977879524230957,True,1
+SHWPmp4,shw pmp,secPump,evapPumpEnable,0.6965333819389343,False,1
+SHWPmp5,shw pmp,secPump,evapPumpEnable,0.6965333819389343,False,1
+SHWPmp6,shw pmp,secPump,evapPumpEnable,0.6965333819389343,False,1
+SYSTEMEna,system ena,systemEnable,chillerEnable,0.49863332509994507,False,1
+Sched,sched,occupancyMode,cond,0.2704794406890869,False,19
+SecCHWDifPrs,sec chw dif prs,secPressureDelta,coolingValve,0.8277828097343445,False,1
+SecCHWP3Sts,sec chwp sts,secPumpStatus,evapPumpStatus,0.9998445510864258,False,1
+SecCHWP4Sts,sec chwp sts,secPumpStatus,evapPumpStatus,0.9998445510864258,False,1
+SecCHWPmp2ACmd,sec chw pmp a cmd,secPump,evapPumpEnable,0.9996696710586548,False,1
+SecCHWPmp2ASpd,sec chw pmp a spd,secPumpSpeed,evapPumpStatus,0.800677478313446,False,1
+SecCHWPmp2ASts,sec chw pmp a sts,secPumpStatus,evapPumpStatus,0.9998717308044434,False,1
+SecCHWPmp2BCmd,sec chw pmp b cmd,secPump,evapPumpEnable,0.9995627999305725,False,1
+SecCHWPmp2BSpd,sec chw pmp b spd,secPumpSpeed,evapPumpEnable,0.9484732747077942,False,1
+SecCHWPmp2BSts,sec chw pmp b sts,secPumpStatus,evapPumpStatus,0.9998564720153809,False,1
+SecCHWPmp2CCmd,sec chw pmp c cmd,secPump,evapPumpEnable,0.9995133876800537,False,1
+SecCHWPmp2CSpd,sec chw pmp c spd,secPumpSpeed,evapPumpEnable,0.8270643949508667,False,1
+SecCHWPmp2CSts,sec chw pmp c sts,secPumpStatus,evapPumpStatus,0.999852180480957,False,1
+SecCHWPmp2DCmd,sec chw pmp d cmd,secPump,evapPumpEnable,0.9980935454368591,False,1
+SecCHWPmp2DSpd,sec chw pmp d spd,secPumpSpeed,evapPumpEnable,0.8230871558189392,False,1
+SecCHWPmp2DSts,sec chw pmp d sts,secPumpStatus,evapPumpStatus,0.9998307228088379,False,1
+SecCHWPmp2ECmd,sec chw pmp e cmd,secPump,evapPumpEnable,0.9995555281639099,False,1
+SecCHWPmp2ESpd,sec chw pmp e spd,secPumpSpeed,evapPumpEnable,0.9954244494438171,False,1
+SecCHWPmp2ESts,sec chw pmp e sts,secPumpStatus,evapPumpStatus,0.9986593723297119,False,1
+SecCHWPmp5VFDOut,sec chw pmp vfd out,secPumpSpeed,evapPumpStatus,0.7293543815612793,False,2
+SecCHWPmp6VFDOut,sec chw pmp vfd out,secPumpSpeed,evapPumpStatus,0.7293543815612793,False,2
+SecCHWPmp7VFDOut,sec chw pmp vfd out,secPumpSpeed,evapPumpStatus,0.7293543815612793,False,2
+SecCHWPmpSS5,sec chw pmp ss,secPump,evapPumpEnable,0.9996906518936157,False,2
+SecCHWPmpSS6,sec chw pmp ss,secPump,evapPumpEnable,0.9996906518936157,False,2
+SecCHWPmpSS7,sec chw pmp ss,secPump,evapPumpEnable,0.9996906518936157,False,2
+SecCHWRTmp,sec chwr tmp,secEnteringTemp,evapEnteringTemp,0.9997889399528503,False,1
+SecCHWSFlw,sec chws flw,secLeavingFlow,evapLeavingFlow,0.9998846054077148,False,1
+SecCHWSTmp,sec chws tmp,secLeavingTemp,evapLeavingTemp,0.9997751116752625,False,1
+SecCHWSTmpSp,sec chws tmp sp,secLeavingTempSp,evapLeavingTemp,0.8347341418266296,False,1
+SecCHWSupTmp,sec chw sup tmp,secLeavingTemp,evapLeavingTemp,0.9997568726539612,False,1
+SerFanCmd,ser fan cmd,dischargeFan,dischargeFan,0.9998148083686829,True,36
+SerFanSpd,ser fan spd,dischargeFanSpeed,dischargeFanSpeed,0.999799907207489,True,36
+StPrs,st prs,dischargePressure,dischargePressure,0.8944433927536011,True,1
+Sts,sts,chillerStatus,unitStatus,0.9982215762138367,False,3
+SuctLinePr1,suct line pr,compSuctionPressure,evapEnteringTemp,0.48588138818740845,False,10
+SuctLinePr2,suct line pr,compSuctionPressure,evapEnteringTemp,0.48588138818740845,False,10
+SuctLinePr3,suct line pr,compSuctionPressure,evapEnteringTemp,0.48588138818740845,False,4
+SuctLinePr4,suct line pr,compSuctionPressure,evapEnteringTemp,0.48588138818740845,False,2
+SuctLinePr5,suct line pr,compSuctionPressure,evapEnteringTemp,0.48588138818740845,False,1
+SuctionTemp,suction temp,compSuctionTemp,heatingCoilEnteringTemp,0.3064184784889221,False,2
+Sys11DiffPrsSp,sys diff prs sp,secPressureDeltaSp,zoneTempSpOffset,0.5107362866401672,False,1
+Sys11Enable,sys enable,systemEnable,coolingStatus,0.5382184386253357,False,1
+Sys11HWDiffPrs,sys hw diff prs,secPressureDelta,heatingCoilEnteringTemp,0.728474497795105,False,1
+Sys11HWRTmp,sys hwr tmp,secEnteringTemp,heatingCoilEnteringTemp,0.988749623298645,False,1
+Sys11HWSTmp,sys hws tmp,secLeavingTemp,heatingCoilLeavingTemp,0.9998045563697815,False,1
+Sys12DiffPrsSp,sys diff prs sp,secPressureDeltaSp,zoneTempSpOffset,0.5107362866401672,False,1
+Sys12HWDiffPrs,sys hw diff prs,secPressureDelta,heatingCoilEnteringTemp,0.728474497795105,False,1
+Sys12HWRTmp,sys hwr tmp,secEnteringTemp,heatingCoilEnteringTemp,0.988749623298645,False,1
+Sys12HWSTmp,sys hws tmp,secLeavingTemp,heatingCoilLeavingTemp,0.9998045563697815,False,1
+Sys5_BlrCmd,sys blr cmd,boiler,boilerEnable,0.9995126724243164,False,1
+Sys5_BlrEWTmp,sys blr ew tmp,secEnteringTemp,heatingCoilEnteringTemp,0.9780851602554321,False,1
+Sys5_BlrEna,sys blr ena,boilerEnable,boilerEnable,0.9997573494911194,True,1
+Sys5_BlrLWTmp,sys blr lw tmp,secLeavingTemp,heatingCoilLeavingTemp,0.9988908171653748,False,1
+Sys5_BlrSts,sys blr sts,boilerStatus,boilerStatus,0.9993736147880554,True,1
+Sys5_HWRstH,sys hw rst h,priLeavingTempHiSp,heatingCoilEnteringTemp,0.9869088530540466,False,1
+Sys5_HWRstL,sys hw rst l,priLeavingTempLoSp,heatingCoilEnteringTemp,0.9927836656570435,False,1
+Sys5_HWSwTmpSp,sys hw sw tmp sp,priLeavingTempSp,heatingCoilLeavingTemp,0.9824381470680237,False,1
+Sys5_OARstH,sys oa rst h,outsideTempHiSp,dischargeFanFaultReset,0.8529156446456909,False,1
+Sys5_OARstL,sys oa rst l,outsideTempLoSp,dischargeFanFaultReset,0.7109930515289307,False,1
+Sys5_OATmpEna,sys oa tmp ena,systemEnableSp,outsideTempFault,0.6888408064842224,False,1
+Sys5_PACmd,sys pa cmd,secPump,dischargeFan,0.9653934836387634,False,1
+Sys5_PASpdCmd,sys pa spd cmd,secPumpSpeed,condPumpSpeed,0.7238165140151978,False,1
+Sys5_PASts,sys pa sts,secPumpStatus,dischargeFanStatus,0.7106012105941772,False,1
+Sys5_PBCmd,sys pb cmd,secPump,condPump,0.9355648159980774,False,1
+Sys5_PBSpdCmd,sys pb spd cmd,secPumpSpeed,condPumpSpeed,0.995513379573822,False,1
+Sys5_PBSts,sys pb sts,secPumpStatus,compStatus,0.32220757007598877,False,1
+Sys5_SysDiffPrsSp,sys sys diff prs sp,secPressureDeltaSp,zonePressureSp,0.7161449790000916,False,1
+Sys5_SysEnable,sys sys enable,systemEnable,coolingStatus,0.9508422613143921,False,1
+Sys5_SysHWBypVlvCmd,sys sys hw byp vlv cmd,secEnteringBypassValve,condBypassValve,0.6562653183937073,False,1
+Sys5_SysHWBypVlvPos,sys sys hw byp vlv pos,secEnteringBypassValveFb,heatingValveFb,0.8827612400054932,False,1
+Sys5_SysHWDiffPrs,sys sys hw diff prs,secPressureDelta,heatingCoilLeavingTemp,0.5817862749099731,False,1
+Sys5_SysHWRTmp,sys sys hwr tmp,priEnteringTemp,heatingCoilEnteringTemp,0.8152186274528503,False,1
+Sys5_SysHWSTmp,sys sys hws tmp,priLeavingTemp,heatingCoilLeavingTemp,0.9996249675750732,False,1
+Sys6_BlrCmd,sys blr cmd,boiler,boilerEnable,0.9995126724243164,False,1
+Sys6_BlrEWTmp,sys blr ew tmp,secEnteringTemp,heatingCoilEnteringTemp,0.9780851602554321,False,1
+Sys6_BlrEna,sys blr ena,boilerEnable,boilerEnable,0.9997573494911194,True,1
+Sys6_BlrLWTmp,sys blr lw tmp,secLeavingTemp,heatingCoilLeavingTemp,0.9988908171653748,False,1
+Sys6_BlrSts,sys blr sts,boilerStatus,boilerStatus,0.9993736147880554,True,1
+Sys6_HWRstH,sys hw rst h,priLeavingTempHiSp,heatingCoilEnteringTemp,0.9869088530540466,False,1
+Sys6_HWRstL,sys hw rst l,priLeavingTempLoSp,heatingCoilEnteringTemp,0.9927836656570435,False,1
+Sys6_HWSwTmpSp,sys hw sw tmp sp,priLeavingTempSp,heatingCoilLeavingTemp,0.9824381470680237,False,1
+Sys6_OARstH,sys oa rst h,outsideTempHiSp,dischargeFanFaultReset,0.8529156446456909,False,1
+Sys6_OARstL,sys oa rst l,outsideTempLoSp,dischargeFanFaultReset,0.7109930515289307,False,1
+Sys6_OATmpEna,sys oa tmp ena,systemEnableSp,outsideTempFault,0.6888408064842224,False,1
+Sys6_PACmd,sys pa cmd,secPump,dischargeFan,0.9653934836387634,False,1
+Sys6_PASpdCmd,sys pa spd cmd,secPumpSpeed,condPumpSpeed,0.7238165140151978,False,1
+Sys6_PASts,sys pa sts,secPumpStatus,dischargeFanStatus,0.7106012105941772,False,1
+Sys6_PBCmd,sys pb cmd,secPump,condPump,0.9355648159980774,False,1
+Sys6_PBSpdCmd,sys pb spd cmd,secPumpSpeed,condPumpSpeed,0.995513379573822,False,1
+Sys6_PBSts,sys pb sts,secPumpStatus,compStatus,0.32220757007598877,False,1
+Sys6_SysDiffPrsSp,sys sys diff prs sp,secPressureDeltaSp,zonePressureSp,0.7161449790000916,False,1
+Sys6_SysEnable,sys sys enable,systemEnable,coolingStatus,0.9508422613143921,False,1
+Sys6_SysHWBypVlvCmd,sys sys hw byp vlv cmd,secEnteringBypassValve,condBypassValve,0.6562653183937073,False,1
+Sys6_SysHWBypVlvPos,sys sys hw byp vlv pos,secEnteringBypassValveFb,heatingValveFb,0.8827612400054932,False,1
+Sys6_SysHWDiffPrs,sys sys hw diff prs,secPressureDelta,heatingCoilLeavingTemp,0.5817862749099731,False,1
+Sys6_SysHWRTmp,sys sys hwr tmp,priEnteringTemp,heatingCoilEnteringTemp,0.8152186274528503,False,1
+Sys6_SysHWSTmp,sys sys hws tmp,priLeavingTemp,heatingCoilLeavingTemp,0.9996249675750732,False,1
+Sys7_BlrCmd,sys blr cmd,boiler,boilerEnable,0.9995126724243164,False,1
+Sys7_BlrEWTmp,sys blr ew tmp,secEnteringTemp,heatingCoilEnteringTemp,0.9780851602554321,False,1
+Sys7_BlrEna,sys blr ena,boilerEnable,boilerEnable,0.9997573494911194,True,1
+Sys7_BlrLWTmp,sys blr lw tmp,secLeavingTemp,heatingCoilLeavingTemp,0.9988908171653748,False,1
+Sys7_BlrSts,sys blr sts,boilerStatus,boilerStatus,0.9993736147880554,True,1
+Sys7_HWRstH,sys hw rst h,priLeavingTempHiSp,heatingCoilEnteringTemp,0.9869088530540466,False,1
+Sys7_HWRstL,sys hw rst l,priLeavingTempLoSp,heatingCoilEnteringTemp,0.9927836656570435,False,1
+Sys7_HWSwTmpSp,sys hw sw tmp sp,priLeavingTempSp,heatingCoilLeavingTemp,0.9824381470680237,False,1
+Sys7_OARstH,sys oa rst h,outsideTempHiSp,dischargeFanFaultReset,0.8529156446456909,False,1
+Sys7_OARstL,sys oa rst l,outsideTempLoSp,dischargeFanFaultReset,0.7109930515289307,False,1
+Sys7_OATmpEna,sys oa tmp ena,systemEnableSp,outsideTempFault,0.6888408064842224,False,1
+Sys7_PACmd,sys pa cmd,secPump,dischargeFan,0.9653934836387634,False,1
+Sys7_PASpdCmd,sys pa spd cmd,secPumpSpeed,condPumpSpeed,0.7238165140151978,False,1
+Sys7_PASts,sys pa sts,secPumpStatus,dischargeFanStatus,0.7106012105941772,False,1
+Sys7_PBCmd,sys pb cmd,secPump,condPump,0.9355648159980774,False,1
+Sys7_PBSpdCmd,sys pb spd cmd,secPumpSpeed,condPumpSpeed,0.995513379573822,False,1
+Sys7_PBSts,sys pb sts,secPumpStatus,compStatus,0.32220757007598877,False,1
+Sys7_SysDiffPrsSp,sys sys diff prs sp,secPressureDeltaSp,zonePressureSp,0.7161449790000916,False,1
+Sys7_SysEnable,sys sys enable,systemEnable,coolingStatus,0.9508422613143921,False,1
+Sys7_SysHWBypVlvCmd,sys sys hw byp vlv cmd,secEnteringBypassValve,condBypassValve,0.6562653183937073,False,1
+Sys7_SysHWBypVlvPos,sys sys hw byp vlv pos,secEnteringBypassValveFb,heatingValveFb,0.8827612400054932,False,1
+Sys7_SysHWDiffPrs,sys sys hw diff prs,secPressureDelta,heatingCoilLeavingTemp,0.5817862749099731,False,1
+Sys7_SysHWRTmp,sys sys hwr tmp,priEnteringTemp,heatingCoilEnteringTemp,0.8152186274528503,False,1
+Sys7_SysHWSTmp,sys sys hws tmp,priLeavingTemp,heatingCoilLeavingTemp,0.9996249675750732,False,1
+Sys8_BlrCmd,sys blr cmd,boiler,boilerEnable,0.9995126724243164,False,1
+Sys8_BlrEWTmp,sys blr ew tmp,secEnteringTemp,heatingCoilEnteringTemp,0.9780851602554321,False,1
+Sys8_BlrEna,sys blr ena,boilerEnable,boilerEnable,0.9997573494911194,True,1
+Sys8_BlrLWTmp,sys blr lw tmp,secLeavingTemp,heatingCoilLeavingTemp,0.9988908171653748,False,1
+Sys8_BlrSts,sys blr sts,boilerStatus,boilerStatus,0.9993736147880554,True,1
+Sys8_HWRstH,sys hw rst h,priLeavingTempHiSp,heatingCoilEnteringTemp,0.9869088530540466,False,1
+Sys8_HWRstL,sys hw rst l,priLeavingTempLoSp,heatingCoilEnteringTemp,0.9927836656570435,False,1
+Sys8_HWSwTmpSp,sys hw sw tmp sp,priLeavingTempSp,heatingCoilLeavingTemp,0.9824381470680237,False,1
+Sys8_OARstH,sys oa rst h,outsideTempHiSp,dischargeFanFaultReset,0.8529156446456909,False,1
+Sys8_OARstL,sys oa rst l,outsideTempLoSp,dischargeFanFaultReset,0.7109930515289307,False,1
+Sys8_OATmpEna,sys oa tmp ena,systemEnableSp,outsideTempFault,0.6888408064842224,False,1
+Sys8_PACmd,sys pa cmd,secPump,dischargeFan,0.9653934836387634,False,1
+Sys8_PASpdCmd,sys pa spd cmd,secPumpSpeed,condPumpSpeed,0.7238165140151978,False,1
+Sys8_PASts,sys pa sts,secPumpStatus,dischargeFanStatus,0.7106012105941772,False,1
+Sys8_PBCmd,sys pb cmd,secPump,condPump,0.9355648159980774,False,1
+Sys8_PBSpdCmd,sys pb spd cmd,secPumpSpeed,condPumpSpeed,0.995513379573822,False,1
+Sys8_PBSts,sys pb sts,secPumpStatus,compStatus,0.32220757007598877,False,1
+Sys8_SysDiffPrsSp,sys sys diff prs sp,secPressureDeltaSp,zonePressureSp,0.7161449790000916,False,1
+Sys8_SysEnable,sys sys enable,systemEnable,coolingStatus,0.9508422613143921,False,1
+Sys8_SysHWBypVlvCmd,sys sys hw byp vlv cmd,secEnteringBypassValve,condBypassValve,0.6562653183937073,False,1
+Sys8_SysHWBypVlvPos,sys sys hw byp vlv pos,secEnteringBypassValveFb,heatingValveFb,0.8827612400054932,False,1
+Sys8_SysHWDiffPrs,sys sys hw diff prs,secPressureDelta,heatingCoilLeavingTemp,0.5817862749099731,False,1
+Sys8_SysHWRTmp,sys sys hwr tmp,priEnteringTemp,heatingCoilEnteringTemp,0.8152186274528503,False,1
+Sys8_SysHWSTmp,sys sys hws tmp,priLeavingTemp,heatingCoilLeavingTemp,0.9996249675750732,False,1
+SysDiffPrsSp,sys diff prs sp,secPressureDeltaSp,zoneTempSpOffset,0.5107362866401672,False,9
+SysEnable,sys enable,systemEnable,coolingStatus,0.5382184386253357,False,9
+SysHWDiffPrs,sys hw diff prs,secPressureDelta,heatingCoilEnteringTemp,0.728474497795105,False,9
+SysHWRTmp,sys hwr tmp,secEnteringTemp,heatingCoilEnteringTemp,0.988749623298645,False,9
+SysHWSTmp,sys hws tmp,secLeavingTemp,heatingCoilLeavingTemp,0.9998045563697815,False,9
+TerminalLoad,terminal load,unitLoad,current,0.6360886096954346,False,155
+UVRad,uv rad,uvFilter,dischargeFlow,0.933315634727478,False,1
+UVRadSts,uv rad sts,uvFilterStatus,heatingCoilPumpStatus,0.9871982932090759,False,1
+UdrFlrPrs,udr flr prs,dischargePressure,unitFilterAlarm,0.6362527012825012,False,9
+UdrFlrPrsSp,udr flr prs sp,dischargePressureSp,evapEnteringTemp,0.4075584411621094,False,6
+UnitStatus,unit status,chillerStatus,unitStatus,0.9997743964195251,False,2
+UnocClgSp,unoc clg sp,unoccupiedCoolSp,unoccupiedCoolSp,0.9998317956924438,True,149
+UnocClgSp,unoc clg sp,unoccupiedCoolingSp,unoccupiedCoolSp,0.9998317956924438,False,14
+UnocHtgSp,unoc htg sp,unoccupiedHeatSp,unoccupiedHeatSp,0.9998302459716797,True,163
+Unocc_Cool_SP,unocc cool sp,unoccupiedCoolSp,unoccupiedCoolSp,0.9998525381088257,True,1126
+Unocc_Heat_SP,unocc heat sp,unoccupiedHeatSp,unoccupiedHeatSp,0.9997838139533997,True,1126
+UocClgMinFlwSp,uoc clg min flw sp,dischargeFlowUnoccCoolSp,dischargeFlowCoolMinSp,0.9998279809951782,False,2858
+UocClgSp,uoc clg sp,unoccupiedCoolSp,dischargeTempCoolSp,0.9446079730987549,False,2946
+UocHeatSp,uoc heat sp,unoccupiedHeatSp,unoccupiedHeatSp,0.9102909564971924,True,22
+UocHtgMinFlwSp,uoc htg min flw sp,dischargeFlowUnoccHeatSp,dischargeFlowHeatMinSp,0.9996107220649719,False,1409
+UocHtgSp,uoc htg sp,unoccupiedHeatSp,unoccupiedHeatSp,0.9729220867156982,True,1502
+UoccClgTmpSp,uocc clg tmp sp,unoccupiedTempSp,dischargeTempCoolSp,0.5835601091384888,False,17
+UserSpAdj,user sp adj,zoneTempSp,zoneTempSpOffset,0.9974129796028137,False,1
+UserSpAdj,user sp adj,zoneTempSpOffset,zoneTempSpOffset,0.9974129796028137,True,155
+VFDFbk,vfd fbk,dischargeFanSpeedFb,heatingCoilPumpStatus,0.9327574968338013,False,1
+VavAvgDmpCmd,vav avg dmp cmd,zoneDischargeDamperAvg,outsideTempAvg,0.9816099405288696,False,10
+VavAvgZnTmp,vav avg zn tmp,zoneTempAvg,zoneTempAvg,0.9171571135520935,True,10
+VentDmpOvrdCmd,vent dmp ovrd cmd,dischargeDamper,dischargeDamperOvr,0.7418348789215088,False,4
+VentDmpOvrdCmd,vent dmp ovrd cmd,dischargeDamper,dischargeDamperOvr,0.7418348789215088,False,1
+VentFlw,vent flw,dischargeFlow,dischargeFlow,0.9997960925102234,True,5
+VlvByp,vlv byp,secEnteringBypassValve,bypassValve,0.9992094039916992,False,1
+WhEntTmp,wh ent tmp,wheelOutsideTemp,evapEnteringTemp,0.6398547291755676,False,2
+WhLvgTmp,wh lvg tmp,wheelDischargeTemp,wheelReturnTemp,0.9865326881408691,False,2
+WhMinSpd,wh min spd,wheelSpeedMinSp,dischargeFanSpeedSp,0.8497912287712097,False,2
+WhlEna,whl ena,wheelEnable,wheelRuntime,0.4049918055534363,False,1
+WtrSmrMode,wtr smr mode,mode02,freezeProtect,0.9948570728302002,False,2
+ZnCO2,zn co2,zoneCO2,zoneCO2,0.9993482232093811,True,1
+ZnCO2Sp,zn co2 sp,zoneCO2Sp,zoneCO2HiSp,0.9852781891822815,False,1
+ZnRelHum,zn rel hum,zoneHumidity,returnHumidity,0.9024946093559265,False,11
+ZnTmp,zn tmp,zoneTemp,zoneTemp,0.9997496008872986,True,53
+ZnTmpEF10,zn tmp ef,zoneTemp,heatingCoilEnteringTemp,0.5551367402076721,False,1
+ZnTmpSnsr,zn tmp snsr,zoneTemp,zoneTemp,0.9986732006072998,True,1
+ZnTmpSp,zn tmp sp,zoneTempSp,zoneTempSp,0.9998070597648621,True,14
+Zone_Temp,zone temp,zoneTemp,zoneTemp,0.9998548030853271,True,1126

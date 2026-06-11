@@ -14,32 +14,46 @@ A proof-of-concept for fine-tuning `FacebookAI/roberta-base` using Modal and Git
 ## Pipeline Steps
 
 ```
-┌─────────────┐   ┌─────────────┐   ┌──────────────────┐
-│  Clean Data │──▶│ Print Tags  │──▶│ Dedupe, Split &  │
-│ (normalize) │   │             │   │ Convert to JSONL │
-└─────────────┘   └─────────────┘   └──────────────────┘
-                                             │
-                                             ▼
-┌─────────────┐   ┌─────────────┐   ┌──────────────────┐
-│  Create PR  │◀──│   Commit    │◀──│   Fine-tune on   │
-│             │   │   Results   │   │ Modal + Test Eval│
-└─────────────┘   └─────────────┘   └──────────────────┘
+┌──────────────────┐   ┌─────────────┐   ┌──────────────────────┐
+│ Extract Real Data│──▶│ Clean Data  │──▶│ Site-grouped Split & │
+│ (site exports)   │   │ (normalize) │   │  Convert to JSONL    │
+└──────────────────┘   └─────────────┘   └──────────────────────┘
+                                                    │
+                                                    ▼
+┌─────────────┐   ┌─────────────┐   ┌──────────────────────────┐
+│  Create PR  │◀──│   Commit    │◀──│ Fine-tune on Modal       │
+│             │   │   Results   │   │ + Quality-gated Hub push │
+└─────────────┘   └─────────────┘   └──────────────────────────┘
 ```
 
 Key data-quality guarantees:
 
-- **Normalization preserves word boundaries**: `CDK_DMPR_STATUS` → `cdk dmpr status`,
-  `zoneCO2Sp` → `zone co2 sp` (instead of stripping spaces).
-- **No train/val/test leakage**: data is deduplicated to one row per unique text
-  before splitting, and the split is assert-checked for overlap.
-- **Conflicting labels are resolved**: texts mapped to multiple targets keep the
-  majority label (ties dropped) and are logged to `data/label_conflicts.csv`.
+- **Normalization is deployment-faithful**: Niagara `$xx` slot-path escapes are
+  decoded (`NGT$20CLG$20STPT` → `ngt clg stpt`), word boundaries are preserved
+  (`zoneCO2Sp` → `zone co2 sp`), and equipment-index digits are stripped
+  (`AHU13_SaTmp` → `ahu sa tmp`) while chemical species (`co2`, `pm25`) and
+  phase tokens (`l1`) survive. The same `normalize_text` runs at training and
+  inference time.
+- **Site-grouped split**: whole real sites are held out for validation and test
+  (`convert_to_jsonl.py --val-sites/--test-sites`), so the metrics measure
+  cross-site generalization — tagging a building the model has never seen —
+  instead of template memorization. Coverage (gold labels outside the training
+  label space) and seen-in-train fractions are reported in
+  `data/dataset_summary.json`.
+- **Labels are canonicalized**: eo66 numbered variants collapse to their base
+  definition (`heatingStage01` → `heatingStage`) via eo66's own regex column,
+  and `data/target_audit.csv` merge/rename decisions are applied everywhere.
+- **Conflicting labels are resolved by weighted majority**: each real-site
+  occurrence counts as evidence, ties are dropped, and every conflict is logged
+  to `data/label_conflicts.csv`.
 - **Manual overrides**: to fix conflicts (or any mislabel) by hand, edit the
   `resolution` column of `data/label_conflicts.csv` (set the correct label, or
   `DROP` to exclude) and save it as `data/label_overrides.csv`. Overrides always
-  win over majority-vote resolution and pushing the file triggers retraining.
-- **Held-out test set**: validation drives early stopping / model selection;
-  the test set is only touched once at the end and provides the headline metrics.
+  win over majority-vote resolution; texts are re-normalized on load so the
+  file survives normalization changes.
+- **Quality-gated deployment**: the Hub push is skipped when the new model's
+  test F1 is below the previous best (`output/best_metrics.json`), so a bad
+  run can never overwrite the production model.
 
 ## Project Structure
 
@@ -48,21 +62,29 @@ roberta-poc/
 ├── .github/workflows/
 │   └── train.yml              # CI/CD pipeline
 ├── data/
-│   └── train_all.csv          # Input: Raw training data (text, target)
+│   ├── train_all.csv          # Input: synthetic training data (text, target)
+│   ├── real_data/             # Input: labeled site exports (.xlsx, see below)
+│   ├── eo66.xlsx              # Input: EO66 tag taxonomy (source of truth)
+│   ├── target_audit.csv       # Input: taxonomy merge/rename decisions
+│   ├── real_points.csv        # Step 0 output (aggregated real points)
 │   # Generated files:
 │   ├── cleaned_data.csv       # Step 1 output
-│   ├── train.jsonl            # Step 3 output
-│   ├── validation.jsonl       # Step 3 output
-│   ├── test.jsonl             # Step 3 output
+│   ├── train.jsonl            # Step 3 output (synthetic + training sites)
+│   ├── validation.jsonl       # Step 3 output (held-out site, covered labels)
+│   ├── test.jsonl             # Step 3 output (frozen sites, covered labels)
+│   ├── *_uncovered.jsonl      # Step 3 output (gold labels outside label space)
 │   ├── label_mapping.json     # Step 3 output
-│   ├── dataset_summary.json   # Step 3 output
+│   ├── dataset_summary.json   # Step 3 output (incl. coverage / seen-in-train)
 │   └── label_conflicts.csv    # Step 3 output (conflicting labels for review)
 ├── scripts/
+│   ├── extract_real_data.py   # Step 0: Extract labeled points from site exports
 │   ├── clean_data.py          # Step 1: Normalize point names
 │   ├── print_tags.py          # Step 2: Show label distribution
-│   ├── convert_to_jsonl.py    # Step 3: Dedupe, split, convert to JSONL
-│   └── finetune.py            # Modal fine-tuning script
+│   ├── convert_to_jsonl.py    # Step 3: Canonicalize, site-grouped split, JSONL
+│   ├── finetune.py            # Modal fine-tuning script (quality-gated push)
+│   └── evaluate_external.py   # Score a model against any labeled site export
 ├── output/                     # Training results (auto-generated)
+│   └── best_metrics.json      # Quality-gate baseline (best pushed model)
 ├── requirements.txt           # Python dependencies
 └── README.md
 ```
@@ -128,12 +150,16 @@ pip install -r requirements.txt
 pip install modal
 
 # Run preprocessing locally
+python scripts/extract_real_data.py   # when site exports in data/real_data/ change
 python scripts/clean_data.py
 python scripts/print_tags.py
-python scripts/convert_to_jsonl.py
+python scripts/convert_to_jsonl.py    # --val-sites / --test-sites to change holdouts
 
 # Run training on Modal
 modal run scripts/finetune.py --epochs 2
+
+# Score any model against a held-out site export
+python scripts/evaluate_external.py --csv data/real_points.csv --site N4-Integ06
 ```
 
 ## Output Format
@@ -169,7 +195,7 @@ Evaluation Metrics:
 
 ## Input Data Format
 
-Place your training data in `data/train_all.csv` with two columns:
+Synthetic training data lives in `data/train_all.csv` with two columns:
 
 ```csv
 text,target
@@ -180,6 +206,21 @@ RAT,returnTemp
 
 - **text**: The raw point name to classify
 - **target**: The standardized label
+
+Labeled real site exports go in `data/real_data/*.xlsx`. Three formats are
+auto-detected by `scripts/extract_real_data.py` (point name = last slot-path
+segment for the N4 styles):
+
+| Format | Point name column | Label column |
+| ------ | ----------------- | ------------ |
+| N4 style A | `pointPath from BAS` | `EO66 Point` |
+| N4 style B | `proxyExt.pointId/BASpointName` | `pointTag/EO66` |
+| BACnet export | `Bacnet Name` | `eo66Def` |
+
+The extraction writes `data/real_points.csv` (aggregated with per-name row
+counts), which is what the pipeline and CI consume — commit it whenever the
+exports change. New sites land in the training pool automatically; promote
+them to validation/test with `convert_to_jsonl.py --val-sites/--test-sites`.
 
 ## Preprocessing Scripts
 

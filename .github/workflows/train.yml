@@ -119,9 +119,11 @@ on:
     paths:
       # Only the raw input data triggers retraining -- generated data files
       # (cleaned_data.csv, *.jsonl, etc.) merged back via results PRs do not.
+      # Script edits intentionally do NOT trigger training (use the Actions
+      # tab / workflow_dispatch to retrain after code changes).
       - "data/train_all.csv"
+      - "data/real_points.csv"
       - "data/label_overrides.csv"
-      - "scripts/**"
       - "config/training.yml"
 
 env:
@@ -194,6 +196,7 @@ jobs:
           MIXED_PRECISION=$(get_config "${{ github.event.inputs.mixed_precision }}" "mixed_precision" "fp16")
           WEIGHT_DECAY=$(get_config "${{ github.event.inputs.weight_decay }}" "weight_decay" "0.075")
           WARMUP_RATIO=$(get_config "${{ github.event.inputs.warmup_ratio }}" "warmup_ratio" "0.1")
+          LABEL_SMOOTHING=$(get_config "" "label_smoothing" "0.0")
           PUSH_TO_HUB=$(get_config "${{ github.event.inputs.push_to_hub }}" "push_to_hub" "true")
           HF_REPO=$(get_config "${{ github.event.inputs.hf_repo }}" "hf_repo" "RyIoT33/haystack-autotagging")
 
@@ -210,6 +213,7 @@ jobs:
           echo "mixed_precision=$MIXED_PRECISION" >> $GITHUB_OUTPUT
           echo "weight_decay=$WEIGHT_DECAY" >> $GITHUB_OUTPUT
           echo "warmup_ratio=$WARMUP_RATIO" >> $GITHUB_OUTPUT
+          echo "label_smoothing=$LABEL_SMOOTHING" >> $GITHUB_OUTPUT
           echo "push_to_hub=$PUSH_TO_HUB" >> $GITHUB_OUTPUT
           echo "hf_repo=$HF_REPO" >> $GITHUB_OUTPUT
 
@@ -305,6 +309,7 @@ jobs:
           CMD="$CMD --mixed-precision ${{ steps.config.outputs.mixed_precision }}"
           CMD="$CMD --weight-decay ${{ steps.config.outputs.weight_decay }}"
           CMD="$CMD --warmup-ratio ${{ steps.config.outputs.warmup_ratio }}"
+          CMD="$CMD --label-smoothing ${{ steps.config.outputs.label_smoothing }}"
 
           # Add HF Hub flags if pushing
           if [ "${{ steps.config.outputs.push_to_hub }}" == "true" ]; then

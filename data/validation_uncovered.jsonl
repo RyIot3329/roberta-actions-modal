@@ -1,0 +1,57 @@
+{"text": "ahu emer rc dmp fbk", "label": "recBypassDamperFb", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "ahu ht rec da tmp", "label": "recOaCoilLeavingTemp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "ahu ph c ht mod cmd", "label": "preHeatingStageMod", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "bb htg vlv pos", "label": "perimeterHeatingValveFb", "site": "N4-Integ05", "rows": 339, "seen_in_train": false}
+{"text": "cd st prs sp hl", "label": "coldDeckDischargePressureMaxSp", "site": "N4-Integ05", "rows": 5, "seen_in_train": false}
+{"text": "cd st prs sp ll", "label": "coldDeckDischargePressureMinSp", "site": "N4-Integ05", "rows": 5, "seen_in_train": false}
+{"text": "co2 lo", "label": "zoneCO2LoSp", "site": "N4-Integ05", "rows": 8, "seen_in_train": false}
+{"text": "co2 spt lo", "label": "zoneCO2LoSp", "site": "N4-Integ05", "rows": 89, "seen_in_train": false}
+{"text": "co max setpt", "label": "zoneCOMaxSp", "site": "N4-Integ05", "rows": 2, "seen_in_train": false}
+{"text": "ct drn vlv cmd", "label": "drainValve", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "ct fill vlv pos", "label": "twrDrainValveFb", "site": "N4-Integ05", "rows": 4, "seen_in_train": false}
+{"text": "ctmu flw tot", "label": "twrFillVolume", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "ctssf ena", "label": "sumpPumpEnable", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "ctssf pmp sts", "label": "sumpPumpStatus", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "ct sump pmp sts", "label": "sumpPumpStatus", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "cw vlv cmd", "label": "condEnteringValve", "site": "N4-Integ05", "rows": 2, "seen_in_train": true}
+{"text": "ch m4 chw vlv cmd", "label": "evapLeavingIso04", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "ch m4 chw vlv pos", "label": "evapLeavingIso04Fb", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "ch m4 cw vlv cmd", "label": "condLeavingIso04", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "ch m4 cw vlv pos", "label": "condLeavingIso04Fb", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "chlr ch w dif prs", "label": "evapLeavingPressure", "site": "N4-Integ05", "rows": 2, "seen_in_train": false}
+{"text": "cl mod cmd", "label": "coolingStageMod", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "cool dn mode", "label": "morningCoolDown", "site": "N4-Integ05", "rows": 4, "seen_in_train": false}
+{"text": "ex f r02 bypass dmp", "label": "exhaustFanBypass", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "fas", "label": "smokePurge", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "fan spd", "label": "dryCoolerFanSpeed", "site": "N4-Integ05", "rows": 3, "seen_in_train": true}
+{"text": "flow setpoint", "label": "dischargeFlowsSp", "site": "N4-Integ05", "rows": 8, "seen_in_train": true}
+{"text": "gh stm vlv pos", "label": "priValveTwoThirdFb", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "gly dif pr spt", "label": "secLeavingPressureDeltaSp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "gly dif prs", "label": "secLeavingPressureDelta", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "gly dif prs n", "label": "secLeavingPressureDelta01", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "gly dif prs s", "label": "secLeavingPressureDelta02", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "hd st prs sp hl", "label": "hotDeckDischargePressureMaxSp", "site": "N4-Integ05", "rows": 5, "seen_in_train": false}
+{"text": "hd st prs sp ll", "label": "hotDeckDischargePressureMinSp", "site": "N4-Integ05", "rows": 5, "seen_in_train": false}
+{"text": "hw dif prs sp hl", "label": "secPressureDeltaHiSp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "hw dif prs sp ll", "label": "secPressureDeltaLoSp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "hw pmp ena", "label": "heatingCoilPumpEnable", "site": "N4-Integ05", "rows": 3, "seen_in_train": false}
+{"text": "hws tmp hi sp", "label": "secLeavingTempHiSp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "hws tmp lo sp", "label": "secLeavingTempLoSp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "ht rec wh dif prs", "label": "wheelExhaustPressure", "site": "N4-Integ05", "rows": 6, "seen_in_train": false}
+{"text": "hum iso vlv cmd", "label": "humidifierLeavingIsoValve", "site": "N4-Integ05", "rows": 2, "seen_in_train": false}
+{"text": "humidifier sts", "label": "humidifierStatus", "site": "N4-Integ05", "rows": 32, "seen_in_train": false}
+{"text": "oa dmp open", "label": "ousideDamperFb", "site": "N4-Integ05", "rows": 4, "seen_in_train": false}
+{"text": "pre cool vlv cmd", "label": "condLeavingBypassValve", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "raco2 sp hl", "label": "returnCO2MaxSp", "site": "N4-Integ05", "rows": 5, "seen_in_train": false}
+{"text": "rh cmd", "label": "heatingCoil", "site": "N4-Integ05", "rows": 8, "seen_in_train": false}
+{"text": "rwa mode", "label": "schedule", "site": "N4-Integ05", "rows": 55, "seen_in_train": false}
+{"text": "remote enable", "label": "dryCooler", "site": "N4-Integ05", "rows": 3, "seen_in_train": false}
+{"text": "ret tmp", "label": "slabLeavingTemp", "site": "N4-Integ05", "rows": 1, "seen_in_train": true}
+{"text": "riser bcws sp", "label": "secLeavingTempSp01", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "riser dcws sp", "label": "secLeavingTempSp02", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "sbhw tmp hi sp", "label": "secLeavingTempHiSp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "sbhw tmp lo sp", "label": "secLeavingTempLoSp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "slab tmp", "label": "slabTemp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "slab tmp spt", "label": "slabTempSp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "sup tmp", "label": "slabEnteringTemp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
+{"text": "temp control cap", "label": "TempControlCap", "site": "N4-Integ05", "rows": 32, "seen_in_train": false}

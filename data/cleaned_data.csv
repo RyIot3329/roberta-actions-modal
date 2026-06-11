@@ -378,9 +378,9 @@ returnairco2,returnCO2
 returncarbondioxide,returnCO2
 returncarbondioxide,returnCO2
 returnco2 level,returnCO2
-returnco2level,returnCO2
+returnco2 level,returnCO2
 returnco2 ppm,returnCO2
-returnco2ppm,returnCO2
+returnco2 ppm,returnCO2
 raco2,returnCO2
 raco2,returnCO2
 rtnco2,returnCO2
@@ -965,18 +965,18 @@ chilleralarm,chillerAlarm
 chalarm,chillerAlarm
 chiller alarm,chillerAlarm
 chiller alarm,chillerAlarm
-ch1 alm,chillerAlarm
-ch1 alm,chillerAlarm
-ch2 alm,chillerAlarm
-ch2 alm,chillerAlarm
-ch 1 alm,chillerAlarm
-ch 2 alm,chillerAlarm
-ch1 alm,chillerAlarm
-ch2 alm,chillerAlarm
-ch1 alm,chillerAlarm
-ch2 alm,chillerAlarm
-ch1 alarm,chillerAlarm
-ch2 alarm,chillerAlarm
+ch alm,chillerAlarm
+ch alm,chillerAlarm
+ch alm,chillerAlarm
+ch alm,chillerAlarm
+ch alm,chillerAlarm
+ch alm,chillerAlarm
+ch alm,chillerAlarm
+ch alm,chillerAlarm
+ch alm,chillerAlarm
+ch alm,chillerAlarm
+ch alarm,chillerAlarm
+ch alarm,chillerAlarm
 ch alm,chillerAlarm
 ch alm,chillerAlarm
 chl alarm,chillerAlarm
@@ -991,14 +991,14 @@ chiller alarm,chillerAlarm
 chiller alarm,chillerAlarm
 ch alarm,chillerAlarm
 ch alarm,chillerAlarm
-ch1 alarm,chillerAlarm
-ch1 alarm,chillerAlarm
-ch2 alarm,chillerAlarm
-ch2 alarm,chillerAlarm
-ch1 alarm,chillerAlarm
-ch1 alarm,chillerAlarm
-ch2 alarm,chillerAlarm
-ch2 alarm,chillerAlarm
+ch alarm,chillerAlarm
+ch alarm,chillerAlarm
+ch alarm,chillerAlarm
+ch alarm,chillerAlarm
+ch alarm,chillerAlarm
+ch alarm,chillerAlarm
+ch alarm,chillerAlarm
+ch alarm,chillerAlarm
 chillr alrm,chillerAlarm
 chl alrm,chillerAlarm
 ch alarm,chillerAlarm
@@ -1098,50 +1098,50 @@ boilr alarm,boilerAlarm
 boilr alarm,boilerAlarm
 boilr alm,boilerAlarm
 boilr alarm,boilerAlarm
-boiler1 alarm,boilerAlarm
-boiler2 alarm,boilerAlarm
-boiler1 alarm,boilerAlarm
-boiler2 alarm,boilerAlarm
-boiler 1 alm,boilerAlarm
-boiler 2 alm,boilerAlarm
-boiler01 alarm,boilerAlarm
-boiler02 alarm,boilerAlarm
-blr1 alarm,boilerAlarm
-blr2 alarm,boilerAlarm
-blr1 alarm,boilerAlarm
-blr2 alarm,boilerAlarm
-blr1 alarm,boilerAlarm
-blr2 alarm,boilerAlarm
-blr01 alarm,boilerAlarm
-blr02 alarm,boilerAlarm
-blr1 alarm,boilerAlarm
-blr2 alarm,boilerAlarm
-blr1 alarm,boilerAlarm
-blr2 alarm,boilerAlarm
-blr1 alm,boilerAlarm
-blr2 alm,boilerAlarm
+boiler alarm,boilerAlarm
+boiler alarm,boilerAlarm
+boiler alarm,boilerAlarm
+boiler alarm,boilerAlarm
+boiler alm,boilerAlarm
+boiler alm,boilerAlarm
+boiler alarm,boilerAlarm
+boiler alarm,boilerAlarm
+blr alarm,boilerAlarm
+blr alarm,boilerAlarm
+blr alarm,boilerAlarm
+blr alarm,boilerAlarm
+blr alarm,boilerAlarm
+blr alarm,boilerAlarm
+blr alarm,boilerAlarm
+blr alarm,boilerAlarm
+blr alarm,boilerAlarm
+blr alarm,boilerAlarm
+blr alarm,boilerAlarm
+blr alarm,boilerAlarm
+blr alm,boilerAlarm
+blr alm,boilerAlarm
 blr cmd,boilerEnable
-blr1 cmd,boilerEnable
-blr2 cmd,boilerEnable
-blr3 cmd,boilerEnable
+blr cmd,boilerEnable
+blr cmd,boilerEnable
+blr cmd,boilerEnable
 blr cmd,boilerEnable
 blr ena,boilerEnable
-blr1 ena,boilerEnable
-blr2 ena,boilerEnable
+blr ena,boilerEnable
+blr ena,boilerEnable
 blr enable,boilerEnable
-blr1 enable,boilerEnable
-blr2 enable,boilerEnable
+blr enable,boilerEnable
+blr enable,boilerEnable
 boiler enable,boilerEnable
 boiler enable,boilerEnable
 boiler enable,boilerEnable
 boiler command,boilerEnable
-boiler1 cmd,boilerEnable
-boiler2 cmd,boilerEnable
-boiler3 cmd,boilerEnable
-boiler 1 enable,boilerEnable
-boiler 2 enable,boilerEnable
-blr1 ena,boilerEnable
-blr2 ena,boilerEnable
+boiler cmd,boilerEnable
+boiler cmd,boilerEnable
+boiler cmd,boilerEnable
+boiler enable,boilerEnable
+boiler enable,boilerEnable
+blr ena,boilerEnable
+blr ena,boilerEnable
 blr ena cmd,boilerEnable
 blr cmd out,boilerEnable
 blr start,boilerEnable
@@ -1152,16 +1152,16 @@ boiler cmd,boilerEnable
 boiler command,boilerEnable
 boiler control,boilerEnable
 boiler enable,boilerEnable
-boiler 1 cmd,boilerEnable
-boiler 2 cmd,boilerEnable
-boiler 1 start,boilerEnable
-boiler 2 start,boilerEnable
+boiler cmd,boilerEnable
+boiler cmd,boilerEnable
+boiler start,boilerEnable
+boiler start,boilerEnable
 boiler run cmd,boilerEnable
 boiler start,boilerEnable
 boiler startup,boilerEnable
 boiler ena,boilerEnable
-boiler 1 ena,boilerEnable
-boiler 2 ena,boilerEnable
+boiler ena,boilerEnable
+boiler ena,boilerEnable
 boiler on cmd,boilerEnable
 boiler enable cmd,boilerEnable
 boiler enable command,boilerEnable
@@ -1183,8 +1183,8 @@ blr on,boilerEnable
 blr ena output,boilerEnable
 boiler on cmd,boilerEnable
 cmd blr enable,boilerEnable
-blr1 enable output,boilerEnable
-blr2 start command,boilerEnable
+blr enable output,boilerEnable
+blr start command,boilerEnable
 blr enable signal,boilerEnable
 boiler enable out,boilerEnable
 boiler cmd out,boilerEnable
@@ -1233,20 +1233,20 @@ blr flt,boilerFault
 blr flt,boilerFault
 blr flt,boilerFault
 blr flt,boilerFault
-blr1 fault,boilerFault
-blr2 fault,boilerFault
-blr1 fault,boilerFault
-blr2 fault,boilerFault
-blr1 fault,boilerFault
-blr2 fault,boilerFault
-blr01 fault,boilerFault
-blr02 fault,boilerFault
-blr01 fault,boilerFault
-blr02 fault,boilerFault
-boiler1 fault,boilerFault
-boiler2 fault,boilerFault
-boiler1 fault,boilerFault
-boiler2 fault,boilerFault
+blr fault,boilerFault
+blr fault,boilerFault
+blr fault,boilerFault
+blr fault,boilerFault
+blr fault,boilerFault
+blr fault,boilerFault
+blr fault,boilerFault
+blr fault,boilerFault
+blr fault,boilerFault
+blr fault,boilerFault
+boiler fault,boilerFault
+boiler fault,boilerFault
+boiler fault,boilerFault
+boiler fault,boilerFault
 boiler fault status,boilerFault
 boiler fault code,boilerFault
 boilerstatus,boilerStatus
@@ -1297,16 +1297,16 @@ blr sts,boilerStatus
 blr sts,boilerStatus
 blr st,boilerStatus
 blr st,boilerStatus
-blr1 status,boilerStatus
-blr2 status,boilerStatus
-blr1 status,boilerStatus
-blr2 status,boilerStatus
-blr1 status,boilerStatus
-blr2 status,boilerStatus
-boiler1 status,boilerStatus
-boiler2 status,boilerStatus
-boiler1 status,boilerStatus
-boiler2 status,boilerStatus
+blr status,boilerStatus
+blr status,boilerStatus
+blr status,boilerStatus
+blr status,boilerStatus
+blr status,boilerStatus
+blr status,boilerStatus
+boiler status,boilerStatus
+boiler status,boilerStatus
+boiler status,boilerStatus
+boiler status,boilerStatus
 boiler status code,boilerStatus
 boiler status flag,boilerStatus
 bypassdamper,bypassDamper
@@ -1560,43 +1560,43 @@ chiller ctrl,chillerEnable
 chiller ctrl,chillerEnable
 chiller control,chillerEnable
 chiller ctrl,chillerEnable
-ch1,chillerEnable
-ch1 cmd,chillerEnable
-ch1 command,chillerEnable
-ch1 command,chillerEnable
-ch1 ctrl,chillerEnable
-ch1 control,chillerEnable
-ch1 cmd,chillerEnable
-ch1 command,chillerEnable
-ch1 ctrl,chillerEnable
-ch1 ctrl,chillerEnable
-ch1 cmd,chillerEnable
-ch1 command,chillerEnable
-ch1 ctrl,chillerEnable
-ch2,chillerEnable
-ch2 cmd,chillerEnable
-ch2 command,chillerEnable
-ch2 command,chillerEnable
-ch2 ctrl,chillerEnable
-ch2 control,chillerEnable
-ch2 cmd,chillerEnable
-ch2 command,chillerEnable
-ch2 ctrl,chillerEnable
-ch2 cmd,chillerEnable
-ch2 command,chillerEnable
-ch2 ctrl,chillerEnable
-chiller1,chillerEnable
-chiller1 cmd,chillerEnable
-chiller1 command,chillerEnable
-chiller2,chillerEnable
-chiller2 cmd,chillerEnable
+ch,chillerEnable
+ch cmd,chillerEnable
+ch command,chillerEnable
+ch command,chillerEnable
+ch ctrl,chillerEnable
+ch control,chillerEnable
+ch cmd,chillerEnable
+ch command,chillerEnable
+ch ctrl,chillerEnable
+ch ctrl,chillerEnable
+ch cmd,chillerEnable
+ch command,chillerEnable
+ch ctrl,chillerEnable
+ch,chillerEnable
+ch cmd,chillerEnable
+ch command,chillerEnable
+ch command,chillerEnable
+ch ctrl,chillerEnable
+ch control,chillerEnable
+ch cmd,chillerEnable
+ch command,chillerEnable
+ch ctrl,chillerEnable
+ch cmd,chillerEnable
+ch command,chillerEnable
+ch ctrl,chillerEnable
+chiller,chillerEnable
+chiller cmd,chillerEnable
+chiller command,chillerEnable
+chiller,chillerEnable
+chiller cmd,chillerEnable
 chlr cmd,chillerEnable
 chlr command,chillerEnable
 chlr ctrl,chillerEnable
-chlr1 cmd,chillerEnable
-chlr2 cmd,chillerEnable
-chlr1 cmd,chillerEnable
-chlr2 command,chillerEnable
+chlr cmd,chillerEnable
+chlr cmd,chillerEnable
+chlr cmd,chillerEnable
+chlr command,chillerEnable
 chillerenable,chillerEnable
 chiller enable,chillerEnable
 chillerenable,chillerEnable
@@ -1613,38 +1613,38 @@ chiller start,chillerEnable
 chiller start,chillerEnable
 chiller enable,chillerEnable
 chiller enable,chillerEnable
-ch1enable,chillerEnable
-ch1 enable,chillerEnable
-ch1 enable,chillerEnable
-ch1 enable,chillerEnable
-ch1 en,chillerEnable
-ch1 en,chillerEnable
-ch1ena,chillerEnable
-ch1 ena,chillerEnable
-ch1 ena,chillerEnable
-ch1start,chillerEnable
-ch1 start,chillerEnable
-ch1 start,chillerEnable
-ch1 enable,chillerEnable
-ch1 en,chillerEnable
-ch1 enable,chillerEnable
-ch2enable,chillerEnable
-ch2 enable,chillerEnable
-ch2 enable,chillerEnable
-ch2 en,chillerEnable
-ch2 en,chillerEnable
-chiller1enable,chillerEnable
-chiller1 enable,chillerEnable
-chiller1 enable,chillerEnable
-chiller1 en,chillerEnable
-chiller1 en,chillerEnable
-chiller2enable,chillerEnable
-chiller2 enable,chillerEnable
-chiller2 enable,chillerEnable
-chiller2 en,chillerEnable
-chiller2 en,chillerEnable
-chiller1 enable,chillerEnable
-chiller2 en,chillerEnable
+ch enable,chillerEnable
+ch enable,chillerEnable
+ch enable,chillerEnable
+ch enable,chillerEnable
+ch en,chillerEnable
+ch en,chillerEnable
+ch ena,chillerEnable
+ch ena,chillerEnable
+ch ena,chillerEnable
+ch start,chillerEnable
+ch start,chillerEnable
+ch start,chillerEnable
+ch enable,chillerEnable
+ch en,chillerEnable
+ch enable,chillerEnable
+ch enable,chillerEnable
+ch enable,chillerEnable
+ch enable,chillerEnable
+ch en,chillerEnable
+ch en,chillerEnable
+chiller enable,chillerEnable
+chiller enable,chillerEnable
+chiller enable,chillerEnable
+chiller en,chillerEnable
+chiller en,chillerEnable
+chiller enable,chillerEnable
+chiller enable,chillerEnable
+chiller enable,chillerEnable
+chiller en,chillerEnable
+chiller en,chillerEnable
+chiller enable,chillerEnable
+chiller en,chillerEnable
 chillerfault,chillerFault
 chiller fault,chillerFault
 chillerfault,chillerFault
@@ -1661,27 +1661,27 @@ chiller alarm,chillerFault
 chiller alarm,chillerFault
 chiller fault,chillerFault
 chiller flt,chillerFault
-ch1fault,chillerFault
-ch1 fault,chillerFault
-ch1 fault,chillerFault
-ch1 fault,chillerFault
-ch1 flt,chillerFault
-ch1 flt,chillerFault
-ch1error,chillerFault
-ch1 error,chillerFault
-ch1 error,chillerFault
-ch1alarm,chillerFault
-ch1 alarm,chillerFault
-ch1 alarm,chillerFault
-ch1 fault,chillerFault
-ch1 flt,chillerFault
-ch2fault,chillerFault
-ch2 fault,chillerFault
-ch2 fault,chillerFault
-ch2 flt,chillerFault
-ch2 flt,chillerFault
-ch2 fault,chillerFault
-ch2 flt,chillerFault
+ch fault,chillerFault
+ch fault,chillerFault
+ch fault,chillerFault
+ch fault,chillerFault
+ch flt,chillerFault
+ch flt,chillerFault
+ch error,chillerFault
+ch error,chillerFault
+ch error,chillerFault
+ch alarm,chillerFault
+ch alarm,chillerFault
+ch alarm,chillerFault
+ch fault,chillerFault
+ch flt,chillerFault
+ch fault,chillerFault
+ch fault,chillerFault
+ch fault,chillerFault
+ch flt,chillerFault
+ch flt,chillerFault
+ch fault,chillerFault
+ch flt,chillerFault
 chlr fault,chillerFault
 chlr fault,chillerFault
 chlr fault,chillerFault
@@ -1693,18 +1693,18 @@ chlr error,chillerFault
 chlr fault,chillerFault
 chlr flt,chillerFault
 chlr fault,chillerFault
-chiller1fault,chillerFault
-chiller1 fault,chillerFault
-chiller1 fault,chillerFault
-chiller1 flt,chillerFault
-chiller1 flt,chillerFault
-chiller2fault,chillerFault
-chiller2 fault,chillerFault
-chiller2 fault,chillerFault
-chiller2 flt,chillerFault
-chiller2 flt,chillerFault
-chiller1 fault,chillerFault
-chiller2 flt,chillerFault
+chiller fault,chillerFault
+chiller fault,chillerFault
+chiller fault,chillerFault
+chiller flt,chillerFault
+chiller flt,chillerFault
+chiller fault,chillerFault
+chiller fault,chillerFault
+chiller fault,chillerFault
+chiller flt,chillerFault
+chiller flt,chillerFault
+chiller fault,chillerFault
+chiller flt,chillerFault
 chillerenablesp,chillerEnableSp
 chiller enable sp,chillerEnableSp
 chillerenablesp,chillerEnableSp
@@ -1721,35 +1721,35 @@ chiller enable spt,chillerEnableSp
 chiller en setpoint,chillerEnableSp
 chiller en spt,chillerEnableSp
 chiller setpoint enable,chillerEnableSp
-ch1enablesp,chillerEnableSp
-ch1 enable sp,chillerEnableSp
-ch1 enable sp,chillerEnableSp
-ch1 enable sp,chillerEnableSp
-ch1 en sp,chillerEnableSp
-ch1 en spt,chillerEnableSp
-ch1 enable setpoint,chillerEnableSp
-ch1 enable setpt,chillerEnableSp
-ch1 enable sp,chillerEnableSp
-ch1 enable spt,chillerEnableSp
-ch1 en setpoint,chillerEnableSp
-ch1 en spt,chillerEnableSp
-ch1 enable sp,chillerEnableSp
-ch1 enable sp,chillerEnableSp
-ch2 enable sp,chillerEnableSp
-ch2 enable sp,chillerEnableSp
-ch2 en sp,chillerEnableSp
-ch2 en spt,chillerEnableSp
-ch2 enable setpoint,chillerEnableSp
-chiller1 enable sp,chillerEnableSp
-chiller1 enable sp,chillerEnableSp
-chiller1 en sp,chillerEnableSp
-chiller1 en spt,chillerEnableSp
-chiller1 enable setpoint,chillerEnableSp
-chiller1 enable sp,chillerEnableSp
-chiller1 enable setpoint,chillerEnableSp
-chiller1 en spt,chillerEnableSp
-chiller1 enable sp,chillerEnableSp
-chiller1 enable sp,chillerEnableSp
+ch enablesp,chillerEnableSp
+ch enable sp,chillerEnableSp
+ch enable sp,chillerEnableSp
+ch enable sp,chillerEnableSp
+ch en sp,chillerEnableSp
+ch en spt,chillerEnableSp
+ch enable setpoint,chillerEnableSp
+ch enable setpt,chillerEnableSp
+ch enable sp,chillerEnableSp
+ch enable spt,chillerEnableSp
+ch en setpoint,chillerEnableSp
+ch en spt,chillerEnableSp
+ch enable sp,chillerEnableSp
+ch enable sp,chillerEnableSp
+ch enable sp,chillerEnableSp
+ch enable sp,chillerEnableSp
+ch en sp,chillerEnableSp
+ch en spt,chillerEnableSp
+ch enable setpoint,chillerEnableSp
+chiller enable sp,chillerEnableSp
+chiller enable sp,chillerEnableSp
+chiller en sp,chillerEnableSp
+chiller en spt,chillerEnableSp
+chiller enable setpoint,chillerEnableSp
+chiller enable sp,chillerEnableSp
+chiller enable setpoint,chillerEnableSp
+chiller en spt,chillerEnableSp
+chiller enable sp,chillerEnableSp
+chiller enable sp,chillerEnableSp
 chlr enable sp,chillerEnableSp
 chlr enable sp,chillerEnableSp
 chlr en sp,chillerEnableSp
@@ -1763,7 +1763,7 @@ chlr enable sp,chillerEnableSp
 chlrenablesp,chillerEnableSp
 chlr enable setpt,chillerEnableSp
 chiller en setpt val,chillerEnableSp
-ch1 en setpt val,chillerEnableSp
+ch en setpt val,chillerEnableSp
 chiller enable setpoint,chillerEnableSp
 chillerstatus,chillerStatus
 chiller status,chillerStatus
@@ -1789,41 +1789,41 @@ chlr stat,chillerStatus
 chlr stat,chillerStatus
 chlr status,chillerStatus
 chlr sts,chillerStatus
-ch1status,chillerStatus
-ch1 status,chillerStatus
-ch1 status,chillerStatus
-ch1 status,chillerStatus
-ch1 sts,chillerStatus
-ch1 sts,chillerStatus
-ch1stat,chillerStatus
-ch1 stat,chillerStatus
-ch1 stat,chillerStatus
-ch1 stat,chillerStatus
-ch1 status,chillerStatus
-ch1 sts,chillerStatus
-ch2status,chillerStatus
-ch2 status,chillerStatus
-ch2 status,chillerStatus
-ch2 status,chillerStatus
-ch2 sts,chillerStatus
-ch2 sts,chillerStatus
-ch2 stat,chillerStatus
-ch2 stat,chillerStatus
-ch2 stat,chillerStatus
-ch2 status,chillerStatus
-ch2 sts,chillerStatus
-chiller1 status,chillerStatus
-chiller1 status,chillerStatus
-chiller1 status,chillerStatus
-chiller1 sts,chillerStatus
-chiller1 sts,chillerStatus
-chiller2 status,chillerStatus
-chiller2 status,chillerStatus
-chiller2 status,chillerStatus
-chiller2 sts,chillerStatus
-chiller2 sts,chillerStatus
-chiller1 status,chillerStatus
-chiller2 sts,chillerStatus
+ch status,chillerStatus
+ch status,chillerStatus
+ch status,chillerStatus
+ch status,chillerStatus
+ch sts,chillerStatus
+ch sts,chillerStatus
+ch stat,chillerStatus
+ch stat,chillerStatus
+ch stat,chillerStatus
+ch stat,chillerStatus
+ch status,chillerStatus
+ch sts,chillerStatus
+ch status,chillerStatus
+ch status,chillerStatus
+ch status,chillerStatus
+ch status,chillerStatus
+ch sts,chillerStatus
+ch sts,chillerStatus
+ch stat,chillerStatus
+ch stat,chillerStatus
+ch stat,chillerStatus
+ch status,chillerStatus
+ch sts,chillerStatus
+chiller status,chillerStatus
+chiller status,chillerStatus
+chiller status,chillerStatus
+chiller sts,chillerStatus
+chiller sts,chillerStatus
+chiller status,chillerStatus
+chiller status,chillerStatus
+chiller status,chillerStatus
+chiller sts,chillerStatus
+chiller sts,chillerStatus
+chiller status,chillerStatus
+chiller sts,chillerStatus
 comp,comp
 comp,comp
 comp,comp
@@ -1862,26 +1862,26 @@ compressor control,comp
 compressor control,comp
 compressor start,comp
 compressor start,comp
-compressor1 cmd,comp
-compressor1 command,comp
-compressor1 ctrl,comp
-compressor1 control,comp
-comp1,comp
-comp1 cmd,comp
-comp1 command,comp
-comp1 ctrl,comp
-comp1 control,comp
-cmp1,comp
-cmp1 cmd,comp
-cmp1 command,comp
-cmp1 ctrl,comp
-cmp1 control,comp
-comp2 cmd,comp
-cmp2 cmd,comp
-compressor2 cmd,comp
-compressor2 command,comp
-compressor2 ctrl,comp
-compressor2 control,comp
+compressor cmd,comp
+compressor command,comp
+compressor ctrl,comp
+compressor control,comp
+comp,comp
+comp cmd,comp
+comp command,comp
+comp ctrl,comp
+comp control,comp
+cmp,comp
+cmp cmd,comp
+cmp command,comp
+cmp ctrl,comp
+cmp control,comp
+comp cmd,comp
+cmp cmd,comp
+compressor cmd,comp
+compressor command,comp
+compressor ctrl,comp
+compressor control,comp
 compalarm,compAlarm
 comp alarm,compAlarm
 compalarm,compAlarm
@@ -1933,18 +1933,18 @@ compressor fault,compAlarm
 compressorflt,compAlarm
 compressor flt,compAlarm
 compressor flt,compAlarm
-comp1 alarm,compAlarm
-comp1 alarm,compAlarm
-comp1 alm,compAlarm
-comp1 alm,compAlarm
-cmp1 alarm,compAlarm
-cmp1 alarm,compAlarm
-cmp1 alm,compAlarm
-cmp1 alm,compAlarm
-compressor1 alarm,compAlarm
-compressor1 alarm,compAlarm
-compressor1 alm,compAlarm
-compressor1 alm,compAlarm
+comp alarm,compAlarm
+comp alarm,compAlarm
+comp alm,compAlarm
+comp alm,compAlarm
+cmp alarm,compAlarm
+cmp alarm,compAlarm
+cmp alm,compAlarm
+cmp alm,compAlarm
+compressor alarm,compAlarm
+compressor alarm,compAlarm
+compressor alm,compAlarm
+compressor alm,compAlarm
 compenable,compEnable
 comp enable,compEnable
 compenable,compEnable
@@ -1989,23 +1989,23 @@ compressor ena,compEnable
 compressorstart,compEnable
 compressor start,compEnable
 compressor start,compEnable
-comp1 enable,compEnable
-comp1 enable,compEnable
-comp1 enable,compEnable
-comp1 en,compEnable
-comp1 en,compEnable
-comp1ena,compEnable
-comp1 ena,compEnable
-comp1 ena,compEnable
-cmp1 enable,compEnable
-cmp1 enable,compEnable
-cmp1 enable,compEnable
-cmp1 en,compEnable
-cmp1 en,compEnable
-compressor1 enable,compEnable
-compressor1 enable,compEnable
-compressor1 en,compEnable
-compressor1 en,compEnable
+comp enable,compEnable
+comp enable,compEnable
+comp enable,compEnable
+comp en,compEnable
+comp en,compEnable
+comp ena,compEnable
+comp ena,compEnable
+comp ena,compEnable
+cmp enable,compEnable
+cmp enable,compEnable
+cmp enable,compEnable
+cmp en,compEnable
+cmp en,compEnable
+compressor enable,compEnable
+compressor enable,compEnable
+compressor en,compEnable
+compressor en,compEnable
 compfault,compFault
 comp fault,compFault
 compfault,compFault
@@ -2058,18 +2058,18 @@ compressor fail,compFault
 compressorerror,compFault
 compressor error,compFault
 compressor error,compFault
-comp1 fault,compFault
-comp1 fault,compFault
-comp1 fault,compFault
-comp1 flt,compFault
-comp1 flt,compFault
-cmp1 fault,compFault
-cmp1 fault,compFault
-cmp1 fault,compFault
-compressor1 fault,compFault
-compressor1 fault,compFault
-compressor1 flt,compFault
-compressor1 flt,compFault
+comp fault,compFault
+comp fault,compFault
+comp fault,compFault
+comp flt,compFault
+comp flt,compFault
+cmp fault,compFault
+cmp fault,compFault
+cmp fault,compFault
+compressor fault,compFault
+compressor fault,compFault
+compressor flt,compFault
+compressor flt,compFault
 compovr,compOvr
 comp ovr,compOvr
 compovr,compOvr
@@ -2185,12 +2185,12 @@ compressor state,compStatus
 compressorrun,compStatus
 compressor run,compStatus
 compressor run,compStatus
-comp1 status,compStatus
-comp1 status,compStatus
-cmp1 status,compStatus
-cmp1 status,compStatus
-compressor1 status,compStatus
-compressor1 status,compStatus
+comp status,compStatus
+comp status,compStatus
+cmp status,compStatus
+cmp status,compStatus
+compressor status,compStatus
+compressor status,compStatus
 compwarning,compWarning
 comp warning,compWarning
 compwarning,compWarning
@@ -2249,9 +2249,9 @@ compressor prealarm,compWarning
 compressoralert,compWarning
 compressor alert,compWarning
 compressor alert,compWarning
-comp1 warning,compWarning
-cmp1 warning,compWarning
-compressor1 warning,compWarning
+comp warning,compWarning
+cmp warning,compWarning
+compressor warning,compWarning
 cond,cond
 cond cmd,cond
 cond cmd,cond
@@ -2265,17 +2265,17 @@ cond ctrl,cond
 cond ctrl,cond
 cond ctrl,cond
 cond ctrl,cond
-cond1,cond
-cond1 cmd,cond
-cond1 cmd,cond
-cond1 cmd,cond
-cond1 command,cond
-cond1 command,cond
-cond1 command,cond
-cond1 command,cond
-cond1 ctrl,cond
-cond1 ctrl,cond
-cond1 ctrl,cond
+cond,cond
+cond cmd,cond
+cond cmd,cond
+cond cmd,cond
+cond command,cond
+cond command,cond
+cond command,cond
+cond command,cond
+cond ctrl,cond
+cond ctrl,cond
+cond ctrl,cond
 condenser,cond
 condenser cmd,cond
 condenser cmd,cond
@@ -2289,16 +2289,16 @@ condenser ctrl,cond
 condenser ctrl,cond
 condenser ctrl,cond
 condenser ctrl,cond
-condenser1,cond
-condenser1 cmd,cond
-condenser1 cmd,cond
-condenser1 cmd,cond
-condenser1 command,cond
-condenser1 command,cond
-condenser1 command,cond
-condenser1 ctrl,cond
-condenser1 ctrl,cond
-condenser1 ctrl,cond
+condenser,cond
+condenser cmd,cond
+condenser cmd,cond
+condenser cmd,cond
+condenser command,cond
+condenser command,cond
+condenser command,cond
+condenser ctrl,cond
+condenser ctrl,cond
+condenser ctrl,cond
 cnd,cond
 cnd cmd,cond
 cnd cmd,cond
@@ -2307,12 +2307,12 @@ cnd cmd,cond
 cnd command,cond
 cnd command,cond
 cnd command,cond
-cnd1 cmd,cond
-cnd1 cmd,cond
-cnd1 cmd,cond
-cnd1 command,cond
-cnd1 command,cond
-cnd1 command,cond
+cnd cmd,cond
+cnd cmd,cond
+cnd cmd,cond
+cnd command,cond
+cnd command,cond
+cnd command,cond
 condalarm,condAlarm
 cond alarm,condAlarm
 condalarm,condAlarm
@@ -2325,25 +2325,25 @@ cond alm,condAlarm
 cond alm,condAlarm
 cond alm,condAlarm
 cond alm,condAlarm
-cond1alarm,condAlarm
-cond1 alarm,condAlarm
-cond1 alarm,condAlarm
-cond1 alarm,condAlarm
-cond1 alarm,condAlarm
-cond1 alarm,condAlarm
-cond1alm,condAlarm
-cond1 alm,condAlarm
-cond1 alm,condAlarm
-cond1 alm,condAlarm
-cond1 alm,condAlarm
-cond1 alm,condAlarm
-cond2alarm,condAlarm
-cond2 alarm,condAlarm
-cond2 alarm,condAlarm
-cond2 alarm,condAlarm
-cond2alm,condAlarm
-cond2 alm,condAlarm
-cond2 alm,condAlarm
+cond alarm,condAlarm
+cond alarm,condAlarm
+cond alarm,condAlarm
+cond alarm,condAlarm
+cond alarm,condAlarm
+cond alarm,condAlarm
+cond alm,condAlarm
+cond alm,condAlarm
+cond alm,condAlarm
+cond alm,condAlarm
+cond alm,condAlarm
+cond alm,condAlarm
+cond alarm,condAlarm
+cond alarm,condAlarm
+cond alarm,condAlarm
+cond alarm,condAlarm
+cond alm,condAlarm
+cond alm,condAlarm
+cond alm,condAlarm
 cndalarm,condAlarm
 cnd alarm,condAlarm
 cndalarm,condAlarm
@@ -2356,18 +2356,18 @@ cnd alm,condAlarm
 cnd alm,condAlarm
 cnd alm,condAlarm
 cnd alm,condAlarm
-cnd1alarm,condAlarm
-cnd1 alarm,condAlarm
-cnd1 alarm,condAlarm
-cnd1 alarm,condAlarm
-cnd1 alarm,condAlarm
-cnd1 alarm,condAlarm
-cnd1alm,condAlarm
-cnd1 alm,condAlarm
-cnd1 alm,condAlarm
-cnd1 alm,condAlarm
-cnd1 alm,condAlarm
-cnd1 alm,condAlarm
+cnd alarm,condAlarm
+cnd alarm,condAlarm
+cnd alarm,condAlarm
+cnd alarm,condAlarm
+cnd alarm,condAlarm
+cnd alarm,condAlarm
+cnd alm,condAlarm
+cnd alm,condAlarm
+cnd alm,condAlarm
+cnd alm,condAlarm
+cnd alm,condAlarm
+cnd alm,condAlarm
 condenseralarm,condAlarm
 condenser alarm,condAlarm
 condenser alarm,condAlarm
@@ -2414,24 +2414,24 @@ condenser bypass flw,condBypassFlow
 condenser byp flow,condBypassFlow
 condenser byp flow,condBypassFlow
 condenser byp flow,condBypassFlow
-cond1 bypass flow,condBypassFlow
-cond1 bypass flow,condBypassFlow
-cond1 bypass flow,condBypassFlow
-cond1 byp flw,condBypassFlow
-cond1 byp flw,condBypassFlow
-cond1 byp flw,condBypassFlow
-cond1 bypassflw,condBypassFlow
-cond1 bypassflw,condBypassFlow
-cond1 bypass flw,condBypassFlow
-cond1 byp flow,condBypassFlow
-cond1 byp flow,condBypassFlow
-cond1 byp flow,condBypassFlow
-cnd1 bypass flow,condBypassFlow
-cnd1 bypass flow,condBypassFlow
-cnd1 bypass flow,condBypassFlow
-cnd1 byp flw,condBypassFlow
-cnd1 byp flw,condBypassFlow
-cnd1 byp flw,condBypassFlow
+cond bypass flow,condBypassFlow
+cond bypass flow,condBypassFlow
+cond bypass flow,condBypassFlow
+cond byp flw,condBypassFlow
+cond byp flw,condBypassFlow
+cond byp flw,condBypassFlow
+cond bypassflw,condBypassFlow
+cond bypassflw,condBypassFlow
+cond bypass flw,condBypassFlow
+cond byp flow,condBypassFlow
+cond byp flow,condBypassFlow
+cond byp flow,condBypassFlow
+cnd bypass flow,condBypassFlow
+cnd bypass flow,condBypassFlow
+cnd bypass flow,condBypassFlow
+cnd byp flw,condBypassFlow
+cnd byp flw,condBypassFlow
+cnd byp flw,condBypassFlow
 condbypasstemp,condBypassTemp
 cond bypass temp,condBypassTemp
 cond bypass temp,condBypassTemp
@@ -2459,21 +2459,21 @@ condenser bypass temp,condBypassTemp
 condenser byp temp,condBypassTemp
 condenser byp temp,condBypassTemp
 condenser byp temp,condBypassTemp
-cond1 bypass temp,condBypassTemp
-cond1 bypass temp,condBypassTemp
-cond1 bypass temp,condBypassTemp
-cond1 byp temp,condBypassTemp
-cond1 byp temp,condBypassTemp
-cond1 byp temp,condBypassTemp
-cnd1 bypass temp,condBypassTemp
-cnd1 bypass temp,condBypassTemp
-cnd1 bypass temp,condBypassTemp
-cnd1 byp temp,condBypassTemp
-cnd1 byp temp,condBypassTemp
-cnd1 byp temp,condBypassTemp
-condenser1 bypass temp,condBypassTemp
-condenser1 bypass temp,condBypassTemp
-condenser1 bypass temp,condBypassTemp
+cond bypass temp,condBypassTemp
+cond bypass temp,condBypassTemp
+cond bypass temp,condBypassTemp
+cond byp temp,condBypassTemp
+cond byp temp,condBypassTemp
+cond byp temp,condBypassTemp
+cnd bypass temp,condBypassTemp
+cnd bypass temp,condBypassTemp
+cnd bypass temp,condBypassTemp
+cnd byp temp,condBypassTemp
+cnd byp temp,condBypassTemp
+cnd byp temp,condBypassTemp
+condenser bypass temp,condBypassTemp
+condenser bypass temp,condBypassTemp
+condenser bypass temp,condBypassTemp
 condbypass temp sensor,condBypassTemp
 cond bypass temp sensor,condBypassTemp
 cond bypass temp sensor,condBypassTemp
@@ -2485,9 +2485,9 @@ cond bypass temp val,condBypassTemp
 cond bypass temp val,condBypassTemp
 cond bypass temp val,condBypassTemp
 cond byp temperature,condBypassTemp
-cond1 bypass temperature,condBypassTemp
-cond1 bypass temperature,condBypassTemp
-cond1 bypass temperature,condBypassTemp
+cond bypass temperature,condBypassTemp
+cond bypass temperature,condBypassTemp
+cond bypass temperature,condBypassTemp
 cnd bypass temperature,condBypassTemp
 cnd bypass temperature,condBypassTemp
 condbypassflowsp,condBypassFlowSp
@@ -2531,18 +2531,18 @@ condenser bypass flow spt,condBypassFlowSp
 condenser bypass flow setpoint,condBypassFlowSp
 condenser bypass flow setpoint,condBypassFlowSp
 condenser bypass flow setpoint,condBypassFlowSp
-cond1 bypass flow sp,condBypassFlowSp
-cond1 bypass flow sp,condBypassFlowSp
-cond1 bypass flow sp,condBypassFlowSp
-cond1 byp flow sp,condBypassFlowSp
-cond1 byp flow sp,condBypassFlowSp
-cond1 byp flow sp,condBypassFlowSp
-cond1 bypass flow spt,condBypassFlowSp
-cond1 bypass flow spt,condBypassFlowSp
-cond1 bypass flow spt,condBypassFlowSp
-cond1 bypass flow setpoint,condBypassFlowSp
-cond1 bypass flow setpoint,condBypassFlowSp
-cond1 bypass flow setpoint,condBypassFlowSp
+cond bypass flow sp,condBypassFlowSp
+cond bypass flow sp,condBypassFlowSp
+cond bypass flow sp,condBypassFlowSp
+cond byp flow sp,condBypassFlowSp
+cond byp flow sp,condBypassFlowSp
+cond byp flow sp,condBypassFlowSp
+cond bypass flow spt,condBypassFlowSp
+cond bypass flow spt,condBypassFlowSp
+cond bypass flow spt,condBypassFlowSp
+cond bypass flow setpoint,condBypassFlowSp
+cond bypass flow setpoint,condBypassFlowSp
+cond bypass flow setpoint,condBypassFlowSp
 condbypassvalvecmd,condBypassValve
 cond bypass valve cmd,condBypassValve
 cond bypass valve cmd,condBypassValve
@@ -2828,14 +2828,14 @@ cw ol temp sensor,condLeavingTemp
 condenser water pump,condPump
 cw pump cmd,condPump
 cw pump cmd,condPump
-cw pump 1 cmd,condPump
-cwp 1 command,condPump
-cwp1 command,condPump
-cwp 1 cmd,condPump
-cwp1 cmd,condPump
-cwp1 cmd,condPump
-cwp 1 cmd,condPump
-cwp 1 cmd,condPump
+cw pump cmd,condPump
+cwp command,condPump
+cwp command,condPump
+cwp cmd,condPump
+cwp cmd,condPump
+cwp cmd,condPump
+cwp cmd,condPump
+cwp cmd,condPump
 cond water pump,condPump
 cond water pump,condPump
 cond water pump cmd,condPump
@@ -2850,36 +2850,36 @@ cond pump cmd,condPump
 condenser pump cmd,condPump
 condenser pump cmd,condPump
 condenser pump cmd,condPump
-condenser pump 1 cmd,condPump
-condenser pump 1 cmd,condPump
+condenser pump cmd,condPump
+condenser pump cmd,condPump
 cw pmp cmd,condPump
 cw pmp cmd,condPump
-cw pump1 cmd,condPump
-cw pump1 cmd,condPump
+cw pump cmd,condPump
+cw pump cmd,condPump
 cwpump cmd,condPump
 cwpump cmd,condPump
-cwp 01 cmd,condPump
-cwp01 cmd,condPump
-cwp 01 cmd,condPump
-cw pump 01 command,condPump
-cw pump 01 command,condPump
-cwpump1 cmd,condPump
+cwp cmd,condPump
+cwp cmd,condPump
+cwp cmd,condPump
+cw pump command,condPump
+cw pump command,condPump
+cwpump cmd,condPump
 cw pump command,condPump
 cw pump command,condPump
 cond pmp cmd,condPump
 condpmp cmd,condPump
 cond pmp cmd,condPump
-cond pmp 1 cmd,condPump
-cond pump1 cmd,condPump
+cond pmp cmd,condPump
+cond pump cmd,condPump
 condensate pump cmd,condPump
-cwp 2 command,condPump
-cwp2 command,condPump
-cw pump2 cmd,condPump
-cw pump 2 cmd,condPump
-cwp 02 cmd,condPump
-cw pmp2 cmd,condPump
-cwp2 cmd,condPump
-cwp2command,condPump
+cwp command,condPump
+cwp command,condPump
+cw pump cmd,condPump
+cw pump cmd,condPump
+cwp cmd,condPump
+cw pmp cmd,condPump
+cwp cmd,condPump
+cwp command,condPump
 cond pump alarm,condPumpAlarm
 cond pump alarm,condPumpAlarm
 cond pump alarm,condPumpAlarm
@@ -2893,24 +2893,24 @@ cond pmp alarm,condPumpAlarm
 cond pmp alarm,condPumpAlarm
 cwp alarm,condPumpAlarm
 cwp alarm,condPumpAlarm
-cwp1 alarm,condPumpAlarm
-cwp 1 alarm,condPumpAlarm
-cwp1 alarm,condPumpAlarm
-cwp 1 alarm,condPumpAlarm
-cwp1 alarm,condPumpAlarm
-cwp2 alarm,condPumpAlarm
-cwp 2 alarm,condPumpAlarm
-cwp 2 alarm,condPumpAlarm
+cwp alarm,condPumpAlarm
+cwp alarm,condPumpAlarm
+cwp alarm,condPumpAlarm
+cwp alarm,condPumpAlarm
+cwp alarm,condPumpAlarm
+cwp alarm,condPumpAlarm
+cwp alarm,condPumpAlarm
+cwp alarm,condPumpAlarm
 cw pump alarm,condPumpAlarm
 cw pump alarm,condPumpAlarm
 cw pump alarm,condPumpAlarm
 cw pump alarm,condPumpAlarm
-cw pump 1 alarm,condPumpAlarm
-cw pump 1 alarm,condPumpAlarm
-cw pump1 alarm,condPumpAlarm
-cw pump 2 alarm,condPumpAlarm
-cw pump 2 alarm,condPumpAlarm
-cw pump2 alarm,condPumpAlarm
+cw pump alarm,condPumpAlarm
+cw pump alarm,condPumpAlarm
+cw pump alarm,condPumpAlarm
+cw pump alarm,condPumpAlarm
+cw pump alarm,condPumpAlarm
+cw pump alarm,condPumpAlarm
 condenser pump alarm,condPumpAlarm
 condenser pump alarm,condPumpAlarm
 condenser pump alarm,condPumpAlarm
@@ -2936,36 +2936,36 @@ cw pump enable,condPumpEnable
 cw pump en,condPumpEnable
 cw pump en,condPumpEnable
 cw pump en,condPumpEnable
-cw pump 1 enable,condPumpEnable
-cw pump 1 enable,condPumpEnable
-cw pump1 enable,condPumpEnable
-cw pump 01 enable,condPumpEnable
-cw pump 01 enable,condPumpEnable
-cw pump01 enable,condPumpEnable
-cw pump1 en,condPumpEnable
-cw pump1 en,condPumpEnable
-cw pump1 en,condPumpEnable
+cw pump enable,condPumpEnable
+cw pump enable,condPumpEnable
+cw pump enable,condPumpEnable
+cw pump enable,condPumpEnable
+cw pump enable,condPumpEnable
+cw pump enable,condPumpEnable
+cw pump en,condPumpEnable
+cw pump en,condPumpEnable
+cw pump en,condPumpEnable
 cwp enable,condPumpEnable
 cwp enable,condPumpEnable
 cwp en,condPumpEnable
 cwp en,condPumpEnable
-cwp1 enable,condPumpEnable
-cwp 1 enable,condPumpEnable
-cwp1 enable,condPumpEnable
-cwp1 en,condPumpEnable
-cwp 1 en,condPumpEnable
-cwp1 en,condPumpEnable
-cwp01 enable,condPumpEnable
-cwp 01 enable,condPumpEnable
-cwp01 enable,condPumpEnable
-cwp01 en,condPumpEnable
-cwp 01 en,condPumpEnable
-cwp01 en,condPumpEnable
-cwp1 enable,condPumpEnable
+cwp enable,condPumpEnable
+cwp enable,condPumpEnable
+cwp enable,condPumpEnable
+cwp en,condPumpEnable
+cwp en,condPumpEnable
+cwp en,condPumpEnable
+cwp enable,condPumpEnable
+cwp enable,condPumpEnable
+cwp enable,condPumpEnable
+cwp en,condPumpEnable
+cwp en,condPumpEnable
+cwp en,condPumpEnable
+cwp enable,condPumpEnable
 cwp enable,condPumpEnable
 cw pump enable,condPumpEnable
 cwp en,condPumpEnable
-cwp1 en,condPumpEnable
+cwp en,condPumpEnable
 cond pump enable,condPumpEnable
 condenser pump enable,condPumpEnable
 condenser water pump enable,condPumpEnable
@@ -2980,21 +2980,21 @@ cond pmp fault,condPumpFault
 cond pmp fault,condPumpFault
 cwp fault,condPumpFault
 cwp fault,condPumpFault
-cwp1 fault,condPumpFault
-cwp 1 fault,condPumpFault
-cwp1 fault,condPumpFault
-cwp 1 fault,condPumpFault
-cwp1 fault,condPumpFault
-cwp01 fault,condPumpFault
-cwp 01 fault,condPumpFault
-cwp01 fault,condPumpFault
+cwp fault,condPumpFault
+cwp fault,condPumpFault
+cwp fault,condPumpFault
+cwp fault,condPumpFault
+cwp fault,condPumpFault
+cwp fault,condPumpFault
+cwp fault,condPumpFault
+cwp fault,condPumpFault
 cw pump fault,condPumpFault
 cw pump fault,condPumpFault
 cw pump fault,condPumpFault
 cw pump fault,condPumpFault
-cw pump1 fault,condPumpFault
-cw pump1 fault,condPumpFault
-cw pump1 fault,condPumpFault
+cw pump fault,condPumpFault
+cw pump fault,condPumpFault
+cw pump fault,condPumpFault
 condenser pump fault,condPumpFault
 condenser pump fault,condPumpFault
 condenser pump fault,condPumpFault
@@ -3005,14 +3005,14 @@ cond water pump fault,condPumpFault
 cond water pump fault,condPumpFault
 cond water pump fault,condPumpFault
 cwpflt,condPumpFault
-cwp1flt,condPumpFault
-cwp01flt,condPumpFault
+cwp flt,condPumpFault
+cwp flt,condPumpFault
 condpumpflt,condPumpFault
 cw pump flt,condPumpFault
-cw pump1 flt,condPumpFault
+cw pump flt,condPumpFault
 cwp flt,condPumpFault
-cwp1 flt,condPumpFault
-cwp 1 flt,condPumpFault
+cwp flt,condPumpFault
+cwp flt,condPumpFault
 cond pump flt,condPumpFault
 cond pump flt,condPumpFault
 cond pump flt,condPumpFault
@@ -3041,27 +3041,27 @@ cw pump override,condPumpOvr
 cw pump ovr,condPumpOvr
 cw pump ovr,condPumpOvr
 cw pump ovr,condPumpOvr
-cw pump1 ovr,condPumpOvr
-cw pump1 ovr,condPumpOvr
-cw pump1 ovr,condPumpOvr
+cw pump ovr,condPumpOvr
+cw pump ovr,condPumpOvr
+cw pump ovr,condPumpOvr
 cwp override,condPumpOvr
 cwp override,condPumpOvr
 cwp override,condPumpOvr
 cwp ovr,condPumpOvr
 cwp ovr,condPumpOvr
 cwp ovr,condPumpOvr
-cwp1 override,condPumpOvr
-cwp 1 override,condPumpOvr
-cwp1 override,condPumpOvr
-cwp1 ovr,condPumpOvr
-cwp 1 ovr,condPumpOvr
-cwp1 ovr,condPumpOvr
-cwp01 override,condPumpOvr
-cwp 01 override,condPumpOvr
-cwp01 override,condPumpOvr
-cwp01 ovr,condPumpOvr
-cwp 01 ovr,condPumpOvr
-cwp01 ovr,condPumpOvr
+cwp override,condPumpOvr
+cwp override,condPumpOvr
+cwp override,condPumpOvr
+cwp ovr,condPumpOvr
+cwp ovr,condPumpOvr
+cwp ovr,condPumpOvr
+cwp override,condPumpOvr
+cwp override,condPumpOvr
+cwp override,condPumpOvr
+cwp ovr,condPumpOvr
+cwp ovr,condPumpOvr
+cwp ovr,condPumpOvr
 condenser pump override,condPumpOvr
 condenser pump override,condPumpOvr
 condenser pump override,condPumpOvr
@@ -3087,18 +3087,18 @@ cw pump runtime,condPumpRuntime
 cw pump runtime,condPumpRuntime
 cw pump runtime,condPumpRuntime
 cw pump runtime,condPumpRuntime
-cw pump1 runtime,condPumpRuntime
-cw pump1 runtime,condPumpRuntime
-cw pump1 runtime,condPumpRuntime
+cw pump runtime,condPumpRuntime
+cw pump runtime,condPumpRuntime
+cw pump runtime,condPumpRuntime
 cwp runtime,condPumpRuntime
 cwp runtime,condPumpRuntime
 cwp runtime,condPumpRuntime
-cwp1 runtime,condPumpRuntime
-cwp 1 runtime,condPumpRuntime
-cwp1 runtime,condPumpRuntime
-cwp01 runtime,condPumpRuntime
-cwp 01 runtime,condPumpRuntime
-cwp01 runtime,condPumpRuntime
+cwp runtime,condPumpRuntime
+cwp runtime,condPumpRuntime
+cwp runtime,condPumpRuntime
+cwp runtime,condPumpRuntime
+cwp runtime,condPumpRuntime
+cwp runtime,condPumpRuntime
 condenser pump runtime,condPumpRuntime
 condenser pump runtime,condPumpRuntime
 condenser pump runtime,condPumpRuntime
@@ -3110,8 +3110,8 @@ cond water pump runtime,condPumpRuntime
 cond water pump runtime,condPumpRuntime
 cwp rt,condPumpRuntime
 cwp rt,condPumpRuntime
-cwp1 rt,condPumpRuntime
-cwp 1 rt,condPumpRuntime
+cwp rt,condPumpRuntime
+cwp rt,condPumpRuntime
 cw pump rt,condPumpRuntime
 cw pump rt,condPumpRuntime
 cond pump rt,condPumpRuntime
@@ -3120,9 +3120,9 @@ cond pump rt,condPumpRuntime
 cond pmp rt,condPumpRuntime
 condenser pump rt,condPumpRuntime
 condenser water pump rt,condPumpRuntime
-cwp01 rt,condPumpRuntime
-cwp 01 rt,condPumpRuntime
-cwp01 rt,condPumpRuntime
+cwp rt,condPumpRuntime
+cwp rt,condPumpRuntime
+cwp rt,condPumpRuntime
 cond pump speed command,condPumpSpeed
 cond pump speed command,condPumpSpeed
 cond pump speed command,condPumpSpeed
@@ -3136,27 +3136,27 @@ cw pump speed command,condPumpSpeed
 cw pump speed command,condPumpSpeed
 cw pump speed command,condPumpSpeed
 cw pump speed command,condPumpSpeed
-cw pump1 speed cmd,condPumpSpeed
-cw pump1 speed cmd,condPumpSpeed
-cw pump1 speed cmd,condPumpSpeed
+cw pump speed cmd,condPumpSpeed
+cw pump speed cmd,condPumpSpeed
+cw pump speed cmd,condPumpSpeed
 cwp speed command,condPumpSpeed
 cwp speed command,condPumpSpeed
 cwp speed command,condPumpSpeed
 cwp speed cmd,condPumpSpeed
 cwp speed cmd,condPumpSpeed
 cwp cmd speed,condPumpSpeed
-cwp1 speed command,condPumpSpeed
-cwp 1 speed command,condPumpSpeed
-cwp1 speed command,condPumpSpeed
-cwp1 speed cmd,condPumpSpeed
-cwp 1 speed cmd,condPumpSpeed
-cwp1 speed cmd,condPumpSpeed
-cwp01 speed command,condPumpSpeed
-cwp 01 speed command,condPumpSpeed
-cwp01 speed command,condPumpSpeed
-cwp01 speed cmd,condPumpSpeed
-cwp 01 speed cmd,condPumpSpeed
-cwp01 speed cmd,condPumpSpeed
+cwp speed command,condPumpSpeed
+cwp speed command,condPumpSpeed
+cwp speed command,condPumpSpeed
+cwp speed cmd,condPumpSpeed
+cwp speed cmd,condPumpSpeed
+cwp speed cmd,condPumpSpeed
+cwp speed command,condPumpSpeed
+cwp speed command,condPumpSpeed
+cwp speed command,condPumpSpeed
+cwp speed cmd,condPumpSpeed
+cwp speed cmd,condPumpSpeed
+cwp speed cmd,condPumpSpeed
 condenser pump speed command,condPumpSpeed
 condenser pump speed command,condPumpSpeed
 condenser pump speed command,condPumpSpeed
@@ -3189,27 +3189,27 @@ cw pump speed feedback,condPumpSpeedFb
 cw pump speed feedback,condPumpSpeedFb
 cw pump speed feedback,condPumpSpeedFb
 cw pump speed feedback,condPumpSpeedFb
-cw pump1 speed fb,condPumpSpeedFb
-cw pump1 speed fb,condPumpSpeedFb
-cw pump1 speed fb,condPumpSpeedFb
+cw pump speed fb,condPumpSpeedFb
+cw pump speed fb,condPumpSpeedFb
+cw pump speed fb,condPumpSpeedFb
 cwp speed feedback,condPumpSpeedFb
 cwp speed feedback,condPumpSpeedFb
 cwp speed feedback,condPumpSpeedFb
 cwp speed fb,condPumpSpeedFb
 cwp speed fb,condPumpSpeedFb
 cwp fb speed,condPumpSpeedFb
-cwp1 speed feedback,condPumpSpeedFb
-cwp 1 speed feedback,condPumpSpeedFb
-cwp1 speed feedback,condPumpSpeedFb
-cwp1 speed fb,condPumpSpeedFb
-cwp 1 speed fb,condPumpSpeedFb
-cwp1 speed fb,condPumpSpeedFb
-cwp01 speed feedback,condPumpSpeedFb
-cwp 01 speed feedback,condPumpSpeedFb
-cwp01 speed feedback,condPumpSpeedFb
-cwp01 speed fb,condPumpSpeedFb
-cwp 01 speed fb,condPumpSpeedFb
-cwp01 speed fb,condPumpSpeedFb
+cwp speed feedback,condPumpSpeedFb
+cwp speed feedback,condPumpSpeedFb
+cwp speed feedback,condPumpSpeedFb
+cwp speed fb,condPumpSpeedFb
+cwp speed fb,condPumpSpeedFb
+cwp speed fb,condPumpSpeedFb
+cwp speed feedback,condPumpSpeedFb
+cwp speed feedback,condPumpSpeedFb
+cwp speed feedback,condPumpSpeedFb
+cwp speed fb,condPumpSpeedFb
+cwp speed fb,condPumpSpeedFb
+cwp speed fb,condPumpSpeedFb
 condenser pump speed feedback,condPumpSpeedFb
 condenser pump speed feedback,condPumpSpeedFb
 condenser pump speed feedback,condPumpSpeedFb
@@ -3242,27 +3242,27 @@ cw pump speed override,condPumpSpeedOvr
 cw pump speed override,condPumpSpeedOvr
 cw pump speed override,condPumpSpeedOvr
 cw pump speed override,condPumpSpeedOvr
-cw pump1 speed ovr,condPumpSpeedOvr
-cw pump1 speed ovr,condPumpSpeedOvr
-cw pump1 speed ovr,condPumpSpeedOvr
+cw pump speed ovr,condPumpSpeedOvr
+cw pump speed ovr,condPumpSpeedOvr
+cw pump speed ovr,condPumpSpeedOvr
 cwp speed override,condPumpSpeedOvr
 cwp speed override,condPumpSpeedOvr
 cwp speed override,condPumpSpeedOvr
 cwp speed ovr,condPumpSpeedOvr
 cwp speed ovr,condPumpSpeedOvr
 cwp ovr speed,condPumpSpeedOvr
-cwp1 speed override,condPumpSpeedOvr
-cwp 1 speed override,condPumpSpeedOvr
-cwp1 speed override,condPumpSpeedOvr
-cwp1 speed ovr,condPumpSpeedOvr
-cwp 1 speed ovr,condPumpSpeedOvr
-cwp1 speed ovr,condPumpSpeedOvr
-cwp01 speed override,condPumpSpeedOvr
-cwp 01 speed override,condPumpSpeedOvr
-cwp01 speed override,condPumpSpeedOvr
-cwp01 speed ovr,condPumpSpeedOvr
-cwp 01 speed ovr,condPumpSpeedOvr
-cwp01 speed ovr,condPumpSpeedOvr
+cwp speed override,condPumpSpeedOvr
+cwp speed override,condPumpSpeedOvr
+cwp speed override,condPumpSpeedOvr
+cwp speed ovr,condPumpSpeedOvr
+cwp speed ovr,condPumpSpeedOvr
+cwp speed ovr,condPumpSpeedOvr
+cwp speed override,condPumpSpeedOvr
+cwp speed override,condPumpSpeedOvr
+cwp speed override,condPumpSpeedOvr
+cwp speed ovr,condPumpSpeedOvr
+cwp speed ovr,condPumpSpeedOvr
+cwp speed ovr,condPumpSpeedOvr
 condenser pump speed override,condPumpSpeedOvr
 condenser pump speed override,condPumpSpeedOvr
 condenser pump speed override,condPumpSpeedOvr
@@ -3282,31 +3282,31 @@ cwp spd ovr,condPumpSpeedOvr
 cwp spd ovr,condPumpSpeedOvr
 cw pump spd ovr,condPumpSpeedOvr
 cond pump spd ovr,condPumpSpeedOvr
-cwp1 speed sp,condPumpSpeedSp
-cwp1 speed sp,condPumpSpeedSp
-cwp1 speed spt,condPumpSpeedSp
-cwp1 spd sp,condPumpSpeedSp
-cwp1 spd spt,condPumpSpeedSp
-cwp1 speed setpoint,condPumpSpeedSp
-cwp1 speed setpoint,condPumpSpeedSp
-cwp 1 speed sp,condPumpSpeedSp
-cwp 1 speed sp,condPumpSpeedSp
-cwp 1 speed spt,condPumpSpeedSp
-cwp 1 speed spt,condPumpSpeedSp
-cwp 1 spd sp,condPumpSpeedSp
-cwp 1 spd spt,condPumpSpeedSp
-cwp 1 speed setpoint,condPumpSpeedSp
-cwp 1 speed setpoint,condPumpSpeedSp
-cwp01 speed sp,condPumpSpeedSp
-cwp01 speed sp,condPumpSpeedSp
-cwp01 speed spt,condPumpSpeedSp
-cwp01 spd sp,condPumpSpeedSp
-cwp01 spd spt,condPumpSpeedSp
-cwp01 speed setpoint,condPumpSpeedSp
-cwp01 speed setpoint,condPumpSpeedSp
-cwp 1 speed sp,condPumpSpeedSp
-cwp 1 speed spt,condPumpSpeedSp
-cwp 1 speed setpoint,condPumpSpeedSp
+cwp speed sp,condPumpSpeedSp
+cwp speed sp,condPumpSpeedSp
+cwp speed spt,condPumpSpeedSp
+cwp spd sp,condPumpSpeedSp
+cwp spd spt,condPumpSpeedSp
+cwp speed setpoint,condPumpSpeedSp
+cwp speed setpoint,condPumpSpeedSp
+cwp speed sp,condPumpSpeedSp
+cwp speed sp,condPumpSpeedSp
+cwp speed spt,condPumpSpeedSp
+cwp speed spt,condPumpSpeedSp
+cwp spd sp,condPumpSpeedSp
+cwp spd spt,condPumpSpeedSp
+cwp speed setpoint,condPumpSpeedSp
+cwp speed setpoint,condPumpSpeedSp
+cwp speed sp,condPumpSpeedSp
+cwp speed sp,condPumpSpeedSp
+cwp speed spt,condPumpSpeedSp
+cwp spd sp,condPumpSpeedSp
+cwp spd spt,condPumpSpeedSp
+cwp speed setpoint,condPumpSpeedSp
+cwp speed setpoint,condPumpSpeedSp
+cwp speed sp,condPumpSpeedSp
+cwp speed spt,condPumpSpeedSp
+cwp speed setpoint,condPumpSpeedSp
 cw pump speed setpoint,condPumpSpeedSp
 cw pump speed setpoint,condPumpSpeedSp
 cw pump speed setpoint,condPumpSpeedSp
@@ -4174,12 +4174,12 @@ zn co2,zoneCO2
 zn co2,zoneCO2
 znco2,zoneCO2
 znco2,zoneCO2
-zn co 2,zoneCO2
-zn co 2,zoneCO2
-zn co 2,zoneCO2
-zn co 2,zoneCO2
-zone co 2,zoneCO2
-zone co 2,zoneCO2
+zn co,zoneCO2
+zn co,zoneCO2
+zn co,zoneCO2
+zn co,zoneCO2
+zone co,zoneCO2
+zone co,zoneCO2
 zn iaq,zoneCO2
 zone indoor air quality,zoneCO2
 zone dcv,zoneCO2
@@ -8259,7 +8259,7 @@ supply rh,dischargeHumidity
 supply air rh,dischargeHumidity
 supplyairhum,dischargeHumidity
 sup air humidity,dischargeHumidity
-sa rh%,dischargeHumidity
+sa rh,dischargeHumidity
 sa hum sensor,dischargeHumidity
 sup rh,dischargeHumidity
 sup rh,dischargeHumidity
@@ -10123,14 +10123,14 @@ pha amps,currentPhaseA
 pha current,currentPhaseA
 pha curr,currentPhaseA
 l1 current,currentPhaseA
-line1 current,currentPhaseA
+line current,currentPhaseA
 l1 curr,currentPhaseA
 l1 i,currentPhaseA
-line1 i,currentPhaseA
-phase1 current,currentPhaseA
-ph1 current,currentPhaseA
-ph1 i,currentPhaseA
-phase1 i,currentPhaseA
+line i,currentPhaseA
+phase current,currentPhaseA
+ph current,currentPhaseA
+ph i,currentPhaseA
+phase i,currentPhaseA
 phase a i,currentPhaseA
 phs a current,currentPhaseA
 phs a cur,currentPhaseA
@@ -10201,14 +10201,14 @@ pha amps max,currentPhaseAMax
 pha current max,currentPhaseAMax
 pha curr max,currentPhaseAMax
 l1 current max,currentPhaseAMax
-line1 current max,currentPhaseAMax
+line current max,currentPhaseAMax
 l1 curr max,currentPhaseAMax
 l1 i max,currentPhaseAMax
-line1 i max,currentPhaseAMax
-phase1 current max,currentPhaseAMax
-ph1 currentmax,currentPhaseAMax
-ph1 i max,currentPhaseAMax
-phase1 i max,currentPhaseAMax
+line i max,currentPhaseAMax
+phase current max,currentPhaseAMax
+ph currentmax,currentPhaseAMax
+ph i max,currentPhaseAMax
+phase i max,currentPhaseAMax
 phase a i max,currentPhaseAMax
 phs a current max,currentPhaseAMax
 phs a cur max,currentPhaseAMax
@@ -10271,14 +10271,14 @@ phb amps,currentPhaseB
 phb current,currentPhaseB
 phb curr,currentPhaseB
 l2 current,currentPhaseB
-line2 current,currentPhaseB
+line current,currentPhaseB
 l2 curr,currentPhaseB
 l2 i,currentPhaseB
-line2 i,currentPhaseB
-phase2 current,currentPhaseB
-ph2 current,currentPhaseB
-ph2 i,currentPhaseB
-phase2 i,currentPhaseB
+line i,currentPhaseB
+phase current,currentPhaseB
+ph current,currentPhaseB
+ph i,currentPhaseB
+phase i,currentPhaseB
 phase b i,currentPhaseB
 phs b current,currentPhaseB
 phs b cur,currentPhaseB
@@ -10349,14 +10349,14 @@ phb amps max,currentPhaseBMax
 phb current max,currentPhaseBMax
 phb curr max,currentPhaseBMax
 l2 current max,currentPhaseBMax
-line2 current max,currentPhaseBMax
+line current max,currentPhaseBMax
 l2 curr max,currentPhaseBMax
 l2 i max,currentPhaseBMax
-line2 i max,currentPhaseBMax
-phase2 current max,currentPhaseBMax
-ph2 currentmax,currentPhaseBMax
-ph2 i max,currentPhaseBMax
-phase2 i max,currentPhaseBMax
+line i max,currentPhaseBMax
+phase current max,currentPhaseBMax
+ph currentmax,currentPhaseBMax
+ph i max,currentPhaseBMax
+phase i max,currentPhaseBMax
 phase b i max,currentPhaseBMax
 phs b current max,currentPhaseBMax
 phs b cur max,currentPhaseBMax
@@ -10419,14 +10419,14 @@ phc amps,currentPhaseC
 phc current,currentPhaseC
 phc curr,currentPhaseC
 l3 current,currentPhaseC
-line3 current,currentPhaseC
+line current,currentPhaseC
 l3 curr,currentPhaseC
 l3 i,currentPhaseC
-line3 i,currentPhaseC
-phase3 current,currentPhaseC
-ph3 current,currentPhaseC
-ph3 i,currentPhaseC
-phase3 i,currentPhaseC
+line i,currentPhaseC
+phase current,currentPhaseC
+ph current,currentPhaseC
+ph i,currentPhaseC
+phase i,currentPhaseC
 phase c i,currentPhaseC
 phs c current,currentPhaseC
 phs c cur,currentPhaseC
@@ -10497,14 +10497,14 @@ phc amps max,currentPhaseCMax
 phc current max,currentPhaseCMax
 phc curr max,currentPhaseCMax
 l3 current max,currentPhaseCMax
-line3 current max,currentPhaseCMax
+line current max,currentPhaseCMax
 l3 curr max,currentPhaseCMax
 l3 i max,currentPhaseCMax
-line3 i max,currentPhaseCMax
-phase3 current max,currentPhaseCMax
-ph3 currentmax,currentPhaseCMax
-ph3 i max,currentPhaseCMax
-phase3 i max,currentPhaseCMax
+line i max,currentPhaseCMax
+phase current max,currentPhaseCMax
+ph currentmax,currentPhaseCMax
+ph i max,currentPhaseCMax
+phase i max,currentPhaseCMax
 phase c i max,currentPhaseCMax
 phs c current max,currentPhaseCMax
 phs c cur max,currentPhaseCMax
@@ -12560,8 +12560,8 @@ vfd out volts sup fan,dischargeFanVoltage
 drive voltage output saf,dischargeFanVoltage
 sup fan line voltage,dischargeFanVoltage
 sup fan phase voltage,dischargeFanVoltage
-sup fan 3 ph v,dischargeFanVoltage
-saf 3 phase voltage,dischargeFanVoltage
+sup fan ph v,dischargeFanVoltage
+saf phase voltage,dischargeFanVoltage
 voltage saf,dischargeFanVoltage
 line voltage supply fan,dischargeFanVoltage
 phase voltage supply fan,dischargeFanVoltage
@@ -12626,8 +12626,8 @@ drive alm relay,driveAlarm
 drive alarm ind,driveAlarm
 drive alarm input,driveAlarm
 drive alarm in,driveAlarm
-vfd1 alm,driveAlarm
-vfd2 alarm,driveAlarm
+vfd alm,driveAlarm
+vfd alarm,driveAlarm
 econ disable sp,econDisableSp
 econ dis sp,econDisableSp
 econ off sp,econDisableSp
@@ -13397,8 +13397,8 @@ exhaust activate,exhaustFanEnable
 exhaust fan enable control,exhaustFanEnable
 exhst fan cmd,exhaustFanEnable
 efn cmd,exhaustFanEnable
-exf1 cmd,exhaustFanEnable
-exf2 cmd,exhaustFanEnable
+exf cmd,exhaustFanEnable
+exf cmd,exhaustFanEnable
 exhaust main cmd,exhaustFanEnable
 exf mode,exhaustFanEnable
 exhst control,exhaustFanEnable
@@ -13458,8 +13458,8 @@ exhaust alarm flag,exhaustFanAlarm
 exhaust ind alarm,exhaustFanAlarm
 exfan alarm output,exhaustFanAlarm
 exh fan alm feedback,exhaustFanAlarm
-exf1 alm,exhaustFanAlarm
-exf2 alm,exhaustFanAlarm
+exf alm,exhaustFanAlarm
+exf alm,exhaustFanAlarm
 efn alm,exhaustFanAlarm
 efan alert,exhaustFanAlarm
 exf alm fb,exhaustFanAlarm
@@ -14894,18 +14894,18 @@ blr pmp cmd,heatingCoilPump
 blr pmp cmd,heatingCoilPump
 blr pump cmd,heatingCoilPump
 boiler pump,heatingCoilPump
-boiler pump1,heatingCoilPump
-boiler1 pump,heatingCoilPump
+boiler pump,heatingCoilPump
+boiler pump,heatingCoilPump
 boiler pump command,heatingCoilPump
-boiler 1 pump cmd,heatingCoilPump
-boiler 1 pump cmd,heatingCoilPump
-blr1 cmd,heatingCoilPump
-blr2 cmd,heatingCoilPump
-boiler2 pump,heatingCoilPump
-blr1 pmp,heatingCoilPump
-blr2 pmp,heatingCoilPump
-blr1 pump,heatingCoilPump
-blr2 pump,heatingCoilPump
+boiler pump cmd,heatingCoilPump
+boiler pump cmd,heatingCoilPump
+blr cmd,heatingCoilPump
+blr cmd,heatingCoilPump
+boiler pump,heatingCoilPump
+blr pmp,heatingCoilPump
+blr pmp,heatingCoilPump
+blr pump,heatingCoilPump
+blr pump,heatingCoilPump
 blr pmp ctrl,heatingCoilPump
 blr pmp out,heatingCoilPump
 boiler pump control,heatingCoilPump
@@ -14925,7 +14925,7 @@ hw pmp,heatingCoilPump
 hw pmp cmd,heatingCoilPump
 hw pump command,heatingCoilPump
 hot water pump cmd,heatingCoilPump
-hot water pump1,heatingCoilPump
+hot water pump,heatingCoilPump
 hwpmp cmd,heatingCoilPump
 blr circpmp,heatingCoilPump
 blr circ pump,heatingCoilPump
@@ -14959,10 +14959,10 @@ blr pump status,heatingCoilPumpStatus
 blr pmp sts,heatingCoilPumpStatus
 blr pmp sts,heatingCoilPumpStatus
 boiler pump status,heatingCoilPumpStatus
-blr1 pmp sts,heatingCoilPumpStatus
-blr2 pmp sts,heatingCoilPumpStatus
-boiler1 pump status,heatingCoilPumpStatus
-boiler2 pump status,heatingCoilPumpStatus
+blr pmp sts,heatingCoilPumpStatus
+blr pmp sts,heatingCoilPumpStatus
+boiler pump status,heatingCoilPumpStatus
+boiler pump status,heatingCoilPumpStatus
 boiler pump sts,heatingCoilPumpStatus
 blr pmp fb,heatingCoilPumpStatus
 blr pmp fbk,heatingCoilPumpStatus
@@ -15002,8 +15002,8 @@ hw pmp status fdbk,heatingCoilPumpStatus
 boiler pump fdbk,heatingCoilPumpStatus
 boiler pump run fbk,heatingCoilPumpStatus
 blr pmp rn sts,heatingCoilPumpStatus
-blr1 pmp fb,heatingCoilPumpStatus
-blr2 pmp fb,heatingCoilPumpStatus
+blr pmp fb,heatingCoilPumpStatus
+blr pmp fb,heatingCoilPumpStatus
 htg pump run fb,heatingCoilPumpStatus
 heating pump fbk,heatingCoilPumpStatus
 hw supply pump sts,heatingCoilPumpStatus
@@ -15023,10 +15023,10 @@ blr pmp alm,heatingCoilPumpAlarm
 blr pump alarm,heatingCoilPumpAlarm
 blr pmp alarm,heatingCoilPumpAlarm
 boiler pump alarm,heatingCoilPumpAlarm
-blr1 pmp alm,heatingCoilPumpAlarm
-blr2 pmp alm,heatingCoilPumpAlarm
-boiler1 pump alarm,heatingCoilPumpAlarm
-boiler2 pump alarm,heatingCoilPumpAlarm
+blr pmp alm,heatingCoilPumpAlarm
+blr pmp alm,heatingCoilPumpAlarm
+boiler pump alarm,heatingCoilPumpAlarm
+boiler pump alarm,heatingCoilPumpAlarm
 boiler pump alarm,heatingCoilPumpAlarm
 blr pmp fail,heatingCoilPumpAlarm
 blr pmp flt,heatingCoilPumpAlarm
@@ -15106,13 +15106,13 @@ oa mean temp,outsideTempAvg
 oa temp long avg,outsideTempAvg
 outdoor temp average,outsideTempAvg
 outdoor air temp avg,outsideTempAvg
-oa temp 15 min avg,outsideTempAvg
-oa temp 1 hr avg,outsideTempAvg
-oa temp 24 hr avg,outsideTempAvg
+oa temp min avg,outsideTempAvg
+oa temp hr avg,outsideTempAvg
+oa temp hr avg,outsideTempAvg
 outside air temp rolling avg,outsideTempAvg
 rolling avg outside temp,outsideTempAvg
-oat 1 h avg,outsideTempAvg
-oat 15 min avg,outsideTempAvg
+oat h avg,outsideTempAvg
+oat min avg,outsideTempAvg
 oa temp lag avg,outsideTempAvg
 outside air mean temp,outsideTempAvg
 outside temp smoothed,outsideTempAvg
@@ -15134,8 +15134,8 @@ outdoor temp average reading,outsideTempAvg
 oa temp sensor mean,outsideTempAvg
 avg oa sensor temp,outsideTempAvg
 outside air temp trend,outsideTempAvg
-oa temp average 5 min,outsideTempAvg
-oa temp average 10 min,outsideTempAvg
+oa temp average min,outsideTempAvg
+oa temp average min,outsideTempAvg
 oa t mean,outsideTempAvg
 outdoor temperature average,outsideTempAvg
 avg ext air temp,outsideTempAvg
@@ -15316,7 +15316,7 @@ chwr t,evapEnteringTemp
 chilled water return temp,evapEnteringTemp
 chwrettmp,evapEnteringTemp
 chw ret tmp,evapEnteringTemp
-ch1 rettemp,evapEnteringTemp
+ch rettemp,evapEnteringTemp
 chiller return temperature,evapEnteringTemp
 chw rt,evapEnteringTemp
 chw ret t,evapEnteringTemp
@@ -15343,9 +15343,9 @@ evap entrance temp,evapEnteringTemp
 evap entr tmp,evapEnteringTemp
 evp ent tmp,evapEnteringTemp
 evapentrtmp,evapEnteringTemp
-ch2 rettemp,evapEnteringTemp
-ch3 rettemp,evapEnteringTemp
-cwrettemp1,evapEnteringTemp
+ch rettemp,evapEnteringTemp
+ch rettemp,evapEnteringTemp
+cwrettemp,evapEnteringTemp
 cw ret temp,evapEnteringTemp
 cw ret temp,evapEnteringTemp
 cwr temp sensor,evapEnteringTemp
@@ -15364,9 +15364,9 @@ e w tmp,evapEnteringTemp
 ewt temp,evapEnteringTemp
 ewt tmp,evapEnteringTemp
 u1 chw ret tmp,evapEnteringTemp
-unit1 cw ret temp,evapEnteringTemp
-ch1 wtr ret t,evapEnteringTemp
-ch1 wrt,evapEnteringTemp
+unit cw ret temp,evapEnteringTemp
+ch wtr ret t,evapEnteringTemp
+ch wrt,evapEnteringTemp
 coil enter temp,evapEnteringTemp
 coil enter temp,evapEnteringTemp
 coil entr tmp,evapEnteringTemp
@@ -15389,7 +15389,7 @@ chiller rt tmp,evapEnteringTemp
 ch w ret temp,evapEnteringTemp
 ch w ret tmp,evapEnteringTemp
 ch w ret temp,evapEnteringTemp
-chw ret temp1,evapEnteringTemp
+chw ret temp,evapEnteringTemp
 cw ret coil temp,evapEnteringTemp
 coil cw ret temp,evapEnteringTemp
 coil chw ret temp,evapEnteringTemp
@@ -15451,13 +15451,13 @@ evap exit temp,evapLeavingTemp
 evapexittemp,evapLeavingTemp
 u1 chw sup tmp,evapLeavingTemp
 u2 chw sup temp,evapLeavingTemp
-ch1 sup temp,evapLeavingTemp
-ch2 sup temp,evapLeavingTemp
-chw1 sup temp,evapLeavingTemp
-chw2 sup tmp,evapLeavingTemp
-chw sup tmp1,evapLeavingTemp
-chws tmp1,evapLeavingTemp
-chwsuptemp1,evapLeavingTemp
+ch sup temp,evapLeavingTemp
+ch sup temp,evapLeavingTemp
+chw sup temp,evapLeavingTemp
+chw sup tmp,evapLeavingTemp
+chw sup tmp,evapLeavingTemp
+chws tmp,evapLeavingTemp
+chwsuptemp,evapLeavingTemp
 trane chw sup temp,evapLeavingTemp
 trane chw sup temp,evapLeavingTemp
 chw sup snsr,evapLeavingTemp
@@ -15482,20 +15482,20 @@ heating coil leaving temp,heatingCoilLeavingTemp
 heating coil out temp,heatingCoilLeavingTemp
 heating coil leaving temp,heatingCoilLeavingTemp
 heating coil supply temp,heatingCoilLeavingTemp
-blr1 suptemp,heatingCoilLeavingTemp
-blr2 suptemp,heatingCoilLeavingTemp
+blr suptemp,heatingCoilLeavingTemp
+blr suptemp,heatingCoilLeavingTemp
 blr supply temp,heatingCoilLeavingTemp
 blr sup temp,heatingCoilLeavingTemp
 blr sup temp,heatingCoilLeavingTemp
 boiler sup temp,heatingCoilLeavingTemp
 boiler supply temp,heatingCoilLeavingTemp
-boiler1 sup temp,heatingCoilLeavingTemp
+boiler sup temp,heatingCoilLeavingTemp
 blr supply water temp,heatingCoilLeavingTemp
 boiler outlet temp,heatingCoilLeavingTemp
 boiler out temp,heatingCoilLeavingTemp
 boiler wtr supply,heatingCoilLeavingTemp
-blr1 out temp,heatingCoilLeavingTemp
-blr2 out temp,heatingCoilLeavingTemp
+blr out temp,heatingCoilLeavingTemp
+blr out temp,heatingCoilLeavingTemp
 hw coil outlet temp,heatingCoilLeavingTemp
 hw coil exit temp,heatingCoilLeavingTemp
 hw coil out temp,heatingCoilLeavingTemp
@@ -15516,8 +15516,8 @@ blr temp sup,heatingCoilLeavingTemp
 boiler wtr temp out,heatingCoilLeavingTemp
 boiler temp supply,heatingCoilLeavingTemp
 blr output temp,heatingCoilLeavingTemp
-blr1 supply temperature,heatingCoilLeavingTemp
-boiler1 sup temp sensor,heatingCoilLeavingTemp
+blr supply temperature,heatingCoilLeavingTemp
+boiler sup temp sensor,heatingCoilLeavingTemp
 hw output temp,heatingCoilLeavingTemp
 hw supply line temp,heatingCoilLeavingTemp
 hw t supply,heatingCoilLeavingTemp
@@ -15552,7 +15552,7 @@ hwr feedback,heatingCoilEnteringTemp
 hwr measured temp,heatingCoilEnteringTemp
 hwr temp read,heatingCoilEnteringTemp
 hwreturnsensor,heatingCoilEnteringTemp
-hwr temp sensor 1,heatingCoilEnteringTemp
+hwr temp sensor,heatingCoilEnteringTemp
 hw ret sensor,heatingCoilEnteringTemp
 hwrtemp,heatingCoilEnteringTemp
 hwr out coil,heatingCoilEnteringTemp
@@ -15573,12 +15573,12 @@ blr return temp,heatingCoilEnteringTemp
 blr ret temp,heatingCoilEnteringTemp
 boiler ret temp,heatingCoilEnteringTemp
 boiler return temp,heatingCoilEnteringTemp
-boiler1 ret temp,heatingCoilEnteringTemp
-blr2 return temp,heatingCoilEnteringTemp
+boiler ret temp,heatingCoilEnteringTemp
+blr return temp,heatingCoilEnteringTemp
 blr r temp,heatingCoilEnteringTemp
 blr ret temp sensor,heatingCoilEnteringTemp
 blr line return temp,heatingCoilEnteringTemp
-blr1 rtn temp,heatingCoilEnteringTemp
+blr rtn temp,heatingCoilEnteringTemp
 boiler wtr ret temp,heatingCoilEnteringTemp
 hw ret line temp,heatingCoilEnteringTemp
 hw line return temp,heatingCoilEnteringTemp
@@ -15634,11 +15634,11 @@ chwr gpm sen,evapEnteringFlow
 chwr meas flow,evapEnteringFlow
 chwr flow feedback,evapEnteringFlow
 chwr flow read,evapEnteringFlow
-ch1 return flow,evapEnteringFlow
-ch1 ret flo,evapEnteringFlow
-ch1 chwr flow,evapEnteringFlow
-chill1 ret flow,evapEnteringFlow
-chwret1 flow,evapEnteringFlow
+ch return flow,evapEnteringFlow
+ch ret flo,evapEnteringFlow
+ch chwr flow,evapEnteringFlow
+chill ret flow,evapEnteringFlow
+chwret flow,evapEnteringFlow
 chwr bldg ret flow,evapEnteringFlow
 chwr loop flow,evapEnteringFlow
 chwr circuit flow,evapEnteringFlow
@@ -15691,11 +15691,11 @@ chws gpm sen,evapLeavingFlow
 chws meas flow,evapLeavingFlow
 chws flow feedback,evapLeavingFlow
 chws flow read,evapLeavingFlow
-ch1 supply flow,evapLeavingFlow
-ch1 sup flo,evapLeavingFlow
-ch1 chws flow,evapLeavingFlow
-chill1 sup flow,evapLeavingFlow
-chwsup1 flow,evapLeavingFlow
+ch supply flow,evapLeavingFlow
+ch sup flo,evapLeavingFlow
+ch chws flow,evapLeavingFlow
+chill sup flow,evapLeavingFlow
+chwsup flow,evapLeavingFlow
 chws bldg sup flow,evapLeavingFlow
 chws loop flow,evapLeavingFlow
 chws circuit flow,evapLeavingFlow
@@ -15771,8 +15771,8 @@ cond return flow val,condEnteringFlow
 cond return flow val,condEnteringFlow
 u1 cdw ret flow,condEnteringFlow
 u2 chw ret flow,condEnteringFlow
-unit1 cwr flow,condEnteringFlow
-unit2 cdw ret slw,condEnteringFlow
+unit cwr flow,condEnteringFlow
+unit cdw ret slw,condEnteringFlow
 c1 cwr ret flow,condEnteringFlow
 c2 cdw ret flow,condEnteringFlow
 plant cw ret flow,condEnteringFlow
@@ -19780,7 +19780,7 @@ room pm4,zonePM4
 zn pm4,zonePM4
 particulate pm4 zone,zonePM4
 zn pm4 mass,zonePM4
-zone pm40,zonePM4
+zone pm,zonePM4
 rm pm4,zonePM4
 pm4 zn,zonePM4
 space pm4 level,zonePM4
@@ -19790,17 +19790,17 @@ zn pm4 reading,zonePM4
 zone pm4,zonePM4
 pm4 conc zn,zonePM4
 space pm4,zonePM4
-zn pm40 conc,zonePM4
+zn pm conc,zonePM4
 rm pm4 level,zonePM4
-zone pm4 ugm3,zonePM4
+zone pm4 ugm,zonePM4
 pm4 sensor zone,zonePM4
 zn iaq pm4,zonePM4
 room pm4,zonePM4
-space pm40 level,zonePM4
+space pm level,zonePM4
 zone air pm4,zonePM4
 pm4 space,zonePM4
 zn pm4,zonePM4
-rm pm40 conc,zonePM4
+rm pm conc,zonePM4
 space pm4,zonePM4
 zn pm4,zonePM4
 pm4 rm,zonePM4
@@ -19814,9 +19814,9 @@ zn pm4 read,zonePM4
 rm pm4 conc,zonePM4
 space pm4 reading,zonePM4
 zn pm4 snsr,zonePM4
-particulate 4 zn,zonePM4
+particulate zn,zonePM4
 zone pm4 val,zonePM4
-zn pm40 level,zonePM4
+zn pm level,zonePM4
 room pm4 level,zonePM4
 space pm4 conc,zonePM4
 zn pm4 active,zonePM4
@@ -19827,7 +19827,7 @@ space pm4 stat,zonePM4
 rmt pm4,zonePM4
 zone pm25,zonePM25
 zn pm25,zonePM25
-zone pm2 5,zonePM25
+zone pm2,zonePM25
 space pm25,zonePM25
 rm pm25,zonePM25
 zone pm25 level,zonePM25
@@ -19836,7 +19836,7 @@ space pm25,zonePM25
 room pm25,zonePM25
 zn pm25,zonePM25
 particulate pm25 zone,zonePM25
-zn pm2 5 mass,zonePM25
+zn pm2 mass,zonePM25
 zone pm25 concentration,zonePM25
 rm pm25,zonePM25
 pm25 zn,zonePM25
@@ -19847,17 +19847,17 @@ zn pm25 reading,zonePM25
 zone pm25,zonePM25
 pm25 conc zn,zonePM25
 space pm25,zonePM25
-zn pm2 5 conc,zonePM25
+zn pm2 conc,zonePM25
 rm pm25 level,zonePM25
-zone pm25 ugm3,zonePM25
+zone pm25 ugm,zonePM25
 pm25 sensor zone,zonePM25
 zn iaq pm25,zonePM25
 room pm25,zonePM25
-space pm2 5 level,zonePM25
+space pm2 level,zonePM25
 zone air pm25,zonePM25
 pm25 space,zonePM25
 zn pm25,zonePM25
-rm pm2 5 conc,zonePM25
+rm pm2 conc,zonePM25
 space pm25,zonePM25
 zn pm25,zonePM25
 pm25 rm,zonePM25
@@ -19871,9 +19871,9 @@ zn pm25 read,zonePM25
 rm pm25 conc,zonePM25
 space pm25 reading,zonePM25
 zn pm25 snsr,zonePM25
-particulate 2 5 zn,zonePM25
+particulate zn,zonePM25
 zone pm25 val,zonePM25
-zn pm2 5 level,zonePM25
+zn pm2 level,zonePM25
 room pm25 level,zonePM25
 space pm25 conc,zonePM25
 zn pm25 active,zonePM25
@@ -19883,29 +19883,29 @@ rm pm25 reading,zonePM25
 space pm25 stat,zonePM25
 rmt pm25,zonePM25
 zn pm25,zonePM25
-zone pm2 5,zonePM25
-room pm2 5,zonePM25
-space pm2 5,zonePM25
+zone pm2,zonePM25
+room pm2,zonePM25
+space pm2,zonePM25
 zn pm25,zonePM25
 zone pm25,zonePM25
 rm pm25,zonePM25
 spc pm25,zonePM25
 pm25 conc,zonePM25
 pm25 level,zonePM25
-zn pm2 5,zonePM25
+zn pm2,zonePM25
 zone pm25,zonePM25
 rm pm25,zonePM25
 spc pm25,zonePM25
-zn pm2 5 concentration,zonePM25
-room pm2 5 sensor,zonePM25
-space pm2 5 sensor,zonePM25
-zn pm2 5 s,zonePM25
-rm pm2 5 s,zonePM25
-spc pm2 5 s,zonePM25
+zn pm2 concentration,zonePM25
+room pm2 sensor,zonePM25
+space pm2 sensor,zonePM25
+zn pm2 s,zonePM25
+rm pm2 s,zonePM25
+spc pm2 s,zonePM25
 pm25 value,zonePM25
-pm2 5 zn,zonePM25
-pm2 5 rm,zonePM25
-pm2 5 spc,zonePM25
+pm2 zn,zonePM25
+pm2 rm,zonePM25
+pm2 spc,zonePM25
 zone pm25 val,zonePM25
 zn pm25 value,zonePM25
 rm pm25 value,zonePM25
@@ -19916,27 +19916,27 @@ pm25 spc t,zonePM25
 zn pm25 conc,zonePM25
 rm pm25 conc,zonePM25
 spc pm25 conc,zonePM25
-zn pm2 5 level,zonePM25
-rm pm2 5 level,zonePM25
-spc pm2 5 level,zonePM25
-pm2 5 zn sensor,zonePM25
-pm2 5 rm sensor,zonePM25
-pm2 5 spc sensor,zonePM25
+zn pm2 level,zonePM25
+rm pm2 level,zonePM25
+spc pm2 level,zonePM25
+pm2 zn sensor,zonePM25
+pm2 rm sensor,zonePM25
+pm2 spc sensor,zonePM25
 zn pm25 data,zonePM25
 rm pm25 data,zonePM25
 spc pm25 data,zonePM25
-pm2 5 concentration zone,zonePM25
-pm2 5 concentration room,zonePM25
-pm2 5 concentration space,zonePM25
-zn pm2 5 meas,zonePM25
-rm pm2 5 meas,zonePM25
-spc pm2 5 meas,zonePM25
+pm2 concentration zone,zonePM25
+pm2 concentration room,zonePM25
+pm2 concentration space,zonePM25
+zn pm2 meas,zonePM25
+rm pm2 meas,zonePM25
+spc pm2 meas,zonePM25
 pm25 room level,zonePM25
 pm25 space level,zonePM25
 pm25 zone level,zonePM25
-pm2 5 zn sns,zonePM25
-pm2 5 rm sns,zonePM25
-pm2 5 spc sns,zonePM25
+pm2 zn sns,zonePM25
+pm2 rm sns,zonePM25
+pm2 spc sns,zonePM25
 zn pm25 realtime,zonePM25
 zn pm10,zonePM10
 zone pm10,zonePM10
@@ -19948,7 +19948,7 @@ rm pm10,zonePM10
 spc pm10,zonePM10
 pm10 conc,zonePM10
 pm10 level,zonePM10
-zn pm 10,zonePM10
+zn pm,zonePM10
 zone pm10 concentration,zonePM10
 rm pm10,zonePM10
 spc pm10,zonePM10
@@ -20004,7 +20004,7 @@ rm pm1,zonePM1
 spc pm1,zonePM1
 pm1 conc,zonePM1
 pm1 level,zonePM1
-zn pm 1,zonePM1
+zn pm,zonePM1
 zone pm1 concentration,zonePM1
 rm pm1,zonePM1
 spc pm1,zonePM1

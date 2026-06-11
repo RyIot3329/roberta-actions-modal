@@ -1,0 +1,30 @@
+target,rows,status,proposed_target,proposed_in_eo66,collides_with_existing_class,rationale
+zoneTempMaxSP,63,merge_case,zoneTempMaxSp,True,True,case variant; eo66 canon is zoneTempMaxSp; training has BOTH as separate classes
+zoneTempMinSP,73,merge_case,zoneTempMinSp,True,True,case variant; eo66 canon is zoneTempMinSp; training has BOTH as separate classes
+condWaterLeavingFlow,63,rename,condLeavingFlow,True,False,"eo66 canon condLeavingFlow (""cond"" already means condenser water)"
+dischargeFanEnable,88,rename,dischargeFan,True,False,"eo66: dischargeFan = ""Discharge Fan Command"" (cmd marker); matches n4 convention"
+returnFanEnable,69,rename,returnFan,True,False,"eo66: returnFan = ""Return Fan Command"" (cmd marker); matches n4 convention"
+emergencyShutdown,58,merge_dup,emergencyStop,True,True,eo66 only defines emergencyStop; training has BOTH as separate classes (semantic duplicates)
+freezeProtectSp,57,rename,freezeProtectEnableSp,True,False,eo66 canon freezeProtectEnableSp
+dischargeFanHandMode,67,decision,dischargeFanMode,True,False,eo66 has dischargeFanMode but marks it blacklist -- map or keep as extension?
+dischargeFanDriveAlarm,68,decision,driveAlarm,True,True,"eo66 only has unscoped driveAlarm (also a training class, 63 rows) -- merge or keep fan-scoped?"
+dischargeFanFaultReset,65,decision,dischargeFanAlarmReset,True,True,"eo66 only has AlarmReset (also a training class, 67 rows) -- merge or keep?"
+dehumidSp,70,decision,dehumidEnableSp,True,True,"eo66 only has dehumidEnableSp (also a training class, 52 rows) -- merge or keep?"
+coolingStatus,69,decision,,False,False,no eo66 equivalent (only coolingStageStatus); unit-level status -- keep as extension?
+heatingStatus,59,decision,,False,False,no eo66 equivalent (only heatingStageStatus); keep as extension?
+econStatus,61,decision,,False,False,eo66 has econEnable/econMode but no status sensor; keep as extension?
+mixedDamper,61,extension,,False,False,genuine eo66 gap: mixed-air family has temp/humidity/pressure but no damper
+steamValve,67,extension,,False,False,genuine eo66 gap: steam family has pressure/temp only
+bypassFanStatus,59,extension,,False,False,no bypass fan family in eo66
+bypassPressure,76,extension,,False,False,no duct bypass pressure in eo66 (only hydronic priBypassPump*)
+dischargeFanBypass,65,extension,,False,False,VFD bypass; no eo66 equivalent
+dischargeFanFaultCode,65,extension,,False,False,"eo66 inconsistency: exhaustFanFaultCode exists, discharge variant missing"
+dischargeFanFrequency,68,extension,,False,False,electrical telemetry; eo66 has dischargeFanCurrent but not frequency
+dischargeFanVoltage,65,extension,,False,False,electrical telemetry; not in eo66
+dischargeFanEnergy,69,extension,,False,False,electrical telemetry; not in eo66
+dischargeFanMotorTemp,62,extension,,False,False,"eo66 inconsistency: exhaustFanMotorTemp exists, discharge variant missing"
+zoneO3,56,extension,,False,False,eo66 has outsideO3 but no zoneO3; consistent with zone gas-sensor naming
+zonePM1,56,extension,,False,False,eo66 has zonePM25/zonePM10 only
+zonePM4,57,extension,,False,False,eo66 has zonePM25/zonePM10 only
+zonePowerReal,57,extension,,False,False,"eo66 scopes PowerReal to equipment (comp/drive/fan), no zone-level"
+zoneTempAvgSp,57,extension,,False,False,eo66 has zoneTempAvg sensor but no setpoint for it
