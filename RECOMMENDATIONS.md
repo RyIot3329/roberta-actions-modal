@@ -240,3 +240,45 @@ validation (Integ05) 52.1% unique / 71.5% row-weighted; test (Integ06+Motorola)
 21.2% unique / 64.5% row-weighted. The retrained transformer must beat the
 linear floor; `output/best_metrics.json` starts unset so the first new-protocol
 run establishes the gate baseline.
+
+---
+
+## Addendum (2026-06-11, evening): Phase 1 IMPLEMENTED
+
+Phase 1 items reconciled against the real-data reality (items 9/10 superseded
+by human-labeled sites and the site-grouped split) and implemented in three
+streams:
+
+1. **Training hygiene** (`scripts/finetune.py`): temperature scaling fitted on
+   validation via LBFGS (clamped [0.25, 10]), stored as
+   `model.config.calibration_temperature`, applied to all reported confidences
+   and honored by `evaluate_external.py`; per-class classification report
+   persisted (`results['test_per_class']` + worst-20 table in the output txt);
+   `seed` plumbed end-to-end (config → workflow → TrainingArguments);
+   `ignore_mismatched_sizes` removed with a label-space assert;
+   `metric_for_best_model` exposed (default f1_weighted — macro would be
+   dominated by ~280 singleton classes); epochs 60→30 so cosine anneals;
+   defaults unified across finetune.py / train.yml / training.yml with
+   config/training.yml as the single source of truth; best_metrics.json now
+   records num_test_records + num_classes for composition-shift detection.
+2. **Synthetic coverage** (`scripts/generate_synthetic.py`,
+   `data/abbreviations.csv` 171 words = 102 curated + 69 mined,
+   `data/synthetic_points.csv` 10,126 texts / 293 classes, cap 40/class,
+   per-class sha256 RNG, byte-identical reruns): consumed at weight 0.5 so
+   real evidence and human templates always win conflicts. Result: classes
+   901→985 (63 generated-only), val coverage 94.6→98.5%, test 95.9→99.4%
+   (uncovered uniques 57→16 / 34→5). 13 generated texts collide with held-out
+   names — kept and flagged seen_in_train (6 exact label matches, 7 known
+   granularity ambiguities).
+3. **Augmentation** (`scripts/augment.py`, hooked after conflict resolution):
+   +15,669 train-only variants at multiplier 0.5 (equipment-stem prefixes
+   excluding class-bearing stems, token dropout, adjacent swaps; per-text
+   sha256 RNG). Decontamination dropped 17 held-out collisions and 418 train
+   collisions; seen_in_train counts unchanged (428/227). Knobs under
+   `preprocessing:` in config/training.yml. Train set: 47,200 records.
+
+Staged-push guidance (gate interpretability): A) hygiene-only push first if a
+clean confidence-semantics baseline is wanted; B) generator artifacts seed the
+gate on the new test composition; C) augmentation knob change lets the gate
+attribute its delta. Pushing everything at once is safe (baseline unset) but
+merges the attribution.

@@ -58,12 +58,43 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from clean_data import normalize_text
 from extract_real_data import build_canonicalizer
+from augment import augment_pool
 
 VAL_SITES = ['N4-Integ05']
 TEST_SITES = ['N4-Integ06', 'Motorola_Points']
 
 DROP_VALUES = {'DROP', 'DROPPED', 'DROPPED (TIE)'}
 AUDIT_APPLY_STATUSES = {'merge_case', 'rename', 'merge_dup'}
+
+PREPROCESSING_DEFAULTS = {
+    'use_generated_synthetic': True,
+    'augment_multiplier': 0.0,
+    'augment_seed': 1337,
+    'dropout_p': 0.1,
+}
+
+
+def load_preprocessing_config(path='config/training.yml'):
+    """Preprocessing knobs from the training config's `preprocessing:` section.
+
+    Lives there so knob changes retrain via the existing config push trigger
+    with full git provenance. Degrades to defaults (augmentation off) when
+    the file, section, or pyyaml is unavailable.
+    """
+    cfg = dict(PREPROCESSING_DEFAULTS)
+    try:
+        import yaml
+    except ImportError:
+        print("WARNING: pyyaml not installed -- using preprocessing defaults")
+        return cfg
+    if not os.path.exists(path):
+        return cfg
+    with open(path) as f:
+        section = (yaml.safe_load(f) or {}).get('preprocessing') or {}
+    for key in cfg:
+        if key in section and section[key] is not None:
+            cfg[key] = section[key]
+    return cfg
 
 
 def build_label_canonicalizer(eo66_path, audit_path):
@@ -140,7 +171,7 @@ def resolve_training_pool(weights, overrides):
             if len(label_weights) > 1:
                 conflicts.append({
                     'text': text,
-                    'targets': ' | '.join(f"{l} ({w})" for l, w in
+                    'targets': ' | '.join(f"{l} ({w:g})" for l, w in
                                           sorted(label_weights.items(), key=lambda x: -x[1])),
                     'resolution': f"{target if target is not None else 'DROPPED'} (override)",
                 })
@@ -157,7 +188,7 @@ def resolve_training_pool(weights, overrides):
         resolution = 'DROPPED (tie)' if is_tie else ranked[0][0]
         conflicts.append({
             'text': text,
-            'targets': ' | '.join(f"{l} ({w})" for l, w in ranked),
+            'targets': ' | '.join(f"{l} ({w:g})" for l, w in ranked),
             'resolution': resolution,
         })
         if not is_tie:
@@ -204,13 +235,22 @@ def write_jsonl(records, filepath):
 def convert_to_jsonl(
     input_csv='data/cleaned_data.csv',
     real_points_csv='data/real_points.csv',
+    synthetic_csv='data/synthetic_points.csv',
     output_dir='data',
     val_sites=None,
     test_sites=None,
+    use_generated=None,
+    augment_multiplier=None,
 ):
     val_sites = val_sites or VAL_SITES
     test_sites = test_sites or TEST_SITES
     os.makedirs(output_dir, exist_ok=True)
+
+    preprocessing = load_preprocessing_config()
+    if use_generated is None:
+        use_generated = bool(preprocessing['use_generated_synthetic'])
+    if augment_multiplier is not None:  # CLI override wins
+        preprocessing['augment_multiplier'] = augment_multiplier
 
     canon = build_label_canonicalizer(
         os.path.join(output_dir, 'eo66.xlsx'),
@@ -248,6 +288,21 @@ def convert_to_jsonl(
     train_sites = [s for s in sites if s not in val_sites + test_sites]
     print(f"Sites -> train: {train_sites}, val: {val_sites}, test: {test_sites}")
 
+    # ----- Generated synthetic texts (eo66 Display Name variants) -----
+    # Weight 0.5/row: any real occurrence (>=1) and any human-curated
+    # template (1.0) strictly outranks a generated row in conflicts.
+    generated = None
+    if use_generated and os.path.exists(synthetic_csv):
+        generated = pd.read_csv(synthetic_csv)
+        generated['text'] = generated['text'].astype(str).str.strip()
+        generated['target'] = generated['target'].astype(str).str.strip().map(canon)
+        generated = generated[(generated['text'].str.len() > 0)
+                              & (generated['target'].str.len() > 0)]
+        print(f"Generated synthetic: {len(generated)} rows, "
+              f"{generated['target'].nunique()} classes (weight 0.5/row)")
+    elif use_generated:
+        print(f"No {synthetic_csv} found -- continuing without generated texts")
+
     # ----- Training pool: weighted label evidence per text -----
     weights = defaultdict(Counter)
     for row in synth.itertuples():
@@ -255,6 +310,10 @@ def convert_to_jsonl(
     real_train = real[real['site'].isin(train_sites)]
     for row in real_train.itertuples():
         weights[row.text][row.label] += int(row.rows)
+    if generated is not None:
+        for row in generated.itertuples():
+            weights[row.text][row.target] += 0.5
+    organic_labels = set(synth['target']) | set(real_train['label'])
 
     overrides = load_overrides(os.path.join(output_dir, 'label_overrides.csv'), canon)
     if overrides:
@@ -277,16 +336,37 @@ def convert_to_jsonl(
     elif os.path.exists(conflicts_path):
         os.remove(conflicts_path)
 
-    # ----- Label space comes from the training pool -----
+    # ----- Train-time augmentation (train-only by construction) -----
+    heldout_texts = set(real[real['site'].isin(val_sites + test_sites)]['text'])
+    aug_variants, aug_stats = augment_pool(
+        resolved, heldout_texts, set(overrides), preprocessing)
+    if aug_stats['augmented_texts']:
+        drops = {k.replace('aug_dropped_', ''): v
+                 for k, v in aug_stats.items() if k.startswith('aug_dropped_')}
+        print(f"Augmentation: +{aug_stats['augmented_texts']} variants "
+              f"(multiplier {preprocessing['augment_multiplier']}, "
+              f"seed {preprocessing['augment_seed']}; dropped {drops})")
+
+    # ----- Label space comes from the resolved pool (augmentation only
+    # reuses existing labels) -----
     train_items = sorted(resolved.items())
     unique_labels = sorted({label for _, label in train_items})
     label2id = {label: idx for idx, label in enumerate(unique_labels)}
-    print(f"Classes: {len(unique_labels)}")
+    # Classes whose entire training support is generated text: held-out
+    # records they newly cover are attributable in the summary
+    generated_only = {l for l in unique_labels if l not in organic_labels}
+    print(f"Classes: {len(unique_labels)} "
+          f"({len(generated_only)} supported only by generated texts)")
 
     train_records = [
         {'text': text, 'label': label, 'label_id': label2id[label]}
         for text, label in train_items
     ]
+    train_records += [
+        {'text': text, 'label': label, 'label_id': label2id[label], 'augmented': True}
+        for text, label in aug_variants
+    ]
+    train_records.sort(key=lambda r: r['text'])
     assert len({r['text'] for r in train_records}) == len(train_records), \
         "Training texts must be unique after dedup"
 
@@ -315,8 +395,10 @@ def convert_to_jsonl(
                     uncovered.append(record)
         total = len(covered) + len(uncovered)
         seen = sum(1 for r in covered + uncovered if r['seen_in_train'])
+        gen_only = sum(1 for r in covered if r['label'] in generated_only)
         print(f"{name}: {total} unique texts from {split_sites} "
               f"({len(covered)} covered = {len(covered) / total:.1%}, "
+              f"{gen_only} covered only via generated classes, "
               f"{seen} seen in train, {ambiguous} ambiguous-gold dropped)")
         return covered, uncovered, ambiguous
 
@@ -340,8 +422,11 @@ def convert_to_jsonl(
         }, f, indent=2, ensure_ascii=False)
     print(f"  Saved: {label_mapping_path}")
 
-    class_counts = Counter(label for _, label in train_items)
-    text_lengths = pd.Series([len(t) for t, _ in train_items])
+    # Data-poverty signal stays pre-augmentation; the distribution the model
+    # actually trains on includes augmented variants
+    organic_counts = Counter(label for _, label in train_items)
+    class_counts = Counter(r['label'] for r in train_records)
+    text_lengths = pd.Series([len(r['text']) for r in train_records])
 
     def split_summary(records, uncovered, ambiguous, split_sites):
         total = len(records) + len(uncovered)
@@ -350,6 +435,7 @@ def convert_to_jsonl(
             'unique_texts': total,
             'covered': len(records),
             'coverage_pct': round(100 * len(records) / total, 1) if total else None,
+            'covered_generated_only': sum(1 for r in records if r['label'] in generated_only),
             'rows_total': sum(r['rows'] for r in records + uncovered),
             'seen_in_train': sum(1 for r in records + uncovered if r['seen_in_train']),
             'ambiguous_gold_dropped': ambiguous,
@@ -362,11 +448,17 @@ def convert_to_jsonl(
             'num_classes': len(unique_labels),
             'train': {
                 'unique_texts': len(train_records),
+                'unique_texts_organic': len(train_items),
                 'synthetic_rows': len(synth),
+                'generated_rows': len(generated) if generated is not None else 0,
+                'generated_only_classes': len(generated_only),
                 'real_sites': train_sites,
                 'real_rows_weight': int(real_train['rows'].sum()),
                 'conflicting_texts': len(conflicts),
-                'classes_with_lt3_texts': sum(1 for c in class_counts.values() if c < 3),
+                'classes_with_lt3_texts': sum(1 for c in organic_counts.values() if c < 3),
+                'augment_multiplier': preprocessing['augment_multiplier'],
+                'augment_seed': preprocessing['augment_seed'],
+                **aug_stats,
             },
             'validation': split_summary(val_records, val_uncovered, val_ambiguous, val_sites),
             'test': split_summary(test_records, test_uncovered, test_ambiguous, test_sites),
@@ -388,6 +480,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Build site-grouped train/val/test JSONL files')
     parser.add_argument('--input-csv', default='data/cleaned_data.csv')
     parser.add_argument('--real-points', default='data/real_points.csv')
+    parser.add_argument('--synthetic-points', default='data/synthetic_points.csv',
+                        help='Generated texts from scripts/generate_synthetic.py')
+    parser.add_argument('--no-generated', action='store_true',
+                        help='Ignore the generated synthetic texts')
+    parser.add_argument('--augment-multiplier', type=float, default=None,
+                        help='Override preprocessing.augment_multiplier from config')
+    parser.add_argument('--no-augment', action='store_true',
+                        help='Disable train-time augmentation')
     parser.add_argument('--output-dir', default='data')
     parser.add_argument('--val-sites', default=','.join(VAL_SITES),
                         help='Comma-separated site names held out for validation')
@@ -397,7 +497,10 @@ if __name__ == "__main__":
     convert_to_jsonl(
         input_csv=args.input_csv,
         real_points_csv=args.real_points,
+        synthetic_csv=args.synthetic_points,
         output_dir=args.output_dir,
         val_sites=[s for s in args.val_sites.split(',') if s],
         test_sites=[s for s in args.test_sites.split(',') if s],
+        use_generated=False if args.no_generated else None,
+        augment_multiplier=0.0 if args.no_augment else args.augment_multiplier,
     )

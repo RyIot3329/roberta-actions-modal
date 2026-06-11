@@ -1,34 +1,5 @@
-{"text": "chws byp vlv cmd", "label": "secEnteringBypassValve", "site": "N4-Integ06", "rows": 1, "seen_in_train": false}
-{"text": "cws prs", "label": "condLeavingPressure", "site": "N4-Integ06", "rows": 1, "seen_in_train": false}
-{"text": "cond pressure", "label": "condLeavingPressure", "site": "N4-Integ06", "rows": 2, "seen_in_train": true}
-{"text": "enrg total", "label": "energyMax", "site": "N4-Integ06", "rows": 153, "seen_in_train": false}
-{"text": "evap pressure", "label": "evapLeavingPressure", "site": "N4-Integ06", "rows": 2, "seen_in_train": true}
-{"text": "evap sat temp", "label": "compSuctionSatTemp", "site": "N4-Integ06", "rows": 2, "seen_in_train": true}
-{"text": "hw rst h", "label": "secLeavingTempHiSp", "site": "N4-Integ06", "rows": 11, "seen_in_train": false}
-{"text": "hw rst l", "label": "secLeavingTempLoSp", "site": "N4-Integ06", "rows": 11, "seen_in_train": false}
-{"text": "hx flw sp", "label": "secEnteringFlowSp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false}
 {"text": "hx cw flw", "label": "priFlow", "site": "N4-Integ06", "rows": 1, "seen_in_train": false}
-{"text": "min co lvl", "label": "zoneCO2MinSp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false}
 {"text": "oa dmp sts", "label": "outsideDamperStatus", "site": "N4-Integ06", "rows": 5, "seen_in_train": true}
-{"text": "power factor", "label": "powerFactor", "site": "N4-Integ06", "rows": 1, "seen_in_train": false}
-{"text": "rad flr flw", "label": "secFlowStatus", "site": "N4-Integ06", "rows": 1, "seen_in_train": false}
-{"text": "rad vlv out", "label": "secEnteringBypassValve", "site": "N4-Integ06", "rows": 1, "seen_in_train": false}
-{"text": "rel pwr total", "label": "powerRealMax", "site": "N4-Integ06", "rows": 152, "seen_in_train": false}
 {"text": "rm int dmp out", "label": "RmIntDmpOut", "site": "N4-Integ06", "rows": 2, "seen_in_train": false}
-{"text": "sys hw rst h", "label": "priLeavingTempHiSp", "site": "N4-Integ06", "rows": 4, "seen_in_train": false}
-{"text": "sys hw rst l", "label": "priLeavingTempLoSp", "site": "N4-Integ06", "rows": 4, "seen_in_train": false}
-{"text": "sys sys hw byp vlv cmd", "label": "secEnteringBypassValve", "site": "N4-Integ06", "rows": 4, "seen_in_train": false}
-{"text": "sys sys hw byp vlv pos", "label": "secEnteringBypassValveFb", "site": "N4-Integ06", "rows": 4, "seen_in_train": false}
 {"text": "vav avg dmp cmd", "label": "zoneDischargeDamperAvg", "site": "N4-Integ06", "rows": 10, "seen_in_train": false}
-{"text": "vlv byp", "label": "secEnteringBypassValve", "site": "N4-Integ06", "rows": 1, "seen_in_train": false}
-{"text": "wh min spd", "label": "wheelSpeedMinSp", "site": "N4-Integ06", "rows": 2, "seen_in_train": false}
 {"text": "wtr smr mode", "label": "mode02", "site": "N4-Integ06", "rows": 2, "seen_in_train": false}
-{"text": "cooldown command", "label": "morningCoolDown", "site": "Motorola_Points", "rows": 3, "seen_in_train": false}
-{"text": "moto ahu ea fan vfd flt", "label": "exhaustFanFault", "site": "Motorola_Points", "rows": 7, "seen_in_train": false}
-{"text": "moto ahu ma temp sp off", "label": "mixedTempDb", "site": "Motorola_Points", "rows": 7, "seen_in_train": false}
-{"text": "moto ahu sa hi st alm", "label": "dischargeFanPressureHiAlarm", "site": "Motorola_Points", "rows": 7, "seen_in_train": false}
-{"text": "moto cws ch sec chwp vfd flt", "label": "priPumpFault", "site": "Motorola_Points", "rows": 2, "seen_in_train": false}
-{"text": "moto cws chwp min spd", "label": "priPumpSpeedMinSp", "site": "Motorola_Points", "rows": 1, "seen_in_train": false}
-{"text": "moto cws chws temp sp", "label": "priLeavingPressureSp", "site": "Motorola_Points", "rows": 1, "seen_in_train": false}
-{"text": "return smoke detect", "label": "returnSmokeAlarm", "site": "Motorola_Points", "rows": 1, "seen_in_train": false}
-{"text": "smoke return", "label": "returnSmokeAlarm", "site": "Motorola_Points", "rows": 1, "seen_in_train": false}

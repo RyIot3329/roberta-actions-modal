@@ -116,7 +116,12 @@ def main():
     # names; canonicalizing its outputs scores them fairly
     id2label = {int(k): canon(v) for k, v in model.config.id2label.items()}
     model_labels = set(id2label.values())
-    print(f"Model loaded on {device}: {len(model_labels)} classes (after canonicalization)")
+    # Calibration: models trained with temperature scaling carry T in their
+    # config; dividing logits by it makes confidences honest probabilities
+    temperature = float(getattr(model.config, "calibration_temperature", None) or 1.0)
+    print(f"Model loaded on {device}: {len(model_labels)} classes (after canonicalization), "
+          f"calibration temperature {temperature:.3f}"
+          + ("" if temperature != 1.0 else " (none stored; raw softmax)"))
 
     # Dataset labels the model has never seen are impossible to get right
     data_labels = set(df["label"])
@@ -139,7 +144,7 @@ def main():
             batch = unique_texts[i:i + BATCH_SIZE]
             inputs = tokenizer(batch, padding=True, truncation=True,
                                max_length=32, return_tensors="pt").to(device)
-            probs = torch.softmax(model(**inputs).logits, dim=1)
+            probs = torch.softmax(model(**inputs).logits / temperature, dim=1)
             confs, ids = probs.max(dim=1)
             for text, pid, conf in zip(batch, ids.tolist(), confs.tolist()):
                 pred_label[text] = id2label[pid]

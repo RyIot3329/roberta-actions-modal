@@ -5,10 +5,11 @@
 # For manual runs via GitHub Actions UI, you can override these with workflow_dispatch inputs.
 
 model: "microsoft/deberta-v3-base"
-# At batch_size 128 an epoch is only ~97 optimizer steps (~16s on A100), so
-# epochs is a ceiling -- early stopping (patience 3) halts training at the
-# plateau. LR is sqrt-scaled for the 4x batch increase (2e-5 @ bs32 -> 4e-5).
-epochs: 60
+# Epochs is the cosine-anneal horizon AND a ceiling -- early stopping
+# (patience 3) halts at the plateau. 30 lets the anneal actually complete:
+# the last 60-epoch run stopped at 26, leaving the LR at ~37% of peak.
+# LR is sqrt-scaled for the 4x batch increase (2e-5 @ bs32 -> 4e-5).
+epochs: 30
 batch_size: 128
 learning_rate: "4e-5"
 max_seq_length: 32
@@ -21,6 +22,11 @@ warmup_ratio: "0.1"
 # Softens the saturated 0.99+ confidences so the auto-accept threshold has
 # headroom to separate sure from unsure predictions.
 label_smoothing: "0.1"
+# Checkpoint selection on validation. f1_weighted tracks the operational
+# row-match rate; f1_macro would be dominated by the ~280 singleton classes.
+metric_for_best_model: "f1_weighted"
+# Reproducibility: change for multi-seed variance runs (Actions tab).
+seed: 42
 push_to_hub: true
 hf_repo: "RyIoT33/haystack-autotagging"
 
@@ -28,3 +34,17 @@ hf_repo: "RyIoT33/haystack-autotagging"
 # Note: bf16 requires Ampere or newer (A100/L4/A10/H100); the script falls back to fp16 on T4.
 # An L4 also handles this workload fine at lower cost if A100 capacity is tight.
 gpu: "A100"
+
+# Preprocessing knobs, read by scripts/convert_to_jsonl.py (the workflow's
+# flat-key lookups ignore this section). Changing them retrains via the
+# existing config push trigger with full git provenance.
+preprocessing:
+  # Include data/synthetic_points.csv (eo66 Display Name variants for thin
+  # classes, weight 0.5/row -- real evidence and human templates outrank it).
+  use_generated_synthetic: true
+  # Train-only augmentation: ~multiplier x organic texts as perturbed variants
+  # (equipment-stem prefixes, token dropout, adjacent swaps). 0 disables.
+  # Variants colliding with held-out site texts are dropped (decontamination).
+  augment_multiplier: 0.5
+  augment_seed: 1337
+  dropout_p: 0.1

@@ -123,6 +123,8 @@ on:
       # tab / workflow_dispatch to retrain after code changes).
       - "data/train_all.csv"
       - "data/real_points.csv"
+      - "data/synthetic_points.csv"
+      - "data/abbreviations.csv"
       - "data/label_overrides.csv"
       - "config/training.yml"
 
@@ -183,20 +185,23 @@ jobs:
             fi
           }
 
-          # Load all config values
+          # Load all config values (fallback defaults mirror config/training.yml,
+          # the single source of truth -- they only apply if the file/key is absent)
           MODEL=$(get_config "${{ github.event.inputs.model }}" "model" "microsoft/deberta-v3-base")
           GPU=$(get_config "${{ github.event.inputs.gpu }}" "gpu" "T4")
-          EPOCHS=$(get_config "${{ github.event.inputs.epochs }}" "epochs" "9")
+          EPOCHS=$(get_config "${{ github.event.inputs.epochs }}" "epochs" "30")
           BATCH_SIZE=$(get_config "${{ github.event.inputs.batch_size }}" "batch_size" "128")
-          LEARNING_RATE=$(get_config "${{ github.event.inputs.learning_rate }}" "learning_rate" "1e-5")
+          LEARNING_RATE=$(get_config "${{ github.event.inputs.learning_rate }}" "learning_rate" "4e-5")
           MAX_SEQ_LENGTH=$(get_config "${{ github.event.inputs.max_seq_length }}" "max_seq_length" "32")
           OPTIMIZER=$(get_config "${{ github.event.inputs.optimizer }}" "optimizer" "adamw_torch")
-          SCHEDULER=$(get_config "${{ github.event.inputs.scheduler }}" "scheduler" "linear")
+          SCHEDULER=$(get_config "${{ github.event.inputs.scheduler }}" "scheduler" "cosine")
           GRADIENT_ACCUMULATION=$(get_config "${{ github.event.inputs.gradient_accumulation }}" "gradient_accumulation" "1")
-          MIXED_PRECISION=$(get_config "${{ github.event.inputs.mixed_precision }}" "mixed_precision" "fp16")
-          WEIGHT_DECAY=$(get_config "${{ github.event.inputs.weight_decay }}" "weight_decay" "0.075")
+          MIXED_PRECISION=$(get_config "${{ github.event.inputs.mixed_precision }}" "mixed_precision" "bf16")
+          WEIGHT_DECAY=$(get_config "${{ github.event.inputs.weight_decay }}" "weight_decay" "0.01")
           WARMUP_RATIO=$(get_config "${{ github.event.inputs.warmup_ratio }}" "warmup_ratio" "0.1")
-          LABEL_SMOOTHING=$(get_config "" "label_smoothing" "0.0")
+          LABEL_SMOOTHING=$(get_config "" "label_smoothing" "0.1")
+          METRIC_FOR_BEST_MODEL=$(get_config "" "metric_for_best_model" "f1_weighted")
+          SEED=$(get_config "" "seed" "42")
           PUSH_TO_HUB=$(get_config "${{ github.event.inputs.push_to_hub }}" "push_to_hub" "true")
           HF_REPO=$(get_config "${{ github.event.inputs.hf_repo }}" "hf_repo" "RyIoT33/haystack-autotagging")
 
@@ -214,6 +219,8 @@ jobs:
           echo "weight_decay=$WEIGHT_DECAY" >> $GITHUB_OUTPUT
           echo "warmup_ratio=$WARMUP_RATIO" >> $GITHUB_OUTPUT
           echo "label_smoothing=$LABEL_SMOOTHING" >> $GITHUB_OUTPUT
+          echo "metric_for_best_model=$METRIC_FOR_BEST_MODEL" >> $GITHUB_OUTPUT
+          echo "seed=$SEED" >> $GITHUB_OUTPUT
           echo "push_to_hub=$PUSH_TO_HUB" >> $GITHUB_OUTPUT
           echo "hf_repo=$HF_REPO" >> $GITHUB_OUTPUT
 
@@ -310,6 +317,8 @@ jobs:
           CMD="$CMD --weight-decay ${{ steps.config.outputs.weight_decay }}"
           CMD="$CMD --warmup-ratio ${{ steps.config.outputs.warmup_ratio }}"
           CMD="$CMD --label-smoothing ${{ steps.config.outputs.label_smoothing }}"
+          CMD="$CMD --metric-for-best-model ${{ steps.config.outputs.metric_for_best_model }}"
+          CMD="$CMD --seed ${{ steps.config.outputs.seed }}"
 
           # Add HF Hub flags if pushing
           if [ "${{ steps.config.outputs.push_to_hub }}" == "true" ]; then

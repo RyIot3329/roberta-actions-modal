@@ -49,6 +49,9 @@ compressorfault,compAlarm (1) | compFault (1),compFault (override)
 compressor fault,compFault (6) | compAlarm (2),compFault (override)
 compressorflt,compAlarm (1) | compFault (1),compFault (override)
 compressor flt,compFault (4) | compAlarm (2),compFault (override)
+comp en,compEnable (5) | compEnergy (0.5),compEnable
+cmp en,compEnable (4) | compEnergy (0.5),compEnable
+compressor en,compEnable (4) | compEnergy (0.5),compEnable
 condenser,cond (2) | condFanSpeed (2),DROPPED (tie)
 cwr t,condEnteringTemp (5) | condLeavingTemp (4) | secEnteringTemp (2) | twrEnteringTemp (1) | twrLeavingTemp (1),condEnteringTemp
 cond water return temp,twrEnteringTemp (3) | condEnteringTemp (1),twrEnteringTemp
@@ -57,6 +60,8 @@ cws tmp,condLeavingTemp (10) | condEnteringTemp (7) | twrLeavingTemp (3) | priEn
 dehumid enable,dehumidEnable (3) | dehumidifier (2),dehumidEnable (override)
 dehum enable,dehumidEnable (4) | dehumidifier (2),dehumidEnable (override)
 dehumidifier enable,dehumidEnable (4) | dehumidifier (1),dehumidEnable (override)
+dehumid en cmd,dehumidEnable (2) | dehumidifierEnable (0.5),dehumidEnable
+dehumidifier enable cmd,dehumidEnable (1) | dehumidifierEnable (0.5),dehumidEnable
 dehum setpoint,dehumidSp (3) | dehumidEnableSp (2),dehumidSp (override)
 zone temp min sp,zoneTempMinSp (7) | zoneTempLoSp (1),zoneTempMinSp (override)
 zone temp low sp,zoneTempMinSp (2) | zoneTempLoSp (1),zoneTempMinSp (override)
@@ -153,6 +158,7 @@ l1 current,current (1) | currentPhaseA (1),currentPhaseA (override)
 l2 current,current (1) | currentPhaseB (1),currentPhaseB (override)
 l3 current,current (1) | currentPhaseC (1),currentPhaseC (override)
 motor current,twrFanCurrent (5) | secPumpCurrent (3) | current (1),twrFanCurrent
+compressor current,current (1) | compCurrent (0.5),current
 line i,currentPhaseA (1) | currentPhaseB (1) | currentPhaseC (1),DROPPED (tie)
 ph current,currentPhaseA (1) | currentPhaseB (1) | currentPhaseC (1),DROPPED (tie)
 ph i,currentPhaseA (1) | currentPhaseB (1) | currentPhaseC (1),DROPPED (tie)
@@ -163,7 +169,14 @@ phase current max,currentPhaseAMax (1) | currentPhaseBMax (1) | currentPhaseCMax
 ph currentmax,currentPhaseAMax (1) | currentPhaseBMax (1) | currentPhaseCMax (1),DROPPED (tie)
 ph i max,currentPhaseAMax (1) | currentPhaseBMax (1) | currentPhaseCMax (1),DROPPED (tie)
 phase i max,currentPhaseAMax (1) | currentPhaseBMax (1) | currentPhaseCMax (1),DROPPED (tie)
-dehum dmd,dehumidDemand (3) | dehumidifierDemand (1),dehumidDemand
+dehumid demand,dehumidDemand (6) | dehumidifierDemand (0.5),dehumidDemand
+dehum demand,dehumidDemand (1) | dehumidifierDemand (0.5),dehumidDemand
+dehum dmd,dehumidDemand (3) | dehumidifierDemand (1.5),dehumidDemand
+dehum req,dehumidDemand (3) | dehumidifierDemand (0.5),dehumidDemand
+dehumid req,dehumidDemand (3) | dehumidifierDemand (0.5),dehumidDemand
+dehmd demand,dehumidDemand (4) | dehumidifierDemand (0.5),dehumidDemand
+dehumidifier demand,dehumidDemand (4) | dehumidifierDemand (0.5),dehumidDemand
+dehumd demand,dehumidDemand (3) | dehumidifierDemand (0.5),dehumidDemand
 dehum sp,dehumidSp (5) | zoneHumiditySp (1),dehumidSp
 supply air dpt hi limit,dischargeDewpointHiAlarm (1) | dischargeDewpointHiSp (1),DROPPED (override)
 sup dpt hi limit,dischargeDewpointHiAlarm (1) | dischargeDewpointHiSp (1),DROPPED (override)
@@ -178,6 +191,7 @@ eaf cmd,exhaustFanEnable (1) | exhaustFan (1),DROPPED (tie)
 ra dmp,reliefDamper (58) | exhaustDamper (24) | returnDamper (12),reliefDamper
 ra fan out,returnFan (1) | returnFanSpeed (1),returnFanSpeed (override)
 ra fan sig,returnFanSpeed (3) | returnFan (1),returnFanSpeed
+zn co2 max sp,zoneCO2HiSp (1) | zoneCO2MaxSp (0.5),zoneCO2HiSp
 zn hi co2 trip,zoneCO2HiSp (1) | zoneCO2Alarm (1),DROPPED (override)
 stm vlv,heatingValve (6) | heatingValveTwoThird (3) | steamValve (1),heatingValve
 steam valve,heatingValve (24) | priValveOneThird (12) | priValveTwoThird (12) | steamValve (3),heatingValve
@@ -326,6 +340,7 @@ clg flow max,dischargeFlowCoolMaxSp (1484) | dischargeFlowMaxSp (268) | coldDeck
 clg flow min,dischargeFlowCoolMinSp (1500) | dischargeFlowMinSp (268) | coldDeckDischargeFlowMinSp (12),dischargeFlowCoolMinSp
 co2 sp,returnCO2Sp (122) | zoneCO2Sp (5),returnCO2Sp
 condp start control,condPump (2) | condfPump02 (1),condPump
+ct enable,twrFan (3) | twrEnable (0.5),twrFan
 ct iso vlv cmd,twrEnteringIsoValve (5) | twrIsoValve (4),twrEnteringIsoValve
 ctl stpt,zoneTempSp (2116) | zoneTempSpLocal (113),zoneTempSp
 ctl flow max,dischargeFlowMaxSp (22) | dischargeFlowCoolMaxSp (1),dischargeFlowMaxSp
@@ -462,6 +477,7 @@ power,powerReal (4) | twrFan01PowerReal (3) | secPump01PowerReal (2) | secPump02
 pchw p01 ena,evapPump (1) | secPump (1),DROPPED (tie)
 pchw p1 sts,evapPumpStatus (1) | secPumpStatus (1),DROPPED (tie)
 pmp cmd,secPump (3) | evapPump (2) | condPump (2) | heatingCoilPump (1),secPump
+pmp spd,secPumpSpeed (9) | pumpSpeed (0.5),secPumpSpeed
 pmp sts,secPumpStatus (3) | evapPumpStatus (2) | condPumpStatus (2) | heatingCoilPumpStatus (1),secPumpStatus
 pressure sp av,secPressureDeltaSp (3) | secPressureDelta31314Sp (1),secPressureDeltaSp
 primary he return temp,priEnteringTemp (1) | priLeavingTemp (1),DROPPED (tie)
@@ -567,6 +583,7 @@ ct isov c,twrEnteringIsoValve (3) | twrLeavingIsoValve (3) | twrIsoValve01 (1) |
 ct iso vlv,twrLeavingIsoValve (2) | twrEnteringIsoValve (2) | twr01IsoValve (1),DROPPED (tie)
 ct spd,twrFanSpeed (7) | twrFanSpeedFb (2) | twr01FanSpeed (1),twrFanSpeed
 ct ct hd vlv cmd,twr01IsoValveFb (1) | twr02IsoValveFb (1) | twr03IsoValveFb (1),DROPPED (tie)
+ct ena,systemEnable (2) | twrEnable (0.5),systemEnable
 ctl temp,zoneTemp (1097) | zoneTempSp (40),zoneTemp
 cts temp,twrLeavingTemp (1) | condLeavingTemp (1),DROPPED (tie)
 cvwhcs c,priMixingValve (1) | secLeavingIsoValve (1),DROPPED (tie)
@@ -594,7 +611,7 @@ dp,secLeavingPressure (1) | secPressureDelta (1),DROPPED (tie)
 dps,dischargeEnthalpySp (2) | secPressureDeltaSp (1),dischargeEnthalpySp
 dpsp,dischargePressureSp (10) | secPressureDeltaSp (1),dischargePressureSp
 damper comd,dischargeDamper (15) | dischargeDamperFb (1),dischargeDamper
-dehum mode,dehumidEnable (4) | dehumidifierStatus (1),dehumidEnable
+dehum mode,dehumidEnable (4) | dehumidifierStatus (1) | dehumidMode (0.5),dehumidEnable
 dmp cmd,dischargeDamper (177) | intakeDamper (11),dischargeDamper
 dmp pos,dischargeDamper (368) | damper (88),dischargeDamper
 drive status,dischargeFanStatus (1) | priPumpCommand (1) | returnFanStatus (1),DROPPED (tie)
@@ -608,7 +625,7 @@ est dmpr pos cd,coldDeckDamper (52) | dischargeDamperFb (29),coldDeckDamper
 est dmpr pos hd,hotDeckDamper (52) | hotDeckDamperFb (29),hotDeckDamper
 fan flow,dischargeFlow (30) | exhaustFlow (6),dischargeFlow
 fa byp dpr,faceDamper (2) | faceBypassDamper (1),faceDamper
-flow rate,condLeavingFlowTotal (1) | twrEnteringFlow (1),DROPPED (tie)
+flow rate,condLeavingFlowTotal (1) | twrEnteringFlow (1) | flow (0.5),DROPPED (tie)
 flr n chw dif prs,secPressureDelta10N (1) | secPressureDelta20N (1),DROPPED (tie)
 flr s chw dif prs,secPressureDelta10S (1) | secPressureDelta20S (1),DROPPED (tie)
 gly pmp sts,recPumpStatus (2) | circPumpStatus (1),recPumpStatus
@@ -725,6 +742,7 @@ chwsys dp,pressureDelta01 (1) | pressureDelta02 (1),DROPPED (tie)
 chw flow,secLeavingFlow (2) | evapFlowStatus (2) | evapLeavingFlow (1),DROPPED (tie)
 cnd flow switch stat,condLeavingFlow (2) | condFlowStatus (1),condLeavingFlow
 ct byp vlv pos,twrBypassValveFb (3) | twrBypassValve (3),DROPPED (tie)
+ct enbl,twrFan (2) | twrEnable (0.5),twrFan
 cwp cw pmp spd,condPumpSpeed (2) | evapPump01Frequency (1) | condPump01Frequency (1),condPumpSpeed
 cd flw sw,condFlowStatus (7) | condEnteringFlow (5),condFlowStatus
 chw dp sp,secPressureDeltaSp (2) | priPressureDeltaSp (1),secPressureDeltaSp
@@ -777,7 +795,9 @@ rec pmp sts,heatingCoilPumpStatus (4) | circPumpStatus (3),heatingCoilPumpStatus
 sa dmp pos,damper (35) | dischargeDamper (18),damper
 schw pump status,secPumpStatus (3) | pumpEnable (1),secPumpStatus
 sf spd sig,dischargeFanSpeedFb (4) | returnFanSpeed (1),dischargeFanSpeedFb
+smp pmp sts,secPumpStatus (3) | sumpPumpStatus (0.5),secPumpStatus
 sa pr sp,dischargePressureSp (2) | dischargePressure (1),dischargePressureSp
+stm tmp,priEnteringTemp (1) | steamTemp (0.5),priEnteringTemp
 twr freq,twrFan01Frequency (1) | twrFan02Frequency (1) | twrFan03Frequency (1) | twrFan04Frequency (1),DROPPED (tie)
 under flr tmp sp,zoneTempSp (3) | dischargeTempSp (2),zoneTempSp
 vav clg dmd,coolingDemand (140) | coldDeckDamper (29) | coolingValve (19),coolingDemand
@@ -823,6 +843,7 @@ hx free clg vlv cmd,priEnteringIsoValve (1) | secLeavingIsoValve (1),DROPPED (ti
 hx mech clg vlv cmd,condEnteringIsoValve (1) | evapLeavingIsoValve (1),DROPPED (tie)
 inlet heat max vol sp,dischargeFlowHeatMaxSp (317) | dischargeFlowMaxSp (17),dischargeFlowHeatMaxSp
 inlet heat min vol sp,dischargeFlowHeatMinSp (317) | dischargeFlowMinSp (17),dischargeFlowHeatMinSp
+inlet tmp,priEnteringTemp (3) | inletTemp (0.5),priEnteringTemp
 mecon c,outsideIsoDamper (11) | outsideDamper (1) | outsideIsoDamperFb (1),outsideIsoDamper
 moad o,minOutsideDamper (32) | outsideDamper (1),minOutsideDamper
 mphd c,minOutsideDamperFb (9) | minOutsideDamper01 (2) | outsideIsoDamper (2) | outsideDamper (1),minOutsideDamperFb
@@ -844,3 +865,39 @@ sf high cmd,dischargeFanSpeedMaxSp (20) | dischargeFanSpeedStage (15),dischargeF
 sf low cmd,dischargeFanSpeedMinSp (20) | dischargeFanSpeedStage (15),dischargeFanSpeedMinSp
 sf sts virt,dischargeFanStatus (20) | dischageFanStatus (9),dischargeFanStatus
 uocc htg sp,dischargeFlowUnoccHeatSp (317) | unoccupiedHeatSp (17),dischargeFlowUnoccHeatSp
+ct ent flo,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+ct ent flow,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+ct ent flw,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+ct enter flo,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+ct enter flow,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+ct enter flw,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+ct entering flo,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+ct entering flow,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+ct entering flw,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+ct entr flo,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+ct entr flow,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+ct entr flw,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+tower ent flo,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+tower ent flow,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+tower ent flw,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+tower enter flo,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+tower enter flow,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+tower enter flw,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+tower entering flo,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+tower entering flow,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+tower entering flw,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+tower entr flo,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+tower entr flow,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+tower entr flw,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+twr ent flo,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+twr ent flow,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+twr ent flw,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+twr enter flo,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+twr enter flow,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+twr enter flw,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+twr entering flo,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+twr entering flow,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+twr entering flw,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+twr entr flo,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+twr entr flow,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)
+twr entr flw,twrEnteringFlow (0.5) | twrLeavingFlow (0.5),DROPPED (tie)

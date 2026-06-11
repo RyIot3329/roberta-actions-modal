@@ -60,17 +60,19 @@ def _train_impl(
     label2id: dict,
     id2label: dict,
     model_name: str = "microsoft/deberta-v3-base",
-    epochs: int = 9,
+    epochs: int = 30,
     batch_size: int = 128,
-    learning_rate: float = 1e-5,
+    learning_rate: float = 4e-5,
     max_seq_length: int = 32,
     optimizer: str = "adamw_torch",
-    scheduler: str = "linear",
-    gradient_accumulation: int = 8,
-    mixed_precision: str = "fp16",
-    weight_decay: float = 0.075,
+    scheduler: str = "cosine",
+    gradient_accumulation: int = 1,
+    mixed_precision: str = "bf16",
+    weight_decay: float = 0.01,
     warmup_ratio: float = 0.1,
-    label_smoothing: float = 0.0,
+    label_smoothing: float = 0.1,
+    metric_for_best_model: str = "f1_weighted",
+    seed: int = 42,
     push_to_hub: bool = False,
     hf_repo: str = None,
     hf_token: str = None,
@@ -78,8 +80,9 @@ def _train_impl(
 ) -> dict:
     """
     Fine-tune a transformer model on the provided data.
-    
+
     This is the shared implementation called by GPU-specific wrapper functions.
+    Defaults mirror config/training.yml, which is the single source of truth.
     """
     import json
     import torch
@@ -90,10 +93,13 @@ def _train_impl(
         Trainer,
         EarlyStoppingCallback,
         DataCollatorWithPadding,
+        set_seed,
     )
     from datasets import Dataset
     from sklearn.metrics import accuracy_score, f1_score, classification_report
     import numpy as np
+
+    set_seed(seed)
 
     # TF32 is free speedup on Ampere+ (A100/L4/H100) with no accuracy cost
     torch.backends.cuda.matmul.allow_tf32 = True
@@ -130,6 +136,8 @@ def _train_impl(
     print(f"  Weight decay: {weight_decay}")
     print(f"  Warmup ratio: {warmup_ratio}")
     print(f"  Label smoothing: {label_smoothing}")
+    print(f"  Model selection metric: {metric_for_best_model}")
+    print(f"  Seed: {seed}")
     print("-" * 60)
     print(f"Push to Hub: {push_to_hub}")
     if push_to_hub and baseline_f1 is not None:
@@ -156,11 +164,14 @@ def _train_impl(
     # Load tokenizer and model
     print(f"\nLoading model: {model_name}")
     
+    assert len(label2id) == num_labels == len(id2label), (
+        f"Label space mismatch: label2id has {len(label2id)}, "
+        f"num_labels is {num_labels}, id2label has {len(id2label)}")
+
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForSequenceClassification.from_pretrained(
         model_name,
         num_labels=num_labels,
-        ignore_mismatched_sizes=True,  # Handle classifier head size mismatch
     )
 
     # Print model info
@@ -239,8 +250,9 @@ def _train_impl(
         eval_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
-        metric_for_best_model="f1_weighted",
+        metric_for_best_model=metric_for_best_model,
         greater_is_better=True,
+        seed=seed,
         logging_steps=10,
         fp16=fp16,
         bf16=bf16,
@@ -269,12 +281,27 @@ def _train_impl(
     print("\nEvaluating...")
     eval_result = trainer.evaluate()
 
-    # Batched inference on validation and held-out test sets
-    def run_inference(dataset, samples, name):
-        print(f"\nRunning {name} inference...")
-        output = trainer.predict(dataset)
-        logits = torch.from_numpy(output.predictions)
-        probs = torch.softmax(logits, dim=1)
+    # Post-hoc temperature scaling: a single scalar T fitted on validation
+    # (the only split we may tune on) so reported confidences are calibrated.
+    # Stored in the model config below so downstream consumers apply it too.
+    def fit_temperature(logits, labels):
+        log_t = torch.zeros(1, requires_grad=True)
+        lbfgs = torch.optim.LBFGS([log_t], lr=0.1, max_iter=50)
+
+        def closure():
+            lbfgs.zero_grad()
+            loss = torch.nn.functional.cross_entropy(logits / torch.exp(log_t), labels)
+            loss.backward()
+            return loss
+
+        lbfgs.step(closure)
+        # Clamp away the degenerate optimum (T->0 when val is near-perfectly
+        # classified) so stored confidences never saturate to exactly 1.0
+        return float(min(max(torch.exp(log_t).item(), 0.25), 10.0))
+
+    def build_predictions(output, samples, temperature):
+        logits = torch.from_numpy(output.predictions).float()
+        probs = torch.softmax(logits / temperature, dim=1)
         confidences, pred_ids = probs.max(dim=1)
 
         predictions = []
@@ -288,30 +315,45 @@ def _train_impl(
                 "confidence": confidence,
                 "correct": pred_id == sample["label_id"],
             })
-        return predictions, output.metrics
+        return predictions
 
-    predictions_list, _ = run_inference(val_dataset, val_data, "validation")
+    print("\nRunning validation inference...")
+    val_output = trainer.predict(val_dataset)
+    temperature = fit_temperature(
+        torch.from_numpy(val_output.predictions).float(),
+        torch.tensor([d["label_id"] for d in val_data]),
+    )
+    print(f"Calibration temperature (fitted on validation): {temperature:.3f}")
+    model.config.calibration_temperature = temperature
+
+    predictions_list = build_predictions(val_output, val_data, temperature)
     val_correct = sum(1 for p in predictions_list if p["correct"])
     val_total = len(predictions_list)
     val_accuracy = val_correct / val_total if val_total > 0 else 0
 
     # Test set was never seen during training or model selection, so these
     # are the headline metrics
-    test_predictions, test_metrics = run_inference(test_dataset, test_data, "test")
+    print("\nRunning test inference...")
+    test_output = trainer.predict(test_dataset)
+    test_metrics = test_output.metrics
+    test_predictions = build_predictions(test_output, test_data, temperature)
     test_correct = sum(1 for p in test_predictions if p["correct"])
     test_total = len(test_predictions)
     test_accuracy = test_correct / test_total if test_total > 0 else 0
 
     all_labels = [p["actual_id"] for p in test_predictions]
     all_preds = [p["predicted_id"] for p in test_predictions]
+    report_label_ids = sorted(set(all_labels + all_preds))
+    report_args = dict(
+        labels=report_label_ids,
+        target_names=[id2label_int[i] for i in report_label_ids],
+        zero_division=0,
+    )
     print("\nTest Set Classification Report:")
-    print(classification_report(
-        all_labels,
-        all_preds,
-        labels=sorted(set(all_labels + all_preds)),
-        target_names=[id2label_int[i] for i in sorted(set(all_labels + all_preds))],
-        zero_division=0
-    ))
+    print(classification_report(all_labels, all_preds, **report_args))
+    # Persisted per-class metrics: per-run regressions stay visible in the
+    # results PR instead of vanishing with the Modal logs
+    test_per_class = classification_report(all_labels, all_preds, output_dict=True, **report_args)
 
     # Quality gate: never overwrite the production model with a worse one.
     # The baseline comes from output/best_metrics.json in the repo (written
@@ -411,6 +453,8 @@ def _train_impl(
             "weight_decay": weight_decay,
             "warmup_ratio": warmup_ratio,
             "label_smoothing": label_smoothing,
+            "metric_for_best_model": metric_for_best_model,
+            "seed": seed,
             "num_labels": num_labels,
             "train_samples": len(train_data),
             "val_samples": len(val_data),
@@ -451,6 +495,8 @@ def _train_impl(
         "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU",
         "huggingface_url": hf_url,
         "quality_gate": gate,
+        "calibration_temperature": temperature,
+        "test_per_class": test_per_class,
     }
 
     # Save results to volume
@@ -530,23 +576,28 @@ GPU_FUNCTIONS = {
 def main(
     model: str = "microsoft/deberta-v3-base",
     gpu: str = "T4",
-    epochs: int = 9,
+    epochs: int = 30,
     batch_size: int = 128,
-    learning_rate: float = 1e-5,
+    learning_rate: float = 4e-5,
     max_seq_length: int = 32,
     optimizer: str = "adamw_torch",
-    scheduler: str = "linear",
+    scheduler: str = "cosine",
     gradient_accumulation: int = 1,
-    mixed_precision: str = "fp16",
-    weight_decay: float = 0.075,
+    mixed_precision: str = "bf16",
+    weight_decay: float = 0.01,
     warmup_ratio: float = 0.1,
-    label_smoothing: float = 0.0,
+    label_smoothing: float = 0.1,
+    metric_for_best_model: str = "f1_weighted",
+    seed: int = 42,
     push_to_hub: bool = False,
     hf_repo: str = None,
 ):
     """
     Run fine-tuning from the command line.
-    
+
+    Defaults mirror config/training.yml (the single source of truth); the
+    GitHub workflow passes every value explicitly from that file.
+
     Args:
         model: Model to fine-tune (e.g., microsoft/deberta-v3-base, FacebookAI/roberta-base)
         gpu: GPU type for Modal (T4, L4, A10G, A100, H100)
@@ -560,7 +611,10 @@ def main(
         mixed_precision: Mixed precision mode (fp16, bf16, no)
         weight_decay: Weight decay for regularization
         warmup_ratio: Ratio of total steps for warmup
-        push_to_hub: Whether to push model to Hugging Face Hub
+        label_smoothing: Label smoothing factor (also softens confidences)
+        metric_for_best_model: Validation metric for checkpoint selection
+        seed: Random seed (data order, dropout, init) for reproducible runs
+        push_to_hub: Whether to push model to Hugging Face Hub (quality-gated)
         hf_repo: Hugging Face repo ID (username/model-name)
     """
     import json
@@ -663,18 +717,24 @@ def main(
         weight_decay=weight_decay,
         warmup_ratio=warmup_ratio,
         label_smoothing=label_smoothing,
+        metric_for_best_model=metric_for_best_model,
+        seed=seed,
         push_to_hub=push_to_hub,
         hf_repo=hf_repo,
         hf_token=hf_token,
         baseline_f1=baseline_f1,
     )
 
-    # A successful gated push establishes the new baseline
+    # A successful gated push establishes the new baseline. Test-set size and
+    # class count are recorded so composition shifts (new sites / new classes)
+    # are detectable when comparing across runs.
     if results.get("huggingface_url"):
         with open(best_metrics_path, "w") as f:
             json.dump({
                 "test_f1_weighted": results["test_metrics"].get("f1_weighted"),
                 "test_accuracy": results["test_metrics"].get("accuracy"),
+                "num_test_records": results["config"].get("test_samples"),
+                "num_classes": results["config"].get("num_labels"),
                 "model": results["model"],
                 "timestamp": results["timestamp"],
             }, f, indent=2)
@@ -717,6 +777,19 @@ def main(
             g = results['quality_gate']
             f.write(f"\nQuality Gate: {'PASSED' if g['passed'] else 'FAILED -- Hub push skipped'} "
                     f"(test f1 {g['new_f1']:.4f} vs previous best {g['baseline_f1']:.4f})\n")
+        if results.get('calibration_temperature'):
+            f.write(f"\nCalibration temperature (fitted on validation, stored in model config): "
+                    f"{results['calibration_temperature']:.3f}\n")
+
+        per_class = results.get('test_per_class') or {}
+        scored = [(name, m) for name, m in per_class.items()
+                  if isinstance(m, dict) and 'f1-score' in m and m.get('support', 0) > 0]
+        if scored:
+            worst = sorted(scored, key=lambda x: (x[1]['f1-score'], -x[1]['support']))[:20]
+            f.write("\nWorst 20 test classes by F1 (precision / recall / f1 / support):\n")
+            for name, m in worst:
+                f.write(f"  {name}: {m['precision']:.2f} / {m['recall']:.2f} / "
+                        f"{m['f1-score']:.2f} / {int(m['support'])}\n")
 
         # Add inference results for both sets
         for title, key in [("Validation", 'validation_inference'), ("Test", 'test_inference')]:
