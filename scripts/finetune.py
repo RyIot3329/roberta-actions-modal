@@ -49,6 +49,8 @@ AVAILABLE_MODELS = {
     "deberta-v3-large": "microsoft/deberta-v3-large",
     "roberta-base": "FacebookAI/roberta-base",
     "roberta-large": "FacebookAI/roberta-large",
+    # DAPT checkpoint produced by scripts/dapt.py (private repo)
+    "deberta-v3-bms": "RyIoT33/deberta-v3-bms-base",
 }
 
 
@@ -168,10 +170,13 @@ def _train_impl(
         f"Label space mismatch: label2id has {len(label2id)}, "
         f"num_labels is {num_labels}, id2label has {len(id2label)}")
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    # token enables private base checkpoints (e.g. the DAPT-pretrained
+    # encoder); None is fine for public models
+    tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
     model = AutoModelForSequenceClassification.from_pretrained(
         model_name,
         num_labels=num_labels,
+        token=hf_token,
     )
 
     # Print model info

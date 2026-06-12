@@ -1,6 +1,9 @@
 # Secrets
 .env
 
+# Derived inspection artifact (rebuilt by scripts/dapt.py --corpus-only)
+data/dapt_corpus.txt
+
 # Python
 __pycache__/
 *.py[cod]

@@ -25,6 +25,7 @@ on:
           - "microsoft/deberta-v3-large"
           - "FacebookAI/roberta-base"
           - "FacebookAI/roberta-large"
+          - "RyIoT33/deberta-v3-bms-base"
       gpu:
         description: "GPU type for Modal"
         required: false

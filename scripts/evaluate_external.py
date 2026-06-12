@@ -8,23 +8,33 @@ labels (eo66 numbered variants + target_audit merges/renames) and scores
 predictions. Predictions are passed through the same canonicalizer so
 models trained on pre-audit label names get alias credit.
 
+Name + description ensemble: when a record carries a description (e.g.
+BACnet's description property), the model predicts BOTH the normalized
+name and the normalized description, and the higher-confidence prediction
+wins. Confidences are temperature-calibrated (the model stores T fitted on
+validation), so the two views are comparable probabilities. This rescues
+semantically empty names like "AV 00" whose description ("Heating Signal")
+carries the meaning, without changing the model's input contract -- the
+production edge tagger should apply the same rule.
+
 Inputs (auto-detected):
   - data/real_points.csv produced by scripts/extract_real_data.py
-    (columns site,name,label_raw,label,rows) -- filter with --site;
-    `rows` weights the row-level metrics
+    (columns site,name,description,label_raw,label,rows) -- filter with
+    --site; `rows` weights the row-level metrics
   - any CSV with a point-path column and a label column
-    (--text-column / --label-column, like the original n4_points.csv)
+    (--text-column / --label-column / optional --desc-column)
 
 Usage:
-    python scripts/evaluate_external.py --csv data/real_points.csv --site N4-Integ06
+    python scripts/evaluate_external.py --csv data/real_points.csv --site Motorola_Points
     python scripts/evaluate_external.py \
         --csv ~/Downloads/n4_points.csv \
         --text-column "pointPath from BAS" \
         --label-column "EO66 Point"
 
-Outputs output/external_eval_<name>.csv (full predictions) and
-output/review_queue_<name>.csv (unique names below the auto-accept
-threshold, ordered by row count -- review once, apply to all rows).
+Outputs output/external_eval_<name>.csv (full predictions with per-view
+confidences and the winning source) and output/review_queue_<name>.csv
+(unique names below the auto-accept threshold, ordered by row count --
+review once, apply to all rows).
 """
 
 import argparse
@@ -48,7 +58,7 @@ BATCH_SIZE = 256
 
 
 def load_dataset(args):
-    """Return a dataframe with point_name, text, label, weight columns."""
+    """Return a dataframe with point_name, text, desc_text, label, weight."""
     df = pd.read_csv(args.csv, low_memory=False)
 
     if {'site', 'name', 'label'}.issubset(df.columns):  # real_points.csv
@@ -60,6 +70,7 @@ def load_dataset(args):
                 sys.exit(1)
         df = df.rename(columns={'name': 'point_name'})
         df['weight'] = df['rows'] if 'rows' in df.columns else 1
+        desc = df['description'] if 'description' in df.columns else ''
         source = f"{args.csv}" + (f" [site={args.site}]" if args.site else "")
     else:
         df = df.dropna(subset=[args.text_column, args.label_column])
@@ -67,12 +78,16 @@ def load_dataset(args):
                             .str.rstrip('/').str.split('/').str[-1])
         df['label'] = df[args.label_column].astype(str).str.strip()
         df['weight'] = 1
+        desc = df[args.desc_column] if args.desc_column and args.desc_column in df.columns else ''
         source = args.csv
 
     df['text'] = df['point_name'].astype(str).map(normalize_text)
+    df['desc_text'] = pd.Series(desc, index=df.index).fillna('').astype(str).map(
+        lambda s: normalize_text(s) if s.strip() else '')
     df = df[(df['text'].str.len() > 0) & (df['label'].astype(str).str.len() > 0)]
-    print(f"Loaded {source}: {len(df)} records, "
-          f"{int(df['weight'].sum())} weighted rows, {df['text'].nunique()} unique texts")
+    n_desc = (df['desc_text'].str.len() > 0).sum()
+    print(f"Loaded {source}: {len(df)} records, {int(df['weight'].sum())} weighted rows, "
+          f"{df['text'].nunique()} unique names, {n_desc} records with descriptions")
     return df
 
 
@@ -83,10 +98,18 @@ def main():
                         help="Site filter when --csv is a real_points.csv export")
     parser.add_argument("--text-column", default="pointPath from BAS")
     parser.add_argument("--label-column", default="EO66 Point")
+    parser.add_argument("--desc-column", default=None,
+                        help="Optional description column for legacy CSV inputs")
     parser.add_argument("--hf-repo", default=HF_REPO)
-    parser.add_argument("--threshold", type=float, default=0.999,
-                        help="Auto-accept confidence threshold (in-taxonomy row "
-                             "precision was 98.7%% at 0.999 in the audit)")
+    parser.add_argument("--threshold", type=float, default=0.8,
+                        help="Auto-accept confidence threshold. Tune on the "
+                             "validation site per model version: smoothed+"
+                             "calibrated models concentrate below ~0.9 (the "
+                             "2026-06-12 run: 0.8 accepts ~75%% of rows at "
+                             "~90%% precision), while legacy raw-softmax "
+                             "models needed 0.999")
+    parser.add_argument("--no-ensemble", action="store_true",
+                        help="Score names only, ignoring descriptions")
     args = parser.parse_args()
 
     # Token from .env at repo root
@@ -97,6 +120,8 @@ def main():
         sys.exit(1)
 
     df = load_dataset(args)
+    if args.no_ensemble:
+        df['desc_text'] = ''
 
     # Canonicalize gold labels the same way the training pipeline does
     canon = build_label_canonicalizer('data/eo66.xlsx', 'data/target_audit.csv')
@@ -107,7 +132,8 @@ def main():
         tokenizer = AutoTokenizer.from_pretrained(args.hf_repo, token=token)
         model = AutoModelForSequenceClassification.from_pretrained(args.hf_repo, token=token)
     except Exception as e:
-        print(f"WARNING: Hub fetch failed ({type(e).__name__}); retrying from local cache")
+        print(f"WARNING: Hub fetch failed ({type(e).__name__}); retrying from local cache "
+              f"-- the cached snapshot may be STALE")
         tokenizer = AutoTokenizer.from_pretrained(args.hf_repo, local_files_only=True)
         model = AutoModelForSequenceClassification.from_pretrained(args.hf_repo, local_files_only=True)
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -118,6 +144,7 @@ def main():
     model_labels = set(id2label.values())
     # Calibration: models trained with temperature scaling carry T in their
     # config; dividing logits by it makes confidences honest probabilities
+    # (and makes name-vs-description confidences comparable for the ensemble)
     temperature = float(getattr(model.config, "calibration_temperature", None) or 1.0)
     print(f"Model loaded on {device}: {len(model_labels)} classes (after canonicalization), "
           f"calibration temperature {temperature:.3f}"
@@ -134,9 +161,10 @@ def main():
         print(f"Rows with labels outside the model's taxonomy: {w:.1%} of weighted rows "
               f"-- counted as errors, listed separately below")
 
-    # Predict each unique text once, then map back to rows
-    unique_texts = sorted(df["text"].unique())
-    print(f"\nRunning inference on {len(unique_texts)} unique point names, batch={BATCH_SIZE}...")
+    # Predict every unique view (names and descriptions) once
+    unique_texts = sorted(set(df["text"]) | {t for t in df["desc_text"] if t})
+    print(f"\nRunning inference on {len(unique_texts)} unique strings "
+          f"(names + descriptions), batch={BATCH_SIZE}...")
 
     pred_label, pred_conf = {}, {}
     with torch.no_grad():
@@ -150,28 +178,46 @@ def main():
                 pred_label[text] = id2label[pid]
                 pred_conf[text] = conf
 
-    df["predicted"] = df["text"].map(pred_label)
-    df["confidence"] = df["text"].map(pred_conf)
+    df["pred_name"] = df["text"].map(pred_label)
+    df["conf_name"] = df["text"].map(pred_conf)
+    df["pred_desc"] = df["desc_text"].map(lambda t: pred_label.get(t))
+    df["conf_desc"] = df["desc_text"].map(lambda t: pred_conf.get(t, 0.0))
+
+    # Max-confidence ensemble: the more certain view wins
+    use_desc = df["conf_desc"] > df["conf_name"]
+    df["predicted"] = df["pred_name"].where(~use_desc, df["pred_desc"])
+    df["confidence"] = df["conf_name"].where(~use_desc, df["conf_desc"])
+    df["source"] = pd.Series('name', index=df.index).where(~use_desc, 'description')
     df["correct"] = df["predicted"] == df["label"]
 
     # ----- Results -----
-    def wacc(frame):
-        return (frame["correct"] * frame["weight"]).sum() / frame["weight"].sum() \
+    def wacc(frame, col="correct"):
+        return (frame[col] * frame["weight"]).sum() / frame["weight"].sum() \
             if frame["weight"].sum() else float("nan")
 
     total_w = df["weight"].sum()
     known = df[~unknown_mask]
+    has_desc = df[df["desc_text"].str.len() > 0]
     uniq = df.drop_duplicates("text")
 
     print("\n" + "=" * 60)
     print("RESULTS")
     print("=" * 60)
-    print(f"Row-weighted accuracy (all rows):   {wacc(df):.2%}  ({int(total_w)} rows)")
+    df["correct_name"] = df["pred_name"] == df["label"]
+    print(f"Name-only accuracy (row-weighted):  {wacc(df, 'correct_name'):.2%}")
+    if len(has_desc):
+        has_desc = has_desc.assign(correct_desc=has_desc["pred_desc"] == has_desc["label"])
+        print(f"Description-only, where present:    {wacc(has_desc, 'correct_desc'):.2%}  "
+              f"({has_desc['weight'].sum() / total_w:.1%} of rows have descriptions)")
+        print(f"Max-confidence ensemble:            {wacc(df):.2%}  <-- headline")
+        src = df.loc[df['desc_text'].str.len() > 0, 'source'].value_counts(normalize=True)
+        print(f"  ensemble chose description for {src.get('description', 0):.0%} "
+              f"of described records")
+    else:
+        print(f"Ensemble == name-only (no descriptions in this dataset): {wacc(df):.2%}")
     print(f"  on labels the model knows:        {wacc(known):.2%}  "
           f"({known['weight'].sum() / total_w:.1%} of rows)")
-    print(f"Unique-text accuracy:               {uniq['correct'].mean():.2%}  ({len(uniq)} texts)")
-    print(f"  on labels the model knows:        "
-          f"{uniq[~uniq['label'].isin(unknown_labels)]['correct'].mean():.2%}")
+    print(f"Unique-name accuracy (ensemble):    {uniq['correct'].mean():.2%}  ({len(uniq)} names)")
 
     hi = df[df["confidence"] >= args.threshold]
     lo = df[df["confidence"] < args.threshold]
@@ -203,14 +249,17 @@ def main():
     name = args.site or Path(args.csv).stem
     os.makedirs("output", exist_ok=True)
     out_path = f"output/external_eval_{name}.csv"
-    df[["point_name", "text", "label", "predicted", "confidence", "correct", "weight"]] \
-        .to_csv(out_path, index=False)
+    df[["point_name", "text", "desc_text", "label",
+        "pred_name", "conf_name", "pred_desc", "conf_desc",
+        "predicted", "confidence", "source", "correct", "weight"]].to_csv(
+        out_path, index=False)
     print(f"\nFull predictions saved to: {out_path}")
 
     queue = (lo.groupby("text")
              .agg(rows=("weight", "sum"), predicted=("predicted", "first"),
-                  confidence=("confidence", "first"),
-                  example_name=("point_name", "first"))
+                  confidence=("confidence", "first"), source=("source", "first"),
+                  example_name=("point_name", "first"),
+                  example_description=("desc_text", "first"))
              .sort_values("rows", ascending=False)
              .reset_index())
     queue_path = f"output/review_queue_{name}.csv"

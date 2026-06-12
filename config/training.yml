@@ -4,7 +4,9 @@
 # These values are used when the workflow is triggered by a push event.
 # For manual runs via GitHub Actions UI, you can override these with workflow_dispatch inputs.
 
-model: "microsoft/deberta-v3-base"
+# model: "microsoft/deberta-v3-base"
+model: "RyIoT33/deberta-v3-bms-base"
+
 # Epochs is the cosine-anneal horizon AND a ceiling -- early stopping
 # (patience 3) halts at the plateau. 30 lets the anneal actually complete:
 # the last 60-epoch run stopped at 26, leaving the LR at ~37% of peak.

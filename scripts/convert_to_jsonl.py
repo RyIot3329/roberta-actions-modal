@@ -307,9 +307,21 @@ def convert_to_jsonl(
     weights = defaultdict(Counter)
     for row in synth.itertuples():
         weights[row.text][row.target] += 1
-    real_train = real[real['site'].isin(train_sites)]
+    real_train = real[real['site'].isin(train_sites)].copy()
     for row in real_train.itertuples():
         weights[row.text][row.label] += int(row.rows)
+    # Train-site descriptions are labeled evidence in their own right
+    # ("Damper Command" is as real as "DmpCmd"); held-out site descriptions
+    # are never read here -- they feed the eval-time max-confidence ensemble
+    if 'description' in real_train.columns:
+        described = real_train[real_train['description'].fillna('')
+                               .astype(str).str.strip().str.len() > 0].copy()
+        if len(described):
+            described['desc_text'] = described['description'].astype(str).map(normalize_text)
+            described = described[described['desc_text'].str.len() > 0]
+            for row in described.itertuples():
+                weights[row.desc_text][row.label] += int(row.rows)
+            print(f"Train-site descriptions: +{len(described)} aggregated rows of evidence")
     if generated is not None:
         for row in generated.itertuples():
             weights[row.text][row.target] += 0.5
@@ -337,7 +349,13 @@ def convert_to_jsonl(
         os.remove(conflicts_path)
 
     # ----- Train-time augmentation (train-only by construction) -----
-    heldout_texts = set(real[real['site'].isin(val_sites + test_sites)]['text'])
+    heldout = real[real['site'].isin(val_sites + test_sites)]
+    heldout_texts = set(heldout['text'])
+    # Held-out descriptions also count as held-out strings: the eval-time
+    # ensemble predicts them, so augmentation must not manufacture them
+    if 'description' in heldout.columns:
+        heldout_texts |= {normalize_text(str(d)) for d in heldout['description'].fillna('')
+                          if str(d).strip()}
     aug_variants, aug_stats = augment_pool(
         resolved, heldout_texts, set(overrides), preprocessing)
     if aug_stats['augmented_texts']:

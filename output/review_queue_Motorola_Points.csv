@@ -1,0 +1,73 @@
+text,rows,predicted,confidence,source,example_name,example_description
+av,1121,zoneTempSp,0.11578039079904556,name,AV 00,
+ai,447,dischargeFlow,0.4908175468444824,name,AI 00,
+setpoint sp,353,dischargePressureSp,0.4335750937461853,name,Setpoint (SP),
+bv,92,waterValve,0.22836309671401978,name,BV 34,hw system enable p p
+microset room temp,90,zoneTempLoSp,0.38429147005081177,name,Microset Room Temp.,
+bi,40,dischargeFan,0.3723810911178589,name,BI 00,b alarm
+bo,38,wheelStatus,0.17917661368846893,name,BO 00,
+vav a3 eff temp sp,30,zoneTempSp,0.6541970372200012,description,VAV_A3_01EffTempSp,eff temp sp
+vav a3 occ clg sp,30,occupiedCoolSp,0.7880963683128357,description,VAV_A3_01OccClgSp,occupied clg sp
+vav a3 unocc clg sp,30,unoccupiedCoolSp,0.7891732454299927,description,VAV_A3_01UnoccClgSp,un occ clg sp
+vav a4 unocc clg sp,25,unoccupiedCoolSp,0.7891732454299927,description,VAV_A4_01UnoccClgSp,un occ clg sp
+vav a4 eff temp sp,25,zoneTempSp,0.6541970372200012,description,VAV_A4_01EffTempSp,eff temp sp
+vav a2 eff temp sp,24,zoneTempSp,0.6541970372200012,description,VAV_A2_01EffTempSp,eff temp sp
+vav a2 occ clg sp,24,occupiedCoolSp,0.7880963683128357,description,VAV_A2_01OccClgSp,occupied clg sp
+vav a2 unocc clg sp,24,unoccupiedCoolSp,0.7891732454299927,description,VAV_A2_01UnoccClgSp,un occ clg sp
+vav a1 eff temp sp,23,zoneTempSp,0.6541970372200012,description,VAV_A1_02EffTempSp,eff temp sp
+vav a1 unocc clg sp,23,unoccupiedCoolSp,0.7891732454299927,description,VAV_A1_02UnoccClgSp,un occ clg sp
+vav a1 occ clg sp,23,occupiedCoolSp,0.7880963683128357,description,VAV_A1_02OccClgSp,occupied clg sp
+vav a5 eff temp sp,19,zoneTempSp,0.6541970372200012,description,VAV_A5_01EffTempSp,eff temp sp
+vav a5 unocc clg sp,19,unoccupiedCoolSp,0.7891732454299927,description,VAV_A5_01UnoccClgSp,un occ clg sp
+vav a5 occ clg sp,19,occupiedCoolSp,0.7954076528549194,name,VAV_A5_01OccClgSp,occupied clg sp
+ao,16,coolingValve,0.37279510498046875,name,AO 00,
+vav a6 eff temp sp,9,zoneTempSp,0.6541970372200012,description,VAV_A6_01EffTempSp,eff temp sp
+vav a6 unocc clg sp,9,unoccupiedCoolSp,0.7891732454299927,description,VAV_A6_01UnoccClgSp,un occ clg sp
+moto ahu sa hi st alm,7,dischargePressureHiSp,0.6281368136405945,description,Moto_AHU1SaHiStAlm,saupply high static alarm
+moto ahu ex fan dmpr curr sts,7,exhaustDamperFb,0.6922844648361206,description,Moto_AHU1ExFanDmprCurrSts,current sw to determine ex dmper open
+moto ahu sa dmpr proof,7,dischargeDamperFb,0.2819514572620392,name,Moto_AHU1SaDmprProof,
+moto ahu gas htg en,7,heatingEnable,0.7342476844787598,description,Moto_AHU1GasHtgEn,gas heating enable
+moto ahu smoke purge ovrd,7,heatingCoilPumpAlarm,0.05339242145419121,name,Moto_AHU1SmokePurgeOvrd,
+moto ahu ma temp sp off,7,mixedTempLoSp,0.6697229146957397,name,Moto_AHU1MaTempSpOff,mixed air temp setpoint offset
+moto ahu ea fan vfd flt,7,exhaustFanFault,0.4649156928062439,name,Moto_AHU1EaFanVFDFlt,vfd fault
+clg vlv position,3,coolingValve,0.7720824480056763,name,Clg Vlv Position,clg vlv position
+supply fan min speed,3,dischargeFanSpeedMinSp,0.7408279776573181,name,Supply Fan Min. Speed,supply fan min speed
+cooling vlv signal,3,coolingValveFb,0.4399140179157257,name,Cooling Vlv Signal,cooling vlv signal
+economizer lockout status,3,econStatus,0.2235409915447235,name,Economizer Lockout Status,economizer lockout status
+cooldown command,3,chillerEnable,0.40106093883514404,name,Cooldown Command,cooldown command
+warmup command,3,morningWarmUp,0.4207475483417511,name,Warmup Command,warmup command
+low limit,2,mixedTempLoSp,0.22662873566150665,name,Low Limit,low limit
+desired supply air temp,2,dischargeTempSp,0.6298156380653381,name,Desired Supply Air Temp,desired supply air temp
+cmpb,2,comp,0.30982333421707153,name,cmpb1_1,
+pmp alarm,2,heatingCoilPumpAlarm,0.78583824634552,name,Pmp 13 Alarm,pmp alarm
+cmpa,2,comp,0.546500027179718,name,cmpa1_1,
+economizer min position,2,dischargeTempLoSp,0.18004639446735382,name,Economizer Min. Position,economizer min position
+oa enable heating,2,heatingEnable,0.47358906269073486,name,OA Enable Heating,oa enable heating
+moto cws ch chw ret temp,2,evapEnteringTemp,0.5256108045578003,description,Moto_CWS_Ch1ChwRetTemp,chilled water return temperature
+moto cws ch sec chwp vfd flt,2,secPumpFault,0.270216703414917,description,Moto_CWS_Ch1SecChwpVFDFlt,pump fault
+moto cws ch sec chwp sts,2,pumpStatus,0.7868316173553467,description,Moto_CWS_Ch1SecChwpSts,pump status
+bypass vlv signal,1,bypassValveFb,0.6117141842842102,name,Bypass Vlv Signal,bypass vlv signal
+current supply temp sp,1,dischargeTempSp,0.7950034737586975,name,Current Supply Temp SP,current supply temp sp
+ct south vfd status,1,twrFanStatus,0.7286168932914734,name,CT South VFD status,ct south vfd status
+ct south speed command,1,twrFanSpeed,0.6711222529411316,name,CT South Speed command,ct south speed command
+cw supply temp,1,secLeavingTemp,0.7744171619415283,name,CW Supply Temp,cw supply temp
+econ pos,1,econEnable,0.3382140100002289,name,econ_pos_1,
+cw supply temp setpt,1,secLeavingTempSp,0.48804083466529846,name,CW Supply Temp Setpt,cw supply temp setpt
+econocmd,1,econEnable,0.7062699198722839,name,econocmd_1,
+ct north speed command,1,twrFanSpeed,0.49116280674934387,name,CT North Speed command,ct north speed command
+hwp start,1,secPump,0.7949846386909485,name,HWP-11 Start,hwp start
+heat enable,1,heatingEnable,0.7645274996757507,name,Heat Enable,heat enable
+econpnt,1,econEnableSp,0.7557552456855774,name,econpnt_1,
+lvg air temperature,1,sumpTemp,0.12938447296619415,name,lvg_air_temperature_1,
+econ min,1,dischargeTempMinSp,0.26729539036750793,name,econ_min_1,
+v sw end sw status,1,chillerStatus,0.5510673522949219,name,V-34 SW EndSw status,v sw end sw status
+v nw end sw status,1,recPumpStatus,0.07340281456708908,name,V-32 NW EndSw status,v nw end sw status
+v se end sw status,1,chillerStatus,0.7998228073120117,name,V-33 SE EndSw status,v se end sw status
+moto cws chwp min spd,1,priPumpSpeedMinSp,0.2311520129442215,description,Moto_CWS_ChwpMinSpd,pump minimum speed
+oatlcomp,1,outsideTempAvg,0.1532983034849167,name,oatlcomp_1,
+moto cws chws temp sp,1,evapLeavingTempSp,0.7480320334434509,description,Moto_CWS_ChwsTempSp,chilled water supply temp setpoint
+v ne end sw status,1,chillerStatus,0.40192827582359314,name,V-31 NE EndSw status,v ne end sw status
+smoke return,1,returnSmokeDamperFb,0.3340463638305664,name,Smoke Return,smoke return
+smoke supply,1,dischargeSmokeAlarm,0.5867472290992737,name,Smoke Supply,smoke supply
+return smoke detect,1,returnSmokeAlarm,0.5576897859573364,name,Return Smoke detect,return smoke detect
+sfan,1,dischargeFan,0.4217235743999481,name,sfan_1,

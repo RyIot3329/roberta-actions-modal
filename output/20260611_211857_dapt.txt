@@ -1,0 +1,20 @@
+DAPT Results
+============================================================
+{
+  "timestamp": "2026-06-12T02:18:57.535864",
+  "base_model": "microsoft/deberta-v3-base",
+  "corpus_train": 36690,
+  "corpus_eval": 1931,
+  "config": {
+    "epochs": 20,
+    "batch_size": 256,
+    "learning_rate": 5e-05,
+    "mlm_probability": 0.3,
+    "max_seq_length": 32,
+    "seed": 42
+  },
+  "perplexity_before": 8945323.036747552,
+  "perplexity_after": 8.825907758265013,
+  "train_runtime_seconds": 1324.8169,
+  "huggingface_url": null
+}

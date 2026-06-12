@@ -67,6 +67,13 @@ Key data-quality guarantees:
 - **Calibrated confidences**: a temperature fitted on validation is stored in
   the model config (`calibration_temperature`) and applied everywhere
   confidences are reported, so triage thresholds mean what they say.
+- **Name + description ensemble**: for points that carry a description, the
+  model predicts the normalized name AND the normalized description, and the
+  higher-confidence prediction wins. This rescues semantically empty names
+  (`AV 00` whose description is "Heating Signal") without changing the model's
+  input contract — it's two calls to the same classifier with comparable,
+  calibrated confidences. `scripts/evaluate_external.py` implements it; the
+  production edge tagger should apply the same rule.
 - **Quality-gated deployment**: the Hub push is skipped when the new model's
   test F1 is below the previous best (`output/best_metrics.json`), so a bad
   run can never overwrite the production model. The baseline records the test
@@ -247,6 +254,31 @@ modal run scripts/finetune.py --epochs 2
 python scripts/evaluate_external.py --csv data/real_points.csv --site N4-Integ06
 ```
 
+## Domain-Adaptive Pretraining (optional, `scripts/dapt.py`)
+
+The base encoder was pretrained on general English; point names are not
+English. DAPT continues masked-LM pretraining on **unlabeled** point names so
+the encoder learns BMS naming statistics (abbreviation synonymy, equipment
+families) before classification fine-tuning — it specifically attacks the
+seen-vs-unseen-name gap, with no labeling effort.
+
+```bash
+python scripts/dapt.py --fetch-public   # real names from public research
+                                        # buildings -> data/public_points.txt
+python scripts/dapt.py --corpus-only    # build + inspect the corpus
+modal run scripts/dapt.py --push-to-hub # pretrain (L4, ~minutes), push to
+                                        # RyIoT33/deberta-v3-bms-base
+```
+
+Then set `model: "RyIoT33/deberta-v3-bms-base"` in `config/training.yml` and
+push — the fine-tune starts from the DAPT encoder and the **quality gate
+decides whether DAPT actually helped**. The corpus reads training sites,
+synthetic/generated texts, eo66 Display Names, and the public file; held-out
+site exports are never read, so the cross-site benchmark stays honest. The
+same mechanism pointed at a new building's unlabeled point list is legitimate
+per-site adaptation at onboarding (no benchmark to protect there). DAPT
+reruns are manual and rare — when the unlabeled corpus grows substantially.
+
 ## Output Format
 
 Results are saved to `output/YYYYMMDD_HHMMSS_roberta-base.txt`:
@@ -296,11 +328,17 @@ Labeled real site exports go in `data/real_data/*.xlsx`. Three formats are
 auto-detected by `scripts/extract_real_data.py` (point name = last slot-path
 segment for the N4 styles):
 
-| Format | Point name column | Label column |
-| ------ | ----------------- | ------------ |
-| N4 style A | `pointPath from BAS` | `EO66 Point` |
-| N4 style B | `proxyExt.pointId/BASpointName` | `pointTag/EO66` |
-| BACnet export | `Bacnet Name` | `eo66Def` |
+| Format | Point name column | Label column | Description column |
+| ------ | ----------------- | ------------ | ------------------ |
+| N4 style A | `pointPath from BAS` | `EO66 Point` | — |
+| N4 style B | `proxyExt.pointId/BASpointName` | `pointTag/EO66` | — |
+| BACnet export | `Bacnet Name` | `eo66Def` | `BACnet Description` |
+
+Descriptions are optional free-text metadata. When present they serve two
+roles: train-site descriptions join the training evidence pool, and at
+evaluation/deployment time the model predicts **both** the name and the
+description, taking the higher-confidence answer (the max-confidence
+ensemble below).
 
 The extraction writes `data/real_points.csv` (aggregated with per-name row
 counts), which is what the pipeline and CI consume — commit it whenever the

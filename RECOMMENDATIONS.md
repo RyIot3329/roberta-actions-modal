@@ -282,3 +282,58 @@ clean confidence-semantics baseline is wanted; B) generator artifacts seed the
 gate on the new test composition; C) augmentation knob change lets the gate
 attribute its delta. Pushing everything at once is safe (baseline unset) but
 merges the attribution.
+
+---
+
+## Addendum (2026-06-12): name + description max-confidence ensemble IMPLEMENTED
+
+Phase 2's description-aware input landed as an inference-time ensemble (user's
+design): predict the normalized name AND the normalized description with the
+same classifier, take the higher (temperature-calibrated) confidence. No model
+retrain, no input-contract change, gate baseline untouched.
+
+- `scripts/extract_real_data.py`: formats now carry an optional description
+  column (BACnet export: `BACnet Description`); `data/real_points.csv` gains a
+  `description` field (2,062 Motorola rows have one).
+- `scripts/evaluate_external.py`: ensemble + per-view confidences + winning
+  source in the output CSV and review queue; `--no-ensemble` for name-only.
+- `scripts/convert_to_jsonl.py`: TRAIN-site descriptions join the evidence
+  pool (inert today — no train site has them); held-out descriptions joined
+  the augmentation decontamination set. Pipeline outputs verified
+  byte-identical.
+- Mechanism verified on Motorola with the STALE cached model (local .env HF
+  token is invalid — refresh it to score the new model): name-only 21.4% →
+  ensemble 47.8% row-weighted. Desc-only was 58.1%, i.e. the stale model's
+  SATURATED confidences mis-arbitrate — which is precisely what the new
+  model's label smoothing + stored temperature fix. Expected with the current
+  985-class calibrated model: Motorola row-weighted from 71.8% (name-only)
+  toward the ~84% measured by the description-fallback heuristic, likely past
+  it since max-confidence adapts per record.
+- The production edge tagger should implement the same rule (documented in
+  README); descriptions come free from BACnet discovery.
+
+---
+
+## Addendum (2026-06-12, later): DAPT IMPLEMENTED (Phase 2 item 12)
+
+`scripts/dapt.py` — continued masked-LM pretraining on unlabeled point names:
+
+- Corpus builder (verified): 38,621 unique normalized texts = train-site real
+  names (7,025) + synthetic templates (15,101) + generated eo66 variants
+  (10,090) + eo66 Display Names (3,901) + 9,089 real names fetched from the
+  plastering research benchmark's SDH/SODA/IBM/UVA buildings
+  (`--fetch-public` → `data/public_points.txt`, committed). Held-out site
+  exports are never read. The point-label-sharing 103k dataset is NOT
+  publicly downloadable (data.mortardata.org is dead); plastering is the
+  practical public source, and `--extra <file>` accepts any future corpus.
+- Modal MLM training (mask 30%% for ~6-token texts, cosine, bf16, seed,
+  before/after held-out perplexity reported), pushes to private
+  `RyIoT33/deberta-v3-bms-base`. No gate of its own — the artifact is an
+  encoder initialization judged by the downstream fine-tune's gate.
+- Integration: finetune.py loads base checkpoints with the HF token (private
+  DAPT repo works as `model:`), `deberta-v3-bms` shorthand, workflow dispatch
+  option added.
+- To run the experiment: `modal run scripts/dapt.py --push-to-hub`, then flip
+  `model:` in config/training.yml and push. Expected per the literature
+  (Waterworth 2021, Gururangan 2020): gains concentrated on unseen names
+  (currently 56.1%% on test).

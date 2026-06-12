@@ -36,11 +36,14 @@ from pathlib import Path
 
 import pandas as pd
 
-# (text column, label column, is_slot_path) per format, tried in order
+# (text column, label column, is_slot_path, description column or None)
+# per format, tried in order. Descriptions are free-text point metadata
+# (e.g. BACnet's description property) that carries the semantics when the
+# name is a bare object reference like "AV 00".
 FORMATS = [
-    ('pointPath from BAS', 'EO66 Point', True),
-    ('proxyExt.pointId/BASpointName', 'pointTag/EO66', True),
-    ('Bacnet Name', 'eo66Def', False),
+    ('pointPath from BAS', 'EO66 Point', True, None),
+    ('proxyExt.pointId/BASpointName', 'pointTag/EO66', True, None),
+    ('Bacnet Name', 'eo66Def', False, 'BACnet Description'),
 ]
 
 
@@ -80,11 +83,15 @@ def build_canonicalizer(eo66_path: str):
 
 
 def extract_file(path: Path) -> pd.DataFrame:
-    """Extract (name, label_raw) pairs from one export, or None if no format matches."""
+    """Extract (name, label_raw, description) from one export, or None if no format matches."""
     df = pd.read_excel(path)
-    for text_col, label_col, is_path in FORMATS:
+    for text_col, label_col, is_path, desc_col in FORMATS:
         if text_col in df.columns and label_col in df.columns:
             out = pd.DataFrame({'name': df[text_col], 'label_raw': df[label_col]})
+            if desc_col and desc_col in df.columns:
+                out['description'] = df[desc_col].fillna('').astype(str).str.strip()
+            else:
+                out['description'] = ''
             out = out.dropna(subset=['name', 'label_raw'])
             out['name'] = out['name'].astype(str).str.strip()
             if is_path:
@@ -138,10 +145,13 @@ def main():
             print(f'  {count:6d}  {label}')
 
     # Aggregate so the file is commit-friendly and keeps frequency as weight
-    agg = (all_df.groupby(['site', 'name', 'label_raw', 'label'], sort=True)
+    all_df['description'] = all_df['description'].fillna('')
+    agg = (all_df.groupby(['site', 'name', 'description', 'label_raw', 'label'], sort=True)
            .size().reset_index(name='rows'))
+    n_desc = (agg['description'].str.len() > 0).sum()
     agg.to_csv(args.output, index=False)
-    print(f'\nSaved: {args.output} ({len(agg)} aggregated rows from {len(all_df)})')
+    print(f'\nSaved: {args.output} ({len(agg)} aggregated rows from {len(all_df)}, '
+          f'{n_desc} with descriptions)')
 
 
 if __name__ == '__main__':
