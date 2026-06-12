@@ -1,6 +1,8 @@
 {
-  "test_f1_weighted": 0.6069836500523672,
-  "test_accuracy": 0.6245306633291614,
+  "test_f1_weighted": 0.6243310757426656,
+  "test_accuracy": 0.6280193236714976,
+  "num_test_records": 828,
+  "num_classes": 985,
   "model": "microsoft/deberta-v3-base",
-  "timestamp": "2026-06-11T22:12:49.039456"
+  "timestamp": "2026-06-12T00:02:22.827509"
 }
