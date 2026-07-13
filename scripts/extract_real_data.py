@@ -6,7 +6,11 @@ Extract labeled (point name, EO66 label) pairs from real site exports
 Reads every .xlsx in data/real_data/, auto-detects the export format,
 extracts the raw BAS point name and its EO66 ground-truth label, and
 canonicalizes labels via the eo66 'Regular Expression' column (numbered
-variants like heatingStage01 collapse to their base definition).
+variants like heatingStage01 collapse to their base definition), plus two
+fallbacks for labels the regexes miss: unique case-insensitive definition
+match (SecEnteringTemp -> secEnteringTemp) and species-preserving
+equipment-index stripping (twrIsoValve01 -> twrIsoValve, zoneTempAvg03 ->
+zoneTempAvg) -- see build_canonicalizer.
 
 Supported formats (auto-detected by column names):
   - Integ01 style:   'pointPath from BAS' (slot path; name = last segment)
@@ -47,15 +51,62 @@ FORMATS = [
 ]
 
 
+# Species / refrigerant tokens whose digits are semantic (zoneN2Alarm,
+# zoneCO2Avg): masked before equipment-index digits are stripped from a
+# label. Uppercase-only on purpose -- a lowercase 'n2' inside a label is
+# equipment numbering (fan2), not a species. Longest tokens first so the
+# alternation never truncates a match (PM25 before PM2, R134A before R11).
+_LABEL_SPECIES = re.compile(
+    r'(R134A|R410A|PM25|PM10|R114|R123|R125|R134|R410'
+    r'|CO2|SO2|NO2|H2S|CH4|CL2|PM1|PM2|PM4|R11|R22|N2|O2|O3|H2)'
+)
+# A digit run plus an optional single instance letter glued to it (pump
+# 01A / 01B, floor 10N / 20S). The lookahead keeps real word starts safe:
+# in zoneTemp01Avg the A begins "Avg" (next char lowercase) and survives.
+_LABEL_INDEX_RUN = re.compile(r'\d+(?:[A-Z](?=[A-Z]|$))?')
+# Separators orphaned by index removal (secPump11-12Status -> secPump-Status,
+# Blr1_Sts -> Blr_Sts, CLR_02 -> CLR_). eo66 definitions never contain -/_,
+# so anything left holding one is a site mislabel being consolidated.
+_LABEL_ORPHAN_SEP = re.compile(r'[-_]+(?=[A-Z]|$)')
+
+
+def _strip_label_indices(label: str) -> str:
+    """Drop equipment-index digits (and their unit letter) from a camelCase
+    label: zoneTempAvg03 -> zoneTempAvg, secPump01APowerReal ->
+    secPumpPowerReal, secPressureDelta10N -> secPressureDelta. Species
+    digits survive: zoneN2Alarm and zoneCO2Avg are untouched."""
+    parts = _LABEL_SPECIES.split(label)  # odd indices are species tokens
+    stripped = ''.join(part if i % 2 else _LABEL_INDEX_RUN.sub('', part)
+                       for i, part in enumerate(parts))
+    return _LABEL_ORPHAN_SEP.sub('', stripped)
+
+
 def build_canonicalizer(eo66_path: str):
     """Map a label to its eo66 base definition via the shipped regexes.
 
     The eo66 regexes match canonical tag strings (heatingStage(\\d{0,4})),
     so they resolve numbered variants in LABELS -- they cannot parse raw
     point names.
+
+    Labels the regexes cannot resolve get two conservative fallbacks:
+      1. unique case-insensitive match against the eo66 definitions
+         (SecEnteringTemp -> secEnteringTemp, hotDeckdischargeFlow ->
+         hotDeckDischargeFlow);
+      2. equipment-index digits stripped (species-preserving), then
+         re-resolved -- numbered site extensions whose BASE form is not an
+         eo66 definition (twrIsoValve01, twrFan02Frequency) have no regex
+         to catch them, so they escaped canonicalization entirely. The
+         stripped form is kept even when it is not an eo66 definition:
+         consolidating twrFan01Frequency and twrFan02Frequency into one
+         twrFanFrequency extension class beats training two junk classes.
+    Every fallback decision is recorded in canon.fallback_remaps for the
+    caller to report.
     """
     eo66 = pd.read_excel(eo66_path)
     defs = set(eo66['Definition'].dropna().astype(str).str.strip())
+    lower_defs = {}
+    for d in sorted(defs):  # deterministic winner if a case-dup ever appears
+        lower_defs.setdefault(d.lower(), d)
     regexes = []
     for d, r in zip(eo66['Definition'], eo66['Regular Expression']):
         if pd.isna(r):
@@ -65,20 +116,37 @@ def build_canonicalizer(eo66_path: str):
         except re.error:
             pass
 
+    def resolve(label: str):
+        """Definition set, then eo66 regexes; None when neither matches."""
+        if label in defs:
+            return label
+        for definition, rx in regexes:
+            if rx.match(label):
+                return definition
+        return None
+
     cache = {}
 
     def canon(label: str) -> str:
         if label in cache:
             return cache[label]
-        out = label
-        if label not in defs:
-            for definition, rx in regexes:
-                if rx.match(label):
-                    out = definition
-                    break
+        out = resolve(label)
+        if out is None:
+            out = lower_defs.get(label.lower())
+            if out is None:
+                stripped = _strip_label_indices(label)
+                if stripped and stripped != label:
+                    out = (resolve(stripped)
+                           or lower_defs.get(stripped.lower())
+                           or stripped)
+            if out is None:
+                out = label
+            if out != label:
+                canon.fallback_remaps[label] = out
         cache[label] = out
         return out
 
+    canon.fallback_remaps = {}
     return canon, defs
 
 
@@ -137,6 +205,12 @@ def main():
     print(f'\nTotal: {len(all_df)} rows across {all_df["site"].nunique()} sites')
     print(f'Labels canonicalized by eo66 regex: {n_canon} rows '
           f'({all_df.loc[all_df.label != all_df.label_raw, "label_raw"].nunique()} distinct labels)')
+    if canon.fallback_remaps:
+        print(f'Labels consolidated by case/index fallback '
+              f'({len(canon.fallback_remaps)} distinct):')
+        for src, dst in sorted(canon.fallback_remaps.items()):
+            marker = '' if dst in eo66_defs else '  [extension]'
+            print(f'  {src} -> {dst}{marker}')
     print(f'Rows with canonical label in eo66: {in_eo66.mean():.1%}')
     outside = all_df.loc[~in_eo66, 'label'].value_counts()
     if len(outside) > 0:

@@ -115,8 +115,12 @@ def build_label_canonicalizer(eo66_path, audit_path):
             print(f"Applying {len(audit_map)} target_audit merges/renames: {audit_map}")
 
     def canon(label: str) -> str:
+        # Audit decisions apply on both sides of eo66 canonicalization:
+        # index stripping can only surface a label's audited form
+        # (Blr1_Sts -> BlrSts -> boilerStatus), never consume one.
         label = audit_map.get(label, label)
-        return eo66_canon(label)
+        label = eo66_canon(label)
+        return audit_map.get(label, label)
 
     return canon
 

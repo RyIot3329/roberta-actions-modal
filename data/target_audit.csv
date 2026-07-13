@@ -28,3 +28,26 @@ zonePM1,56,extension,,False,False,eo66 has zonePM25/zonePM10 only
 zonePM4,57,extension,,False,False,eo66 has zonePM25/zonePM10 only
 zonePowerReal,57,extension,,False,False,"eo66 scopes PowerReal to equipment (comp/drive/fan), no zone-level"
 zoneTempAvgSp,57,extension,,False,False,eo66 has zoneTempAvg sensor but no setpoint for it
+condLeavringTemp,3,rename,condLeavingTemp,True,True,typo (Leavring) in Integ01 labels; eo66 canon condLeavingTemp
+ehaustDamperFb,4,rename,exhaustDamperFb,True,True,typo (ehaust) in Integ03 labels; eo66 canon exhaustDamperFb
+chillerEnabled,2,rename,chillerEnable,True,True,tense variant in Integ04 (name RunEnabled); eo66 canon chillerEnable
+reOaCoilEnteringTemp,1,rename,recOaCoilEnteringTemp,True,False,typo (re vs rec) in Integ01; eo66 canon recOaCoilEnteringTemp
+dischargeFlowHeatMinStpt,225,rename,dischargeFlowHeatMinSp,True,True,Stpt suffix variant in Integ03; eo66 canon dischargeFlowHeatMinSp
+secPressureDeltaS,1,rename,secPressureDeltaSp,True,True,truncated Sp in Integ03 (source name HWPrSpt is a setpoint)
+condensorPumpStatus,1,rename,condPumpStatus,True,True,misspelling (condensor); index-strip form of condensorPump01Status (Integ02)
+priValveA,3,merge_dup,priValve,True,True,A/B instance letters on HX steam valves (Integ01); same concept as priValve
+priValveB,3,merge_dup,priValve,True,True,A/B instance letters on HX steam valves (Integ01); same concept as priValve
+heatWheel,3,merge_dup,wheel,True,True,energy-recovery wheel (ERV/HRW names); eo66 wheel family
+heatWheelStatus,3,merge_dup,wheelStatus,True,True,energy-recovery wheel status; eo66 wheelStatus
+heatWheelExhaustTemp,1,merge_dup,wheelExhaustTemp,True,True,energy-recovery wheel exhaust temp; eo66 wheelExhaustTemp
+AHU,1,merge_case,ahu,False,True,both 1-row equipment-name mislabels (AhuSS / STK_AHUL3_2_FPH_ENA_Sp); consolidate case; DROP candidates
+BlrSts,4,rename,boilerStatus,True,True,Integ06 name-as-label rows (Blr1_Sts..Blr4_Sts index-strip to BlrSts); keeps the blr sts gold on boilerStatus
+dischargeTem,1,rename,dischargeTemp,True,True,truncated label (dischargeTem364; Integ05 name SATmp)
+towerFan,1,rename,twrFan,True,True,tower02Fan (Integ02; name Ct2Cmd); eo66 canon twrFan
+primaryPump,1,rename,priPump,True,True,primaryPump02 (Integ03; name CHWP_2_CMD); eo66 canon priPump
+primaryPumpStatus,1,rename,priPumpStatus,True,True,primaryPump02Status (Integ03; name CHWP_2_R); eo66 canon priPumpStatus
+condLeavingIso,1,rename,condLeavingIsoValve,True,True,condLeavingIso04 (Integ05; name ChM4CwVlvCmd); eo66 condLeavingIsoValve
+condLeavingIsoFb,1,rename,condLeavingIsoValveFb,True,True,condLeavingIso04Fb (Integ05; name ChM4CwVlvPos)
+evapLeavingIso,1,rename,evapLeavingIsoValve,True,True,evapLeavingIso04 (Integ05; name ChM4ChwVlvCmd)
+evapLeavingIsoFb,1,rename,evapLeavingIsoValveFb,True,True,evapLeavingIso04Fb (Integ05; name ChM4ChwVlvPos)
+ClgSignal,67,decision,coolingDemand,True,True,label_raw equals point name (Integ04 mapping artifact); likely coolingDemand -- needs human confirmation before applying

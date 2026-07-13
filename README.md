@@ -45,7 +45,16 @@ Key data-quality guarantees:
   `data/dataset_summary.json`.
 - **Labels are canonicalized**: eo66 numbered variants collapse to their base
   definition (`heatingStage01` → `heatingStage`) via eo66's own regex column,
-  and `data/target_audit.csv` merge/rename decisions are applied everywhere.
+  and `data/target_audit.csv` merge/rename decisions are applied everywhere
+  (on both sides of eo66 canonicalization, so index stripping can surface an
+  audited form). Labels the regexes miss get two conservative fallbacks:
+  a unique case-insensitive definition match (`SecEnteringTemp` →
+  `secEnteringTemp`) and species-preserving equipment-index stripping
+  (`twrIsoValve01` → `twrIsoValve`, `secPressureDelta10N` →
+  `secPressureDelta`, while `zoneN2Alarm` / `zoneCO2Avg` stay intact) —
+  numbered site-extension variants whose base form has no eo66 regex would
+  otherwise survive as junk classes. Extraction prints every fallback
+  consolidation for review.
 - **Conflicting labels are resolved by weighted majority**: each real-site
   occurrence counts as evidence, ties are dropped, and every conflict is logged
   to `data/label_conflicts.csv`.
