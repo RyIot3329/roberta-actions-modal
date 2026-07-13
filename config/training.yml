@@ -28,7 +28,7 @@ label_smoothing: "0.1"
 # row-match rate; f1_macro would be dominated by the ~280 singleton classes.
 metric_for_best_model: "f1_weighted"
 # Reproducibility: change for multi-seed variance runs (Actions tab).
-seed: 42
+seed: 43
 push_to_hub: true
 hf_repo: "RyIoT33/haystack-autotagging"
 
