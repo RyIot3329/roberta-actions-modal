@@ -16,6 +16,12 @@ training and deployment always see identically normalized text):
      pm25, r134a, ...) and single-letter+digit tokens (l1/l2/l3 phases) are
      preserved intact. Names that are ALL indices (e.g. "AV 12") fall back to
      their pre-stripping form rather than normalizing to nothing.
+  7. Glued compounds with no case/separator/digit boundary ("DATEMP") are
+     split by peeling known semantic tails right-to-left until a known head
+     remains ("datemp" -> "da temp", "zntempminspt" -> "zn temp min spt").
+     Both pieces must be in the curated lexicon; anything unknown passes
+     through untouched, so English words ("compress", "thermostat") and
+     novel tokens are never mangled.
 
   "Zone Temperature"   -> "zone temperature"
   "ZN-T"               -> "zn t"
@@ -24,6 +30,7 @@ training and deployment always see identically normalized text):
   "NGT$20CLG$20STPT"   -> "ngt clg stpt"
   "AHU13_SaTmp"        -> "ahu sa tmp"
   "L1_Current"         -> "l1 current"
+  "DATEMP"             -> "da temp"
 
 Target column: only stripped of BOM/whitespace (labels stay camelCase).
 
@@ -68,6 +75,51 @@ def _strip_index_digits(token: str) -> str:
     return ' '.join(kept)
 
 
+# --- Glued-compound de-glue -------------------------------------------------
+# All-caps glued names (DATEMP, RATEMPSP) survive every boundary rule above as
+# a single token; the model's SentencePiece then carves them along English
+# words ("datemp" -> date+mp) and the signal is destroyed. Peel known semantic
+# tails right-to-left until a known head remains; if any piece is unknown the
+# token is left untouched. Both sets are curated (seeded from
+# data/abbreviations.csv) -- precision over recall by design.
+DEGLUE_TAILS = tuple(sorted((
+    'temp', 'tmp', 'sp', 'spt', 'stpt', 'sts', 'stat', 'cmd', 'fb', 'pos',
+    'alm', 'min', 'max', 'press', 'prs', 'hum', 'flow', 'vlv', 'dmpr', 'spd',
+    'co2',
+), key=len, reverse=True))
+DEGLUE_HEADS = frozenset({
+    # air streams / locations
+    'da', 'sa', 'ra', 'ma', 'oa', 'ea', 'zn', 'rm',
+    # water loops
+    'chw', 'hw', 'cw', 'cdw', 'hhw', 'twr', 'cond', 'evap', 'pri', 'sec',
+    # equipment
+    'ahu', 'vav', 'fcu', 'rtu', 'cuh', 'ef', 'sf', 'rf', 'ct', 'blr', 'chlr',
+    'hx', 'cwp', 'chwp', 'hwp', 'pmp', 'fan', 'comp',
+    # acronym compounds (DATSP -> dat sp)
+    'dat', 'sat', 'rat', 'mat', 'oat', 'znt',
+    # modifiers / directions
+    'hi', 'lo', 'min', 'max', 'occ', 'clg', 'htg', 'frz', 'econ', 'sup', 'ret',
+    # measurements (TEMPSP -> temp sp); also terminate multi-tail peels
+    'temp', 'tmp', 'flow', 'press', 'hum', 'vlv', 'dmpr', 'spd',
+})
+
+
+def _deglue(token: str) -> list:
+    """Split a glued compound into lexicon words; unknown tokens unchanged."""
+    if token in DEGLUE_HEADS or len(token) < 4:
+        return [token]
+    parts, rest = [], token
+    while rest not in DEGLUE_HEADS:
+        for tail in DEGLUE_TAILS:
+            if rest.endswith(tail) and len(rest) > len(tail):
+                parts.insert(0, tail)
+                rest = rest[:-len(tail)]
+                break
+        else:
+            return [token]
+    return [rest] + parts
+
+
 def normalize_text(s: str) -> str:
     """Normalize a raw point name into lowercase space-separated words."""
     s = s.replace('\ufeff', '').strip()
@@ -82,7 +134,11 @@ def normalize_text(s: str) -> str:
     # Acronym boundary: "CDKDamper" -> "CDK Damper" (keeps "CO2" intact)
     s = re.sub(r'(?<=[A-Z])(?=[A-Z][a-z])', ' ', s)
     s = re.sub(r'\s+', ' ', s).strip().lower()
-    cleaned = ' '.join(filter(None, (_strip_index_digits(t) for t in s.split())))
+    tokens = []
+    for t in s.split():
+        for piece in _strip_index_digits(t).split():
+            tokens.extend(_deglue(piece))
+    cleaned = ' '.join(tokens)
     # All-index names ("AV 12") must not normalize to nothing
     return cleaned if cleaned else s
 
