@@ -50,3 +50,8 @@ preprocessing:
   augment_multiplier: 0.5
   augment_seed: 1337
   dropout_p: 0.1
+  # Conflict votes: per-site real rows are capped then square-rooted, so a
+  # single high-row site cannot outvote a multi-site consensus ('return temp':
+  # zoneTemp 1008 rows/1 site vs returnTemp 93 rows/2 sites). 0 = legacy raw
+  # row majority. Ties break on site count, then eo66 Display-Name overlap.
+  row_cap: 100

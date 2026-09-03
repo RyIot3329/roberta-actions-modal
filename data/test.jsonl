@@ -33,7 +33,7 @@
 {"text": "chw byp vlv pos", "label": "secBypassValveFb", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["secBypassValveFb"], "label_id": 674}
 {"text": "chw dif prs", "label": "secPressureDelta", "site": "N4-Integ06", "rows": 3, "seen_in_train": true, "accept": ["evapPressureDelta", "secPressureDelta"], "label_id": 707}
 {"text": "chw diff prs sp", "label": "secPressureDeltaSp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secPressureDeltaSp"], "label_id": 710}
-{"text": "chw flow", "label": "secLeavingFlow", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["evapFlowStatus", "evapLeavingFlow", "secLeavingFlow"], "label_id": 689}
+{"text": "chw flow", "label": "secLeavingFlow", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["evapFlowStatus", "evapLeavingFlow", "secLeavingFlow"], "label_id": 689}
 {"text": "chw flw", "label": "secLeavingFlow", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["evapLeavingFlow", "secLeavingFlow"], "label_id": 689}
 {"text": "chw iso vlv", "label": "evapLeavingIsoValve", "site": "N4-Integ06", "rows": 3, "seen_in_train": false, "accept": ["evapLeavingIsoValve"], "label_id": 317}
 {"text": "chwp pri chwp cmd", "label": "priPump", "site": "N4-Integ06", "rows": 4, "seen_in_train": false, "accept": ["priPump"], "label_id": 575}
@@ -272,7 +272,7 @@
 {"text": "eff clg sp", "label": "zoneCoolSp", "site": "N4-Integ06", "rows": 3061, "seen_in_train": true, "accept": ["occupiedCoolSp", "zoneCoolSp"], "label_id": 866}
 {"text": "eff dis tmp sp", "label": "dischargeTempSp", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["dischargeTempSp"], "label_id": 274}
 {"text": "eff htg sp", "label": "zoneHeatSp", "site": "N4-Integ06", "rows": 1600, "seen_in_train": true, "accept": ["occupiedHeatSp", "zoneHeatSp"], "label_id": 872}
-{"text": "eff occ", "label": "occupancyStatus", "site": "N4-Integ06", "rows": 2858, "seen_in_train": true, "accept": ["occupancyMode", "occupancyStatus", "occupiedMode"], "label_id": 478}
+{"text": "eff occ", "label": "occupancyStatus", "site": "N4-Integ06", "rows": 2858, "seen_in_train": true, "accept": ["occupancyMode", "occupancyStatus", "occupiedMode"], "label_id": 479}
 {"text": "eff pri flw sp", "label": "dischargeFlowSp", "site": "N4-Integ06", "rows": 5, "seen_in_train": false, "accept": ["dischargeFlowSp"], "label_id": 236}
 {"text": "eff sa tmp sp", "label": "dischargeTempSp", "site": "N4-Integ06", "rows": 77, "seen_in_train": true, "accept": ["dischargeTempSp"], "label_id": 274}
 {"text": "eff vent flw sp", "label": "dischargeFlowSp", "site": "N4-Integ06", "rows": 5, "seen_in_train": false, "accept": ["dischargeFlowSp"], "label_id": 236}
@@ -293,14 +293,14 @@
 {"text": "flw sp", "label": "dischargeFlowSp", "site": "N4-Integ06", "rows": 19, "seen_in_train": true, "accept": ["dischargeFlowSp"], "label_id": 236}
 {"text": "free clg sys", "label": "econEnable", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["econEnable"], "label_id": 284}
 {"text": "gpm sts", "label": "condLeavingFlow", "site": "N4-Integ06", "rows": 27, "seen_in_train": false, "accept": ["condLeavingFlow"], "label_id": 104}
-{"text": "hc vlv cmd", "label": "heatingValve", "site": "N4-Integ06", "rows": 175, "seen_in_train": true, "accept": ["heatingValve", "heatingValveFb"], "label_id": 401}
-{"text": "hcp cmd", "label": "heatingCoilPump", "site": "N4-Integ06", "rows": 80, "seen_in_train": false, "accept": ["heatingCoilPump"], "label_id": 388}
-{"text": "hcp sts", "label": "heatingCoilPumpStatus", "site": "N4-Integ06", "rows": 80, "seen_in_train": false, "accept": ["heatingCoilPumpStatus"], "label_id": 392}
+{"text": "hc vlv cmd", "label": "heatingValve", "site": "N4-Integ06", "rows": 175, "seen_in_train": true, "accept": ["heatingValve", "heatingValveFb"], "label_id": 402}
+{"text": "hcp cmd", "label": "heatingCoilPump", "site": "N4-Integ06", "rows": 80, "seen_in_train": false, "accept": ["heatingCoilPump"], "label_id": 389}
+{"text": "hcp sts", "label": "heatingCoilPumpStatus", "site": "N4-Integ06", "rows": 80, "seen_in_train": false, "accept": ["heatingCoilPumpStatus"], "label_id": 393}
 {"text": "hpc ena", "label": "chillerEnable", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["chillerEnable"], "label_id": 33}
 {"text": "hpc sts", "label": "chillerStatus", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["chillerStatus"], "label_id": 37}
 {"text": "hpc hws tmp sp", "label": "evapLeavingTempSp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["evapLeavingTempSp"], "label_id": 325}
 {"text": "hplw tmp", "label": "secLeavingTemp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secLeavingTemp"], "label_id": 699}
-{"text": "hvac mode sts", "label": "hvacMode", "site": "N4-Integ06", "rows": 155, "seen_in_train": false, "accept": ["hvacMode"], "label_id": 432}
+{"text": "hvac mode sts", "label": "hvacMode", "site": "N4-Integ06", "rows": 155, "seen_in_train": false, "accept": ["hvacMode"], "label_id": 433}
 {"text": "hw flow", "label": "evapEnteringFlow", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["evapEnteringFlow", "secLeavingFlow"], "label_id": 305}
 {"text": "hwp sec hw pmp cmd", "label": "secPump", "site": "N4-Integ06", "rows": 2, "seen_in_train": true, "accept": ["secPump"], "label_id": 711}
 {"text": "hwp sec hw pmp spd", "label": "secPumpSpeed", "site": "N4-Integ06", "rows": 2, "seen_in_train": true, "accept": ["secPumpSpeed"], "label_id": 723}
@@ -312,8 +312,8 @@
 {"text": "hw pmp pr hw pmp sts", "label": "priPumpStatus", "site": "N4-Integ06", "rows": 3, "seen_in_train": false, "accept": ["priPumpStatus"], "label_id": 583}
 {"text": "hw pmp cmd", "label": "secPump", "site": "N4-Integ06", "rows": 4, "seen_in_train": true, "accept": ["heatingCoilPump", "secPump"], "label_id": 711}
 {"text": "hw pmp vfd out", "label": "secPumpSpeed", "site": "N4-Integ06", "rows": 6, "seen_in_train": false, "accept": ["secPumpSpeed"], "label_id": 723}
-{"text": "hw pmp sts", "label": "heatingCoilPumpStatus", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["heatingCoilPumpStatus", "priPumpStatus", "secPumpStatus"], "label_id": 392}
-{"text": "hw req", "label": "heatingEnable", "site": "N4-Integ06", "rows": 18, "seen_in_train": false, "accept": ["heatingEnable"], "label_id": 394}
+{"text": "hw pmp sts", "label": "heatingCoilPumpStatus", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["heatingCoilPumpStatus", "priPumpStatus", "secPumpStatus"], "label_id": 393}
+{"text": "hw req", "label": "heatingEnable", "site": "N4-Integ06", "rows": 18, "seen_in_train": false, "accept": ["heatingEnable"], "label_id": 395}
 {"text": "hw ret tmp", "label": "secEnteringTemp", "site": "N4-Integ06", "rows": 2, "seen_in_train": true, "accept": ["secEnteringTemp"], "label_id": 683}
 {"text": "hw rst h", "label": "secLeavingTempHiSp", "site": "N4-Integ06", "rows": 11, "seen_in_train": false, "accept": ["secLeavingTempHiSp"], "label_id": 700}
 {"text": "hw rst l", "label": "secLeavingTempLoSp", "site": "N4-Integ06", "rows": 11, "seen_in_train": false, "accept": ["secLeavingTempLoSp"], "label_id": 701}
@@ -324,8 +324,8 @@
 {"text": "hw sup gpm", "label": "secLeavingFlow", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["secLeavingFlow"], "label_id": 689}
 {"text": "hw sup tmp", "label": "secLeavingTemp", "site": "N4-Integ06", "rows": 2, "seen_in_train": true, "accept": ["secLeavingTemp"], "label_id": 699}
 {"text": "hw sw tmp sp", "label": "secLeavingTempSp", "site": "N4-Integ06", "rows": 10, "seen_in_train": false, "accept": ["secLeavingTempSp"], "label_id": 704}
-{"text": "hw vlv", "label": "heatingValve", "site": "N4-Integ06", "rows": 19, "seen_in_train": true, "accept": ["heatingValve"], "label_id": 401}
-{"text": "hw valve cmd", "label": "heatingValve", "site": "N4-Integ06", "rows": 1002, "seen_in_train": false, "accept": ["heatingValve"], "label_id": 401}
+{"text": "hw vlv", "label": "heatingValve", "site": "N4-Integ06", "rows": 19, "seen_in_train": true, "accept": ["heatingValve"], "label_id": 402}
+{"text": "hw valve cmd", "label": "heatingValve", "site": "N4-Integ06", "rows": 1002, "seen_in_train": false, "accept": ["heatingValve"], "label_id": 402}
 {"text": "hx achw iso vlv cmd", "label": "priLeavingIsoValve", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["priLeavingIsoValve"], "label_id": 562}
 {"text": "hx acw iso vlv cmd", "label": "condLeavingIsoValve", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["condLeavingIsoValve"], "label_id": 108}
 {"text": "hx a cold cwr tmp", "label": "condEnteringTemp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["condEnteringTemp"], "label_id": 94}
@@ -353,14 +353,14 @@
 {"text": "hx hot chws tmp", "label": "secLeavingTemp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secLeavingTemp"], "label_id": 699}
 {"text": "hx iso vlv sts", "label": "secEnteringIsoValveFb", "site": "N4-Integ06", "rows": 2, "seen_in_train": true, "accept": ["secEnteringIsoValveFb"], "label_id": 681}
 {"text": "hx sp", "label": "secLeavingTempSp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secLeavingTempSp"], "label_id": 704}
-{"text": "htg mod cmd", "label": "heatingStage", "site": "N4-Integ06", "rows": 8, "seen_in_train": false, "accept": ["heatingStage"], "label_id": 396}
-{"text": "htg vlv out", "label": "heatingValve", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["heatingValve"], "label_id": 401}
-{"text": "htg vlv pos", "label": "heatingValve", "site": "N4-Integ06", "rows": 22, "seen_in_train": true, "accept": ["heatingValve", "heatingValveFb"], "label_id": 401}
+{"text": "htg mod cmd", "label": "heatingStage", "site": "N4-Integ06", "rows": 8, "seen_in_train": false, "accept": ["heatingStage"], "label_id": 397}
+{"text": "htg vlv out", "label": "heatingValve", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["heatingValve"], "label_id": 402}
+{"text": "htg vlv pos", "label": "heatingValve", "site": "N4-Integ06", "rows": 22, "seen_in_train": true, "accept": ["heatingValve", "heatingValveFb"], "label_id": 402}
 {"text": "htg vol sp hl", "label": "dischargeFlowHeatMaxSp", "site": "N4-Integ06", "rows": 154, "seen_in_train": true, "accept": ["dischargeFlowHeatMaxSp"], "label_id": 228}
 {"text": "htg vol sp ll", "label": "dischargeFlowHeatMinSp", "site": "N4-Integ06", "rows": 154, "seen_in_train": true, "accept": ["dischargeFlowHeatMinSp"], "label_id": 229}
-{"text": "hum cmd", "label": "humidifierValve", "site": "N4-Integ06", "rows": 9, "seen_in_train": true, "accept": ["humidifier", "humidifierValve"], "label_id": 431}
+{"text": "hum cmd", "label": "humidifierValve", "site": "N4-Integ06", "rows": 9, "seen_in_train": true, "accept": ["humidifier", "humidifierValve"], "label_id": 432}
 {"text": "hum sp", "label": "returnHumiditySp", "site": "N4-Integ06", "rows": 9, "seen_in_train": true, "accept": ["dischargeHumiditySp", "humidifierEnableSp", "returnHumiditySp"], "label_id": 656}
-{"text": "hum vlv cmd", "label": "humidifierValve", "site": "N4-Integ06", "rows": 11, "seen_in_train": true, "accept": ["humidifierValve", "returnHumidity"], "label_id": 431}
+{"text": "hum vlv cmd", "label": "humidifierValve", "site": "N4-Integ06", "rows": 11, "seen_in_train": true, "accept": ["humidifierValve", "returnHumidity"], "label_id": 432}
 {"text": "hx chwr tmp", "label": "secEnteringTemp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secEnteringTemp"], "label_id": 683}
 {"text": "hx chws prs", "label": "secLeavingPressure", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secLeavingPressure"], "label_id": 695}
 {"text": "hx chws tmp", "label": "secLeavingTemp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secLeavingTemp"], "label_id": 699}
@@ -389,23 +389,23 @@
 {"text": "m1 byp dmp cmd", "label": "bypassDamper", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["bypassDamper"], "label_id": 21}
 {"text": "m2 flt dmp cmd", "label": "exhaustDamper", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["exhaustDamper"], "label_id": 335}
 {"text": "m3 decon dmp cmd", "label": "dischargeDamper", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["dischargeDamper"], "label_id": 185}
-{"text": "ma tmp", "label": "mixedTemp", "site": "N4-Integ06", "rows": 91, "seen_in_train": true, "accept": ["mixedTemp"], "label_id": 462}
-{"text": "moa vol", "label": "minOutsideFlow", "site": "N4-Integ06", "rows": 45, "seen_in_train": false, "accept": ["minOutsideFlow"], "label_id": 454}
-{"text": "moa vol sp", "label": "minOutsideFlowSp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["minOutsideFlowSp"], "label_id": 455}
+{"text": "ma tmp", "label": "mixedTemp", "site": "N4-Integ06", "rows": 91, "seen_in_train": true, "accept": ["mixedTemp"], "label_id": 463}
+{"text": "moa vol", "label": "minOutsideFlow", "site": "N4-Integ06", "rows": 45, "seen_in_train": false, "accept": ["minOutsideFlow"], "label_id": 455}
+{"text": "moa vol sp", "label": "minOutsideFlowSp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["minOutsideFlowSp"], "label_id": 456}
 {"text": "max co lvl", "label": "zoneCO2MaxSp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["zoneCO2MaxSp"], "label_id": 860}
 {"text": "min co lvl", "label": "zoneCO2MinSp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["zoneCO2MinSp"], "label_id": 861}
 {"text": "min occ air flw", "label": "dischargeFlowMinSp", "site": "N4-Integ06", "rows": 19, "seen_in_train": false, "accept": ["dischargeFlowMinSp"], "label_id": 232}
-{"text": "oa dmp cmd", "label": "outsideDamper", "site": "N4-Integ06", "rows": 96, "seen_in_train": true, "accept": ["outsideDamper", "outsideIsoDamper"], "label_id": 490}
-{"text": "oa dmp min cmd", "label": "minOutsideDamper", "site": "N4-Integ06", "rows": 50, "seen_in_train": true, "accept": ["minOutsideDamper", "minOutsideDamperFb"], "label_id": 447}
-{"text": "oa dmp pos", "label": "outsideDamperFb", "site": "N4-Integ06", "rows": 11, "seen_in_train": true, "accept": ["dischargeDamper", "outsideDamper", "outsideDamperFb", "reliefDamper"], "label_id": 491}
+{"text": "oa dmp cmd", "label": "outsideDamper", "site": "N4-Integ06", "rows": 96, "seen_in_train": true, "accept": ["outsideDamper", "outsideIsoDamper"], "label_id": 491}
+{"text": "oa dmp min cmd", "label": "minOutsideDamper", "site": "N4-Integ06", "rows": 50, "seen_in_train": true, "accept": ["minOutsideDamper", "minOutsideDamperFb"], "label_id": 448}
+{"text": "oa dmp pos", "label": "outsideDamperFb", "site": "N4-Integ06", "rows": 11, "seen_in_train": true, "accept": ["dischargeDamper", "outsideDamper", "outsideDamperFb", "reliefDamper"], "label_id": 492}
 {"text": "oa dmp sts", "label": "outsideDamperStatus", "site": "N4-Integ06", "rows": 5, "seen_in_train": true, "accept": ["outsideDamperFb", "outsideDamperStatus"], "label_id": 497}
-{"text": "oa dmpr cmd", "label": "outsideDamper", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["outsideDamper"], "label_id": 490}
+{"text": "oa dmpr cmd", "label": "outsideDamper", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["outsideDamper"], "label_id": 491}
 {"text": "oaf cmd", "label": "outsideFan", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["dischargeFan", "minOutsideFan", "outsideFan"], "label_id": 501}
 {"text": "oaf sts", "label": "outsideFanStatus", "site": "N4-Integ06", "rows": 2, "seen_in_train": true, "accept": ["dischargeFanStatus", "minOutsideFan", "outsideFanStatus"], "label_id": 503}
 {"text": "oa flw", "label": "outsideFlow", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["outsideFlow"], "label_id": 505}
 {"text": "oa hum", "label": "outsideHumidity", "site": "N4-Integ06", "rows": 2, "seen_in_train": true, "accept": ["outsideHumidity"], "label_id": 509}
 {"text": "oa max vol", "label": "outsideFlow", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["outsideFlow"], "label_id": 505}
-{"text": "oa min dmp pos", "label": "outsideDamperFb", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["outsideDamperFb"], "label_id": 491}
+{"text": "oa min dmp pos", "label": "outsideDamperFb", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["outsideDamperFb"], "label_id": 492}
 {"text": "oa min vol", "label": "outsideFlow", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["outsideFlow"], "label_id": 505}
 {"text": "oa rel hum master", "label": "outsideHumidity", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["outsideHumidity"], "label_id": 509}
 {"text": "oa rst h", "label": "outsideTempHiSp", "site": "N4-Integ06", "rows": 11, "seen_in_train": false, "accept": ["outsideTempHiSp"], "label_id": 516}
@@ -417,15 +417,15 @@
 {"text": "oa vol sp", "label": "outsideFlowSp", "site": "N4-Integ06", "rows": 2, "seen_in_train": true, "accept": ["outsideFlowSp"], "label_id": 508}
 {"text": "occ clg max flw sp", "label": "dischargeFlowCoolMaxSp", "site": "N4-Integ06", "rows": 2858, "seen_in_train": false, "accept": ["dischargeFlowCoolMaxSp"], "label_id": 226}
 {"text": "occ clg min flw sp", "label": "dischargeFlowCoolMinSp", "site": "N4-Integ06", "rows": 2858, "seen_in_train": false, "accept": ["dischargeFlowCoolMinSp"], "label_id": 227}
-{"text": "occ clg sp", "label": "occupiedCoolSp", "site": "N4-Integ06", "rows": 190, "seen_in_train": true, "accept": ["occupiedCoolSp", "zoneCoolSp", "zoneTempSp"], "label_id": 479}
-{"text": "occ cmd", "label": "occupancyMode", "site": "N4-Integ06", "rows": 250, "seen_in_train": true, "accept": ["occupancyMode", "occupancyModeOvr"], "label_id": 475}
-{"text": "occ heat sp", "label": "occupiedHeatSp", "site": "N4-Integ06", "rows": 22, "seen_in_train": true, "accept": ["occupiedHeatSp"], "label_id": 482}
-{"text": "occ htg sp", "label": "occupiedHeatSp", "site": "N4-Integ06", "rows": 190, "seen_in_train": true, "accept": ["occupiedHeatSp", "zoneHeatSp"], "label_id": 482}
-{"text": "occ snsr sts", "label": "occupancySensor", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["occupancySensor"], "label_id": 477}
-{"text": "occ status", "label": "occupancyMode", "site": "N4-Integ06", "rows": 1126, "seen_in_train": true, "accept": ["occupancyMode", "occupancySensor"], "label_id": 475}
-{"text": "occ zone db sp", "label": "occupiedHeatSp", "site": "N4-Integ06", "rows": 1126, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 482}
-{"text": "occ zone sp", "label": "occupiedCoolSp", "site": "N4-Integ06", "rows": 1126, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 479}
-{"text": "occupancy", "label": "occupancyMode", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["occupancyMode"], "label_id": 475}
+{"text": "occ clg sp", "label": "occupiedCoolSp", "site": "N4-Integ06", "rows": 190, "seen_in_train": true, "accept": ["occupiedCoolSp", "zoneCoolSp", "zoneTempSp"], "label_id": 480}
+{"text": "occ cmd", "label": "occupancyMode", "site": "N4-Integ06", "rows": 250, "seen_in_train": true, "accept": ["occupancyMode", "occupancyModeOvr"], "label_id": 476}
+{"text": "occ heat sp", "label": "occupiedHeatSp", "site": "N4-Integ06", "rows": 22, "seen_in_train": true, "accept": ["occupiedHeatSp"], "label_id": 483}
+{"text": "occ htg sp", "label": "occupiedHeatSp", "site": "N4-Integ06", "rows": 190, "seen_in_train": true, "accept": ["occupiedHeatSp", "zoneHeatSp"], "label_id": 483}
+{"text": "occ snsr sts", "label": "occupancySensor", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["occupancySensor"], "label_id": 478}
+{"text": "occ status", "label": "occupancyMode", "site": "N4-Integ06", "rows": 1126, "seen_in_train": true, "accept": ["occupancyMode", "occupancySensor"], "label_id": 476}
+{"text": "occ zone db sp", "label": "occupiedHeatSp", "site": "N4-Integ06", "rows": 1126, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 483}
+{"text": "occ zone sp", "label": "occupiedCoolSp", "site": "N4-Integ06", "rows": 1126, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 480}
+{"text": "occupancy", "label": "occupancyMode", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["occupancyMode"], "label_id": 476}
 {"text": "p11 a cmd", "label": "secPump", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secPump"], "label_id": 711}
 {"text": "p11 a spd cmd", "label": "secPumpSpeed", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secPumpSpeed"], "label_id": 723}
 {"text": "p11 a sts", "label": "secPumpStatus", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secPumpStatus"], "label_id": 727}
@@ -444,12 +444,12 @@
 {"text": "pb cmd", "label": "secPump", "site": "N4-Integ06", "rows": 9, "seen_in_train": false, "accept": ["secPump"], "label_id": 711}
 {"text": "pb spd cmd", "label": "secPumpSpeed", "site": "N4-Integ06", "rows": 9, "seen_in_train": false, "accept": ["secPumpSpeed"], "label_id": 723}
 {"text": "pb sts", "label": "secPumpStatus", "site": "N4-Integ06", "rows": 9, "seen_in_train": false, "accept": ["secPumpStatus"], "label_id": 727}
-{"text": "phcp cmd", "label": "heatingCoilPump", "site": "N4-Integ06", "rows": 3, "seen_in_train": false, "accept": ["heatingCoilPump"], "label_id": 388}
-{"text": "phcp sts", "label": "heatingCoilPumpStatus", "site": "N4-Integ06", "rows": 3, "seen_in_train": false, "accept": ["heatingCoilPumpStatus"], "label_id": 392}
+{"text": "phcp cmd", "label": "heatingCoilPump", "site": "N4-Integ06", "rows": 3, "seen_in_train": false, "accept": ["heatingCoilPump"], "label_id": 389}
+{"text": "phcp sts", "label": "heatingCoilPumpStatus", "site": "N4-Integ06", "rows": 3, "seen_in_train": false, "accept": ["heatingCoilPumpStatus"], "label_id": 393}
 {"text": "phc pmp cmd", "label": "preHeatingCoilPump", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["preHeatingCoilPump"], "label_id": 536}
 {"text": "phc vlv cmd", "label": "preHeatingValve", "site": "N4-Integ06", "rows": 3, "seen_in_train": true, "accept": ["preHeatingValve"], "label_id": 544}
 {"text": "ph sp", "label": "preHeatingCoilDischargeTempSp", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["preHeatingCoilDischargeTempSp", "preHeatingEnableSp"], "label_id": 533}
-{"text": "ph tmp", "label": "heatingCoilDischargeTemp", "site": "N4-Integ06", "rows": 11, "seen_in_train": true, "accept": ["heatingCoilDischargeTemp", "preHeatingCoilDischargeTemp"], "label_id": 382}
+{"text": "ph tmp", "label": "heatingCoilDischargeTemp", "site": "N4-Integ06", "rows": 11, "seen_in_train": true, "accept": ["heatingCoilDischargeTemp", "preHeatingCoilDischargeTemp"], "label_id": 383}
 {"text": "ph vlv", "label": "preHeatingValve", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["preHeatingValve"], "label_id": 544}
 {"text": "ph wtr pmp", "label": "priPump", "site": "N4-Integ06", "rows": 3, "seen_in_train": false, "accept": ["priPump"], "label_id": 575}
 {"text": "ph wtr pmp cmd", "label": "priPump", "site": "N4-Integ06", "rows": 3, "seen_in_train": false, "accept": ["priPump"], "label_id": 575}
@@ -489,7 +489,7 @@
 {"text": "rf spd", "label": "returnFanSpeed", "site": "N4-Integ06", "rows": 37, "seen_in_train": true, "accept": ["returnFanFrequency", "returnFanSpeed", "returnFanSpeedFb"], "label_id": 646}
 {"text": "rf sts", "label": "returnFanStatus", "site": "N4-Integ06", "rows": 32, "seen_in_train": true, "accept": ["returnFanStatus"], "label_id": 649}
 {"text": "rhc vlv cmd", "label": "reHeatingValve", "site": "N4-Integ06", "rows": 1408, "seen_in_train": true, "accept": ["heatingValve", "reHeatingValve"], "label_id": 606}
-{"text": "rhc vlv pos", "label": "heatingValve", "site": "N4-Integ06", "rows": 147, "seen_in_train": true, "accept": ["heatingValve", "reHeatingValve"], "label_id": 401}
+{"text": "rhc vlv pos", "label": "heatingValve", "site": "N4-Integ06", "rows": 147, "seen_in_train": true, "accept": ["heatingValve", "reHeatingValve"], "label_id": 402}
 {"text": "rlf dmp cmd", "label": "reliefDamper", "site": "N4-Integ06", "rows": 4, "seen_in_train": true, "accept": ["exhaustDamper", "reliefDamper"], "label_id": 625}
 {"text": "rad flr flw", "label": "secFlowStatus", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secFlowStatus"], "label_id": 686}
 {"text": "rad hw sup tmp", "label": "secLeavingTemp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secLeavingTemp"], "label_id": 699}
@@ -529,7 +529,7 @@
 {"text": "sfvfd out", "label": "dischargeFanSpeed", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["dischargeFanSpeed"], "label_id": 215}
 {"text": "shw pmp", "label": "secPump", "site": "N4-Integ06", "rows": 3, "seen_in_train": false, "accept": ["secPump"], "label_id": 711}
 {"text": "system ena", "label": "systemEnable", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["systemEnable"], "label_id": 753}
-{"text": "sched", "label": "occupancyMode", "site": "N4-Integ06", "rows": 19, "seen_in_train": false, "accept": ["occupancyMode"], "label_id": 475}
+{"text": "sched", "label": "occupancyMode", "site": "N4-Integ06", "rows": 19, "seen_in_train": false, "accept": ["occupancyMode"], "label_id": 476}
 {"text": "sec chw dif prs", "label": "secPressureDelta", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secPressureDelta"], "label_id": 707}
 {"text": "sec chwp sts", "label": "secPumpStatus", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["secPumpStatus"], "label_id": 727}
 {"text": "sec chw pmp a cmd", "label": "secPump", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["secPump"], "label_id": 711}
@@ -615,7 +615,7 @@
 {"text": "wh lvg tmp", "label": "wheelDischargeTemp", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["wheelDischargeTemp"], "label_id": 820}
 {"text": "wh min spd", "label": "wheelSpeedMinSp", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["wheelSpeedMinSp"], "label_id": 850}
 {"text": "whl ena", "label": "wheelEnable", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["wheelEnable"], "label_id": 822}
-{"text": "wtr smr mode", "label": "mode", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["mode"], "label_id": 470}
+{"text": "wtr smr mode", "label": "mode", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["mode"], "label_id": 471}
 {"text": "zn co2", "label": "zoneCO2", "site": "N4-Integ06", "rows": 1, "seen_in_train": true, "accept": ["zoneCO2"], "label_id": 855}
 {"text": "zn co2 sp", "label": "zoneCO2Sp", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["zoneCO2Sp"], "label_id": 862}
 {"text": "zn rel hum", "label": "zoneHumidity", "site": "N4-Integ06", "rows": 11, "seen_in_train": false, "accept": ["zoneHumidity"], "label_id": 875}
@@ -628,7 +628,7 @@
 {"text": "ao", "label": "secPumpSpeed", "site": "Motorola_Points", "rows": 22, "seen_in_train": false, "accept": ["secPumpSpeed"], "label_id": 723}
 {"text": "bi", "label": "secPumpStatus", "site": "Motorola_Points", "rows": 60, "seen_in_train": false, "accept": ["secPumpStatus"], "label_id": 727}
 {"text": "bo", "label": "dischargeFan", "site": "Motorola_Points", "rows": 80, "seen_in_train": false, "accept": ["dischargeFan"], "label_id": 198}
-{"text": "bv", "label": "occupancyMode", "site": "Motorola_Points", "rows": 373, "seen_in_train": false, "accept": ["occupancyMode"], "label_id": 475}
+{"text": "bv", "label": "occupancyMode", "site": "Motorola_Points", "rows": 373, "seen_in_train": false, "accept": ["occupancyMode"], "label_id": 476}
 {"text": "bypass vlv signal", "label": "secMixingValve", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["secMixingValve"], "label_id": 705}
 {"text": "ct north speed command", "label": "twrFanSpeed", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["twrFanSpeed"], "label_id": 773}
 {"text": "ct north vfd status", "label": "twrFanStatus", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["twrFanStatus"], "label_id": 777}
@@ -639,7 +639,7 @@
 {"text": "ch w pump status", "label": "secPumpStatus", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["secPumpStatus"], "label_id": 727}
 {"text": "ch w pump start", "label": "secPump", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["secPump"], "label_id": 711}
 {"text": "clg vlv position", "label": "coolingValveFb", "site": "Motorola_Points", "rows": 3, "seen_in_train": true, "accept": ["coolingValve", "coolingValveFb"], "label_id": 156}
-{"text": "cooldown command", "label": "morningCoolDown", "site": "Motorola_Points", "rows": 3, "seen_in_train": false, "accept": ["morningCoolDown"], "label_id": 471}
+{"text": "cooldown command", "label": "morningCoolDown", "site": "Motorola_Points", "rows": 3, "seen_in_train": false, "accept": ["morningCoolDown"], "label_id": 472}
 {"text": "cooling vlv signal", "label": "coolingValve", "site": "Motorola_Points", "rows": 3, "seen_in_train": false, "accept": ["coolingValve"], "label_id": 155}
 {"text": "current cooling sp", "label": "zoneCoolSp", "site": "Motorola_Points", "rows": 353, "seen_in_train": true, "accept": ["zoneCoolSp"], "label_id": 866}
 {"text": "current heating sp", "label": "zoneHeatSp", "site": "Motorola_Points", "rows": 353, "seen_in_train": true, "accept": ["zoneHeatSp"], "label_id": 872}
@@ -649,19 +649,19 @@
 {"text": "desired supply air temp", "label": "dischargeTempSp", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["dischargeTempSp"], "label_id": 274}
 {"text": "discharge temperature", "label": "dischargeTemp", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["dischargeTemp"], "label_id": 259}
 {"text": "economizer lockout status", "label": "econEnable", "site": "Motorola_Points", "rows": 3, "seen_in_train": false, "accept": ["econEnable"], "label_id": 284}
-{"text": "economizer min position", "label": "minOutsideDamper", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["minOutsideDamper"], "label_id": 447}
-{"text": "hw valve", "label": "heatingValve", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["heatingValve"], "label_id": 401}
+{"text": "economizer min position", "label": "minOutsideDamper", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["minOutsideDamper"], "label_id": 448}
+{"text": "hw valve", "label": "heatingValve", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["heatingValve"], "label_id": 402}
 {"text": "hwp start", "label": "secPump", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["secPump"], "label_id": 711}
 {"text": "hwp status", "label": "secPumpStatus", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["secPumpStatus"], "label_id": 727}
 {"text": "hwp a start", "label": "secPump", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["secPump"], "label_id": 711}
 {"text": "hwp a status", "label": "secPumpStatus", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["secPumpStatus"], "label_id": 727}
-{"text": "heat enable", "label": "heatingEnable", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["heatingEnable"], "label_id": 394}
-{"text": "heat enable sp", "label": "heatingEnableSp", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["heatingEnableSp"], "label_id": 395}
-{"text": "low limit", "label": "lowLimitAlarm", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["lowLimitAlarm"], "label_id": 446}
+{"text": "heat enable", "label": "heatingEnable", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["heatingEnable"], "label_id": 395}
+{"text": "heat enable sp", "label": "heatingEnableSp", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["heatingEnableSp"], "label_id": 396}
+{"text": "low limit", "label": "lowLimitAlarm", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["lowLimitAlarm"], "label_id": 447}
 {"text": "microset room temp", "label": "zoneTemp", "site": "Motorola_Points", "rows": 92, "seen_in_train": false, "accept": ["zoneTemp"], "label_id": 915}
-{"text": "min oa dmpr position", "label": "minOutsideDamper", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["minOutsideDamper"], "label_id": 447}
-{"text": "mixed air setpt", "label": "mixedTempSp", "site": "Motorola_Points", "rows": 3, "seen_in_train": true, "accept": ["mixedTempSp"], "label_id": 468}
-{"text": "mixed air temp", "label": "mixedTemp", "site": "Motorola_Points", "rows": 2, "seen_in_train": true, "accept": ["mixedTemp"], "label_id": 462}
+{"text": "min oa dmpr position", "label": "minOutsideDamper", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["minOutsideDamper"], "label_id": 448}
+{"text": "mixed air setpt", "label": "mixedTempSp", "site": "Motorola_Points", "rows": 3, "seen_in_train": true, "accept": ["mixedTempSp"], "label_id": 469}
+{"text": "mixed air temp", "label": "mixedTemp", "site": "Motorola_Points", "rows": 2, "seen_in_train": true, "accept": ["mixedTemp"], "label_id": 463}
 {"text": "moto ahu clg vlv", "label": "coolingValve", "site": "Motorola_Points", "rows": 14, "seen_in_train": false, "accept": ["coolingValve"], "label_id": 155}
 {"text": "moto ahu dehumid sp", "label": "dehumidEnableSp", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["dehumidEnableSp"], "label_id": 174}
 {"text": "moto ahu duct static sp", "label": "dischargePressureSp", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["dischargePressureSp"], "label_id": 254}
@@ -675,11 +675,11 @@
 {"text": "moto ahu ex fan dmpr curr sts", "label": "exhaustIsoDamperFb", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["exhaustIsoDamperFb"], "label_id": 360}
 {"text": "moto ahu ex fan dmpr fb", "label": "exhaustDamperFb", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["exhaustDamperFb"], "label_id": 336}
 {"text": "moto ahu flt alm", "label": "unitFilterAlarm", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["unitFilterAlarm"], "label_id": 795}
-{"text": "moto ahu gas htg en", "label": "heatingEnable", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["heatingEnable"], "label_id": 394}
+{"text": "moto ahu gas htg en", "label": "heatingEnable", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["heatingEnable"], "label_id": 395}
 {"text": "moto ahu ma dmpr", "label": "returnDamper", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["returnDamper"], "label_id": 633}
-{"text": "moto ahu ma temp", "label": "mixedTemp", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["mixedTemp"], "label_id": 462}
-{"text": "moto ahu ma temp sp", "label": "mixedTempSp", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["mixedTempSp"], "label_id": 468}
-{"text": "moto ahu ma temp sp off", "label": "mixedTempDb", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["mixedTempDb"], "label_id": 463}
+{"text": "moto ahu ma temp", "label": "mixedTemp", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["mixedTemp"], "label_id": 463}
+{"text": "moto ahu ma temp sp", "label": "mixedTempSp", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["mixedTempSp"], "label_id": 469}
+{"text": "moto ahu ma temp sp off", "label": "mixedTempDb", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["mixedTempDb"], "label_id": 464}
 {"text": "moto ahu ra enth", "label": "returnEnthalpy", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["returnEnthalpy"], "label_id": 640}
 {"text": "moto ahu ra rh", "label": "returnHumidity", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["returnHumidity"], "label_id": 655}
 {"text": "moto ahu ra temp", "label": "returnTemp", "site": "Motorola_Points", "rows": 7, "seen_in_train": false, "accept": ["returnTemp"], "label_id": 666}
@@ -712,12 +712,12 @@
 {"text": "moto cws chwp min spd", "label": "priPumpSpeedMinSp", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["priPumpSpeedMinSp"], "label_id": 582}
 {"text": "moto cws chws temp sp", "label": "priLeavingPressureSp", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["priLeavingPressureSp"], "label_id": 565}
 {"text": "moto cws oa temp en sp", "label": "systemEnableSp", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["systemEnableSp"], "label_id": 754}
-{"text": "oa dmpr output", "label": "outsideDamper", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["outsideDamper"], "label_id": 490}
-{"text": "oa enable heating", "label": "heatingEnableSp", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["heatingEnableSp"], "label_id": 395}
+{"text": "oa dmpr output", "label": "outsideDamper", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["outsideDamper"], "label_id": 491}
+{"text": "oa enable heating", "label": "heatingEnableSp", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["heatingEnableSp"], "label_id": 396}
 {"text": "oa temp", "label": "outsideTemp", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["outsideTemp"], "label_id": 513}
 {"text": "oat", "label": "outsideTemp", "site": "Motorola_Points", "rows": 2, "seen_in_train": true, "accept": ["outsideTemp"], "label_id": 513}
 {"text": "osa temp", "label": "outsideTemp", "site": "Motorola_Points", "rows": 2, "seen_in_train": true, "accept": ["outsideTemp"], "label_id": 513}
-{"text": "occupied command", "label": "occupancyMode", "site": "Motorola_Points", "rows": 3, "seen_in_train": false, "accept": ["occupancyMode"], "label_id": 475}
+{"text": "occupied command", "label": "occupancyMode", "site": "Motorola_Points", "rows": 3, "seen_in_train": false, "accept": ["occupancyMode"], "label_id": 476}
 {"text": "pmp alarm", "label": "secPumpAlarm", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["secPumpAlarm"], "label_id": 712}
 {"text": "ra damper position", "label": "returnDamper", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["returnDamper"], "label_id": 633}
 {"text": "rarh", "label": "returnHumidity", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["returnHumidity"], "label_id": 655}
@@ -752,8 +752,8 @@
 {"text": "vav a1 eff air flow sp", "label": "dischargeFlowSp", "site": "Motorola_Points", "rows": 34, "seen_in_train": false, "accept": ["dischargeFlowSp"], "label_id": 236}
 {"text": "vav a1 sup air dmpr", "label": "dischargeDamper", "site": "Motorola_Points", "rows": 34, "seen_in_train": false, "accept": ["dischargeDamper"], "label_id": 185}
 {"text": "vav a1 eff temp sp", "label": "zoneTempSp", "site": "Motorola_Points", "rows": 23, "seen_in_train": false, "accept": ["zoneTempSp"], "label_id": 931}
-{"text": "vav a1 occ clg sp", "label": "occupiedCoolSp", "site": "Motorola_Points", "rows": 23, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 479}
-{"text": "vav a1 occ htg sp", "label": "occupiedHeatSp", "site": "Motorola_Points", "rows": 23, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 482}
+{"text": "vav a1 occ clg sp", "label": "occupiedCoolSp", "site": "Motorola_Points", "rows": 23, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 480}
+{"text": "vav a1 occ htg sp", "label": "occupiedHeatSp", "site": "Motorola_Points", "rows": 23, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 483}
 {"text": "vav a1 rm temp", "label": "zoneTemp", "site": "Motorola_Points", "rows": 23, "seen_in_train": false, "accept": ["zoneTemp"], "label_id": 915}
 {"text": "vav a1 unocc clg sp", "label": "unoccupiedCoolSp", "site": "Motorola_Points", "rows": 23, "seen_in_train": false, "accept": ["unoccupiedCoolSp"], "label_id": 799}
 {"text": "vav a1 unocc htg sp", "label": "unoccupiedHeatSp", "site": "Motorola_Points", "rows": 23, "seen_in_train": false, "accept": ["unoccupiedHeatSp"], "label_id": 800}
@@ -761,8 +761,8 @@
 {"text": "vav a2 da temp", "label": "dischargeTemp", "site": "Motorola_Points", "rows": 32, "seen_in_train": false, "accept": ["dischargeTemp"], "label_id": 259}
 {"text": "vav a2 eff air flow sp", "label": "dischargeFlowSp", "site": "Motorola_Points", "rows": 32, "seen_in_train": false, "accept": ["dischargeFlowSp"], "label_id": 236}
 {"text": "vav a2 eff temp sp", "label": "zoneTempSp", "site": "Motorola_Points", "rows": 24, "seen_in_train": false, "accept": ["zoneTempSp"], "label_id": 931}
-{"text": "vav a2 occ clg sp", "label": "occupiedCoolSp", "site": "Motorola_Points", "rows": 24, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 479}
-{"text": "vav a2 occ htg sp", "label": "occupiedHeatSp", "site": "Motorola_Points", "rows": 24, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 482}
+{"text": "vav a2 occ clg sp", "label": "occupiedCoolSp", "site": "Motorola_Points", "rows": 24, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 480}
+{"text": "vav a2 occ htg sp", "label": "occupiedHeatSp", "site": "Motorola_Points", "rows": 24, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 483}
 {"text": "vav a2 rm temp", "label": "zoneTemp", "site": "Motorola_Points", "rows": 24, "seen_in_train": false, "accept": ["zoneTemp"], "label_id": 915}
 {"text": "vav a2 sup air dmpr", "label": "dischargeDamper", "site": "Motorola_Points", "rows": 32, "seen_in_train": false, "accept": ["dischargeDamper"], "label_id": 185}
 {"text": "vav a2 unocc clg sp", "label": "unoccupiedCoolSp", "site": "Motorola_Points", "rows": 24, "seen_in_train": false, "accept": ["unoccupiedCoolSp"], "label_id": 799}
@@ -771,19 +771,19 @@
 {"text": "vav a3 da temp", "label": "dischargeTemp", "site": "Motorola_Points", "rows": 53, "seen_in_train": false, "accept": ["dischargeTemp"], "label_id": 259}
 {"text": "vav a3 eff air flow sp", "label": "dischargeFlowSp", "site": "Motorola_Points", "rows": 53, "seen_in_train": false, "accept": ["dischargeFlowSp"], "label_id": 236}
 {"text": "vav a3 eff temp sp", "label": "zoneTempSp", "site": "Motorola_Points", "rows": 30, "seen_in_train": false, "accept": ["zoneTempSp"], "label_id": 931}
-{"text": "vav a3 occ clg sp", "label": "occupiedCoolSp", "site": "Motorola_Points", "rows": 30, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 479}
-{"text": "vav a3 occ htg sp", "label": "occupiedHeatSp", "site": "Motorola_Points", "rows": 30, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 482}
+{"text": "vav a3 occ clg sp", "label": "occupiedCoolSp", "site": "Motorola_Points", "rows": 30, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 480}
+{"text": "vav a3 occ htg sp", "label": "occupiedHeatSp", "site": "Motorola_Points", "rows": 30, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 483}
 {"text": "vav a3 rm temp", "label": "zoneTemp", "site": "Motorola_Points", "rows": 30, "seen_in_train": false, "accept": ["zoneTemp"], "label_id": 915}
 {"text": "vav a3 sup air dmpr", "label": "dischargeDamper", "site": "Motorola_Points", "rows": 53, "seen_in_train": false, "accept": ["dischargeDamper"], "label_id": 185}
 {"text": "vav a3 unocc clg sp", "label": "unoccupiedCoolSp", "site": "Motorola_Points", "rows": 30, "seen_in_train": false, "accept": ["unoccupiedCoolSp"], "label_id": 799}
 {"text": "vav a3 unocc htg sp", "label": "unoccupiedHeatSp", "site": "Motorola_Points", "rows": 30, "seen_in_train": false, "accept": ["unoccupiedHeatSp"], "label_id": 800}
-{"text": "vav a3 elec htg", "label": "heatingValve", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["heatingValve"], "label_id": 401}
+{"text": "vav a3 elec htg", "label": "heatingValve", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["heatingValve"], "label_id": 402}
 {"text": "vav a4 air flow", "label": "dischargeFlow", "site": "Motorola_Points", "rows": 45, "seen_in_train": false, "accept": ["dischargeFlow"], "label_id": 223}
 {"text": "vav a4 da temp", "label": "dischargeTemp", "site": "Motorola_Points", "rows": 45, "seen_in_train": false, "accept": ["dischargeTemp"], "label_id": 259}
 {"text": "vav a4 eff air flow sp", "label": "dischargeFlowSp", "site": "Motorola_Points", "rows": 45, "seen_in_train": false, "accept": ["dischargeFlowSp"], "label_id": 236}
 {"text": "vav a4 eff temp sp", "label": "zoneTempSp", "site": "Motorola_Points", "rows": 25, "seen_in_train": false, "accept": ["zoneTempSp"], "label_id": 931}
-{"text": "vav a4 occ clg sp", "label": "occupiedCoolSp", "site": "Motorola_Points", "rows": 25, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 479}
-{"text": "vav a4 occ htg sp", "label": "occupiedHeatSp", "site": "Motorola_Points", "rows": 25, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 482}
+{"text": "vav a4 occ clg sp", "label": "occupiedCoolSp", "site": "Motorola_Points", "rows": 25, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 480}
+{"text": "vav a4 occ htg sp", "label": "occupiedHeatSp", "site": "Motorola_Points", "rows": 25, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 483}
 {"text": "vav a4 rm temp", "label": "zoneTemp", "site": "Motorola_Points", "rows": 25, "seen_in_train": false, "accept": ["zoneTemp"], "label_id": 915}
 {"text": "vav a4 sup air dmpr", "label": "dischargeDamper", "site": "Motorola_Points", "rows": 45, "seen_in_train": false, "accept": ["dischargeDamper"], "label_id": 185}
 {"text": "vav a4 unocc clg sp", "label": "unoccupiedCoolSp", "site": "Motorola_Points", "rows": 25, "seen_in_train": false, "accept": ["unoccupiedCoolSp"], "label_id": 799}
@@ -792,35 +792,35 @@
 {"text": "vav a5 da temp", "label": "dischargeTemp", "site": "Motorola_Points", "rows": 31, "seen_in_train": false, "accept": ["dischargeTemp"], "label_id": 259}
 {"text": "vav a5 eff air flow sp", "label": "dischargeFlowSp", "site": "Motorola_Points", "rows": 31, "seen_in_train": false, "accept": ["dischargeFlowSp"], "label_id": 236}
 {"text": "vav a5 eff temp sp", "label": "zoneTempSp", "site": "Motorola_Points", "rows": 19, "seen_in_train": false, "accept": ["zoneTempSp"], "label_id": 931}
-{"text": "vav a5 occ clg sp", "label": "occupiedCoolSp", "site": "Motorola_Points", "rows": 19, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 479}
-{"text": "vav a5 occ htg sp", "label": "occupiedHeatSp", "site": "Motorola_Points", "rows": 19, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 482}
+{"text": "vav a5 occ clg sp", "label": "occupiedCoolSp", "site": "Motorola_Points", "rows": 19, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 480}
+{"text": "vav a5 occ htg sp", "label": "occupiedHeatSp", "site": "Motorola_Points", "rows": 19, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 483}
 {"text": "vav a5 rm temp", "label": "zoneTemp", "site": "Motorola_Points", "rows": 19, "seen_in_train": false, "accept": ["zoneTemp"], "label_id": 915}
 {"text": "vav a5 sup air dmpr", "label": "dischargeDamper", "site": "Motorola_Points", "rows": 31, "seen_in_train": false, "accept": ["dischargeDamper"], "label_id": 185}
 {"text": "vav a5 unocc clg sp", "label": "unoccupiedCoolSp", "site": "Motorola_Points", "rows": 19, "seen_in_train": false, "accept": ["unoccupiedCoolSp"], "label_id": 799}
 {"text": "vav a5 unocc htg sp", "label": "unoccupiedHeatSp", "site": "Motorola_Points", "rows": 19, "seen_in_train": false, "accept": ["unoccupiedHeatSp"], "label_id": 800}
-{"text": "vav a5 elec htg", "label": "heatingValve", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["heatingValve"], "label_id": 401}
+{"text": "vav a5 elec htg", "label": "heatingValve", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["heatingValve"], "label_id": 402}
 {"text": "vav a6 air flow", "label": "dischargeFlow", "site": "Motorola_Points", "rows": 13, "seen_in_train": false, "accept": ["dischargeFlow"], "label_id": 223}
 {"text": "vav a6 da temp", "label": "dischargeTemp", "site": "Motorola_Points", "rows": 13, "seen_in_train": false, "accept": ["dischargeTemp"], "label_id": 259}
 {"text": "vav a6 eff air flow sp", "label": "dischargeFlowSp", "site": "Motorola_Points", "rows": 13, "seen_in_train": false, "accept": ["dischargeFlowSp"], "label_id": 236}
 {"text": "vav a6 eff temp sp", "label": "zoneTempSp", "site": "Motorola_Points", "rows": 9, "seen_in_train": false, "accept": ["zoneTempSp"], "label_id": 931}
-{"text": "vav a6 occ clg sp", "label": "occupiedCoolSp", "site": "Motorola_Points", "rows": 9, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 479}
-{"text": "vav a6 occ htg sp", "label": "occupiedHeatSp", "site": "Motorola_Points", "rows": 9, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 482}
+{"text": "vav a6 occ clg sp", "label": "occupiedCoolSp", "site": "Motorola_Points", "rows": 9, "seen_in_train": false, "accept": ["occupiedCoolSp"], "label_id": 480}
+{"text": "vav a6 occ htg sp", "label": "occupiedHeatSp", "site": "Motorola_Points", "rows": 9, "seen_in_train": false, "accept": ["occupiedHeatSp"], "label_id": 483}
 {"text": "vav a6 rm temp", "label": "zoneTemp", "site": "Motorola_Points", "rows": 9, "seen_in_train": false, "accept": ["zoneTemp"], "label_id": 915}
 {"text": "vav a6 sup air dmpr", "label": "dischargeDamper", "site": "Motorola_Points", "rows": 13, "seen_in_train": false, "accept": ["dischargeDamper"], "label_id": 185}
 {"text": "vav a6 unocc clg sp", "label": "unoccupiedCoolSp", "site": "Motorola_Points", "rows": 9, "seen_in_train": false, "accept": ["unoccupiedCoolSp"], "label_id": 799}
 {"text": "vav a6 unocc htg sp", "label": "unoccupiedHeatSp", "site": "Motorola_Points", "rows": 9, "seen_in_train": false, "accept": ["unoccupiedHeatSp"], "label_id": 800}
-{"text": "warmup command", "label": "morningWarmUp", "site": "Motorola_Points", "rows": 3, "seen_in_train": false, "accept": ["morningWarmUp"], "label_id": 472}
+{"text": "warmup command", "label": "morningWarmUp", "site": "Motorola_Points", "rows": 3, "seen_in_train": false, "accept": ["morningWarmUp"], "label_id": 473}
 {"text": "cmpa", "label": "coolingStage", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["coolingStage"], "label_id": 150}
 {"text": "cmpb", "label": "coolingStage", "site": "Motorola_Points", "rows": 2, "seen_in_train": false, "accept": ["coolingStage"], "label_id": 150}
-{"text": "econ min", "label": "minOutsideDamper", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["minOutsideDamper"], "label_id": 447}
-{"text": "econ pos", "label": "outsideDamperFb", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["outsideDamperFb"], "label_id": 491}
-{"text": "econocmd", "label": "outsideDamper", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["outsideDamper"], "label_id": 490}
+{"text": "econ min", "label": "minOutsideDamper", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["minOutsideDamper"], "label_id": 448}
+{"text": "econ pos", "label": "outsideDamperFb", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["outsideDamperFb"], "label_id": 492}
+{"text": "econocmd", "label": "outsideDamper", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["outsideDamper"], "label_id": 491}
 {"text": "econpnt", "label": "econEnableSp", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["econEnableSp"], "label_id": 287}
 {"text": "ef vfd output", "label": "exhaustFanSpeed", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["exhaustFanSpeed"], "label_id": 349}
 {"text": "lvg air temperature", "label": "dischargeTemp", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["dischargeTemp"], "label_id": 259}
-{"text": "ma temp", "label": "mixedTemp", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["mixedTemp"], "label_id": 462}
+{"text": "ma temp", "label": "mixedTemp", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["mixedTemp"], "label_id": 463}
 {"text": "oatlcomp", "label": "coolingEnableSp", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["coolingEnableSp"], "label_id": 149}
-{"text": "occ status", "label": "occupancyMode", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["occupancyMode", "occupancySensor"], "label_id": 475}
+{"text": "occ status", "label": "occupancyMode", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["occupancyMode", "occupancySensor"], "label_id": 476}
 {"text": "ra temp", "label": "returnTempSp", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["returnTemp", "returnTempSp"], "label_id": 669}
 {"text": "rat", "label": "returnTemp", "site": "Motorola_Points", "rows": 1, "seen_in_train": true, "accept": ["returnTemp"], "label_id": 666}
 {"text": "sa static stpt", "label": "dischargePressureSp", "site": "Motorola_Points", "rows": 1, "seen_in_train": false, "accept": ["dischargePressureSp"], "label_id": 254}

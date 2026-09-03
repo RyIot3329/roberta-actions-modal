@@ -50,6 +50,7 @@ Output: data/train.jsonl, data/validation.jsonl, data/test.jsonl,
 import argparse
 import json
 import os
+import re
 import sys
 from collections import Counter, defaultdict
 
@@ -57,7 +58,8 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from clean_data import normalize_text
-from extract_real_data import build_canonicalizer
+from extract_real_data import build_canonicalizer, build_display_name_index
+import math
 from augment import augment_pool
 
 VAL_SITES = ['N4-Integ05']
@@ -71,6 +73,9 @@ PREPROCESSING_DEFAULTS = {
     'augment_multiplier': 0.0,
     'augment_seed': 1337,
     'dropout_p': 0.1,
+    # Conflict votes: per-site rows are capped then square-rooted so one
+    # high-row site cannot outvote a multi-site consensus (0 = legacy raw rows)
+    'row_cap': 100,
 }
 
 
@@ -196,47 +201,128 @@ def load_equivalences(path, canon):
     return equiv
 
 
-def resolve_training_pool(weights, overrides):
+def build_evidence(synth, real_train, generated=None):
     """
-    Collapse {text: {label: weight}} to one label per text.
+    Per-text label evidence: {text: {label: {'synth': template rows,
+    'gen': generated rows, 'sites': Counter{site: real rows}}}}.
 
-    Manual overrides win; otherwise weighted majority; ties are dropped.
+    Train-site descriptions are labeled evidence in their own right
+    ("Damper Command" is as real as "DmpCmd"); held-out site descriptions
+    are never read here -- they feed the eval-time max-confidence ensemble.
+    """
+    def _empty():
+        return {'synth': 0.0, 'gen': 0.0, 'sites': Counter()}
+    evidence = defaultdict(lambda: defaultdict(_empty))
+    for row in synth.itertuples():
+        evidence[row.text][row.target]['synth'] += 1
+    for row in real_train.itertuples():
+        evidence[row.text][row.label]['sites'][row.site] += int(row.rows)
+    stats = {'described_rows': 0}
+    if 'description' in real_train.columns:
+        described = real_train[real_train['description'].fillna('')
+                               .astype(str).str.strip().str.len() > 0].copy()
+        if len(described):
+            described['desc_text'] = described['description'].astype(str).map(normalize_text)
+            described = described[described['desc_text'].str.len() > 0]
+            for row in described.itertuples():
+                evidence[row.desc_text][row.label]['sites'][row.site] += int(row.rows)
+            stats['described_rows'] = len(described)
+    if generated is not None:
+        for row in generated.itertuples():
+            evidence[row.text][row.target]['gen'] += 1
+    return evidence, stats
+
+
+def label_score(ev, row_cap=None):
+    """Vote strength of one label for one text.
+
+    Legacy (row_cap falsy): templates 1.0 each + generated 0.5 each + raw real
+    rows. Capped: real rows enter as sum over sites of sqrt(min(rows, cap)),
+    so a single 1000-row site scores 10 (cap 100) while two sites with 50 rows
+    each score 14.1 -- multi-site agreement beats one site's volume.
+    """
+    if row_cap:
+        site_part = sum(math.sqrt(min(r, row_cap)) for r in ev['sites'].values())
+    else:
+        site_part = float(sum(ev['sites'].values()))
+    return ev['synth'] + 0.5 * ev['gen'] + site_part
+
+
+def make_overlap_fn(eo66_path):
+    """Jaccard overlap between a text's tokens and a label's eo66 Display
+    Name / Markers tokens (camelCase split for extension classes). Used only
+    to break exact vote ties."""
+    index = build_display_name_index(eo66_path)
+    cache = {}
+
+    def label_tokens(label):
+        if label not in cache:
+            toks = set(index.get(label, set()))
+            toks |= {t.lower() for t in re.findall(r'[A-Z]?[a-z0-9]+|[A-Z]+(?![a-z])', label)}
+            cache[label] = toks
+        return cache[label]
+
+    def overlap(text, label):
+        t = set(text.split())
+        l = label_tokens(label)
+        return len(t & l) / len(t | l) if (t | l) else 0.0
+
+    return overlap
+
+
+def resolve_training_pool(evidence, overrides, row_cap=None, overlap_fn=None):
+    """
+    Collapse {text: {label: evidence}} to one label per text.
+
+    Manual overrides win; otherwise the strongest label_score. In capped
+    mode ties break on the number of sites backing a label, then on the
+    Display-Name overlap prior (when an overlap_fn is given); a residual tie
+    is dropped. Legacy mode (row_cap falsy, no overlap_fn) reproduces the
+    original raw-row majority exactly.
     Returns (resolved {text: label}, conflicts list for the CSV report).
     """
     resolved = {}
     conflicts = []
+    use_tiebreaks = bool(row_cap) or overlap_fn is not None
 
-    for text, label_weights in weights.items():
+    def describe(text, label, ev, score):
+        rows = int(sum(ev['sites'].values()))
+        return f"{label} ({score:g}; rows {rows}, sites {len(ev['sites'])})"
+
+    for text, label_ev in evidence.items():
+        keyed = []
+        for label, ev in label_ev.items():
+            key = (label_score(ev, row_cap),
+                   len(ev['sites']) if use_tiebreaks else 0,
+                   overlap_fn(text, label) if overlap_fn is not None else 0.0)
+            keyed.append((key, label, ev))
+        keyed.sort(key=lambda x: x[0], reverse=True)
+        targets = ' | '.join(describe(text, label, ev, key[0]) for key, label, ev in keyed)
+
         if text in overrides:
             target = overrides[text]
-            if len(label_weights) > 1:
+            if len(label_ev) > 1:
                 conflicts.append({
                     'text': text,
-                    'targets': ' | '.join(f"{l} ({w:g})" for l, w in
-                                          sorted(label_weights.items(), key=lambda x: -x[1])),
+                    'targets': targets,
                     'resolution': f"{target if target is not None else 'DROPPED'} (override)",
                 })
             if target is not None:
                 resolved[text] = target
             continue
 
-        if len(label_weights) == 1:
-            resolved[text] = next(iter(label_weights))
+        if len(label_ev) == 1:
+            resolved[text] = next(iter(label_ev))
             continue
 
-        ranked = sorted(label_weights.items(), key=lambda x: -x[1])
-        is_tie = ranked[0][1] == ranked[1][1]
-        resolution = 'DROPPED (tie)' if is_tie else ranked[0][0]
-        conflicts.append({
-            'text': text,
-            'targets': ' | '.join(f"{l} ({w:g})" for l, w in ranked),
-            'resolution': resolution,
-        })
+        is_tie = keyed[0][0] == keyed[1][0]
+        resolution = 'DROPPED (tie)' if is_tie else keyed[0][1]
+        conflicts.append({'text': text, 'targets': targets, 'resolution': resolution})
         if not is_tie:
-            resolved[text] = ranked[0][0]
+            resolved[text] = keyed[0][1]
 
     # Overrides for texts absent from the source data are honored but flagged
-    known = set(weights)
+    known = set(evidence)
     for text, target in overrides.items():
         if text not in known:
             print(f"WARNING: override text not found in data (typo or stale?): '{text}'")
@@ -273,31 +359,10 @@ def write_jsonl(records, filepath):
     print(f"  Saved: {filepath} ({len(records)} records)")
 
 
-def convert_to_jsonl(
-    input_csv='data/cleaned_data.csv',
-    real_points_csv='data/real_points.csv',
-    synthetic_csv='data/synthetic_points.csv',
-    output_dir='data',
-    val_sites=None,
-    test_sites=None,
-    use_generated=None,
-    augment_multiplier=None,
-):
-    val_sites = val_sites or VAL_SITES
-    test_sites = test_sites or TEST_SITES
-    os.makedirs(output_dir, exist_ok=True)
-
-    preprocessing = load_preprocessing_config()
-    if use_generated is None:
-        use_generated = bool(preprocessing['use_generated_synthetic'])
-    if augment_multiplier is not None:  # CLI override wins
-        preprocessing['augment_multiplier'] = augment_multiplier
-
-    canon = build_label_canonicalizer(
-        os.path.join(output_dir, 'eo66.xlsx'),
-        os.path.join(output_dir, 'target_audit.csv'),
-    )
-
+def load_sources(input_csv, real_points_csv, synthetic_csv, output_dir,
+                 use_generated, canon, val_sites, test_sites):
+    """Read + canonicalize the three training sources; returns a dict with
+    synth, real, train_sites, generated (None when disabled/absent)."""
     # ----- Synthetic template data -----
     try:
         synth = pd.read_csv(input_csv)
@@ -344,28 +409,43 @@ def convert_to_jsonl(
     elif use_generated:
         print(f"No {synthetic_csv} found -- continuing without generated texts")
 
-    # ----- Training pool: weighted label evidence per text -----
-    weights = defaultdict(Counter)
-    for row in synth.itertuples():
-        weights[row.text][row.target] += 1
+    return {'synth': synth, 'real': real, 'train_sites': train_sites, 'generated': generated}
+
+
+def convert_to_jsonl(
+    input_csv='data/cleaned_data.csv',
+    real_points_csv='data/real_points.csv',
+    synthetic_csv='data/synthetic_points.csv',
+    output_dir='data',
+    val_sites=None,
+    test_sites=None,
+    use_generated=None,
+    augment_multiplier=None,
+):
+    val_sites = val_sites or VAL_SITES
+    test_sites = test_sites or TEST_SITES
+    os.makedirs(output_dir, exist_ok=True)
+
+    preprocessing = load_preprocessing_config()
+    if use_generated is None:
+        use_generated = bool(preprocessing['use_generated_synthetic'])
+    if augment_multiplier is not None:  # CLI override wins
+        preprocessing['augment_multiplier'] = augment_multiplier
+
+    canon = build_label_canonicalizer(
+        os.path.join(output_dir, 'eo66.xlsx'),
+        os.path.join(output_dir, 'target_audit.csv'),
+    )
+
+    src = load_sources(input_csv, real_points_csv, synthetic_csv, output_dir,
+                       use_generated, canon, val_sites, test_sites)
+    synth, real, train_sites, generated = src['synth'], src['real'], src['train_sites'], src['generated']
+
+    # ----- Training pool: per-site label evidence per text -----
     real_train = real[real['site'].isin(train_sites)].copy()
-    for row in real_train.itertuples():
-        weights[row.text][row.label] += int(row.rows)
-    # Train-site descriptions are labeled evidence in their own right
-    # ("Damper Command" is as real as "DmpCmd"); held-out site descriptions
-    # are never read here -- they feed the eval-time max-confidence ensemble
-    if 'description' in real_train.columns:
-        described = real_train[real_train['description'].fillna('')
-                               .astype(str).str.strip().str.len() > 0].copy()
-        if len(described):
-            described['desc_text'] = described['description'].astype(str).map(normalize_text)
-            described = described[described['desc_text'].str.len() > 0]
-            for row in described.itertuples():
-                weights[row.desc_text][row.label] += int(row.rows)
-            print(f"Train-site descriptions: +{len(described)} aggregated rows of evidence")
-    if generated is not None:
-        for row in generated.itertuples():
-            weights[row.text][row.target] += 0.5
+    evidence, ev_stats = build_evidence(synth, real_train, generated)
+    if ev_stats['described_rows']:
+        print(f"Train-site descriptions: +{ev_stats['described_rows']} aggregated rows of evidence")
     organic_labels = set(synth['target']) | set(real_train['label'])
     # Accept sets for LENIENT scoring: every label a TRAIN site used for the
     # identical text (site-convention credit) plus approved equivalences.
@@ -384,8 +464,12 @@ def convert_to_jsonl(
         print(f"Loaded {len(overrides)} manual overrides "
               f"({len(overrides) - n_dropped} relabeled, {n_dropped} dropped)")
 
-    resolved, conflicts = resolve_training_pool(weights, overrides)
-    print(f"Training pool: {len(weights)} unique texts -> {len(resolved)} after conflict resolution")
+    row_cap = int(preprocessing.get('row_cap') or 0)
+    overlap_fn = make_overlap_fn(os.path.join(output_dir, 'eo66.xlsx')) if row_cap else None
+    resolved, conflicts = resolve_training_pool(evidence, overrides, row_cap=row_cap,
+                                                overlap_fn=overlap_fn)
+    print(f"Training pool: {len(evidence)} unique texts -> {len(resolved)} after conflict "
+          f"resolution (row_cap={row_cap or 'legacy raw rows'})")
 
     conflicts_path = os.path.join(output_dir, 'label_conflicts.csv')
     if conflicts:

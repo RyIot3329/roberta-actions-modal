@@ -81,6 +81,25 @@ def _strip_label_indices(label: str) -> str:
     return _LABEL_ORPHAN_SEP.sub('', stripped)
 
 
+def build_display_name_index(eo66_path: str):
+    """{definition: token set} from eo66 Display Names + Markers (normalized),
+    used as a weak self-evidence prior when conflict votes tie: the label
+    whose own words overlap the point name wins the tie."""
+    from clean_data import normalize_text
+    eo66 = pd.read_excel(eo66_path)
+    index = {}
+    for d, dn, mk in zip(eo66['Definition'], eo66['Display Name'], eo66['Markers']):
+        if not isinstance(d, str):
+            continue
+        tokens = set()
+        if isinstance(dn, str):
+            tokens |= set(normalize_text(dn).split())
+        if isinstance(mk, str):
+            tokens |= {t.strip().lower() for t in mk.split(',') if t.strip()}
+        index[d.strip()] = tokens
+    return index
+
+
 def build_canonicalizer(eo66_path: str):
     """Map a label to its eo66 base definition via the shipped regexes.
 
