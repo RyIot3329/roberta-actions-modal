@@ -195,7 +195,8 @@ _UNIT_CANON = {
     'c': 'degc', 'degc': 'degc', 'degreesc': 'degc', 'celsius': 'degc',
     'k': 'degk', 'degk': 'degk',
     '%': 'percent', 'pct': 'percent', 'percent': 'percent', '%rh': 'percentrh', 'rh': 'percentrh',
-    'in/wc': 'inwc', 'inwc': 'inwc', 'inh2o': 'inwc', 'inw': 'inwc', 'inwg': 'inwc', 'inh₂o': 'inwc',
+    'in/wc': 'inwc', 'inwc': 'inwc', 'inh2o': 'inwc', 'inw': 'inwc', 'inwg': 'inwc',
+    'inh₂o': 'inwc',
     'cfm': 'cfm', 'l/s': 'lps', 'lps': 'lps', 'm3/h': 'm3h', 'm³/h': 'm3h', 'cfh': 'cfh',
     'gpm': 'gpm', 'l/min': 'lpm', 'lpm': 'lpm',
     'ppm': 'ppm', 'ppb': 'ppb', 'ug/m3': 'ugm3', 'µg/m³': 'ugm3',
@@ -277,7 +278,7 @@ def _canon_path(raw) -> str:
     return ' '.join(tokens)
 
 
-def build_context(equip='', description='', units='', value_kind='', object_type='',
+def build_context(equip='', description='', units='', value_kind='', object_type='',  # pylint: disable=too-many-arguments,too-many-positional-arguments
                   device='', keep=None) -> str:
     """Join the available context fields into the canonical context string.
 
