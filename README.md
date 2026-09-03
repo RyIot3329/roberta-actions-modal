@@ -124,6 +124,15 @@ Key data-quality guarantees:
   workflow input) trains the seeds in parallel; the seed with the median
   validation strict accuracy is the candidate, and the logit ensemble is
   reported for reference. Single-seed noise on the 830-text test is ~0.5pp.
+- **Training-recipe knobs** (`config/training.yml`, all default-off, each
+  adopted only after a 3-seed A/B on validation): `early_stopping_patience`
+  (0 trains the full cosine horizon and keeps the best epoch), `llrd_decay` +
+  `head_lr_multiplier` (layer-wise LR decay), `rdrop_alpha` (R-Drop
+  consistency, two forward passes per step), `logit_adjustment_tau` (tail
+  classes), `ema_decay` (evaluate and checkpoint the EMA of the weights).
+  After a multi-seed run, `modal run scripts/finetune.py::soup --seeds 42,43,44`
+  builds a greedy weight soup of the saved seeds on the volume, scores it with
+  the same gate, and leaves it as `final_model_soup` for `push_saved_model`.
 - **Floors and regression suites**: `scripts/baseline_linear.py` (TF-IDF +
   SGD hinge, seconds on CPU) writes the linear floor the transformer must
   clear by >=5pp; `scripts/evaluate_external.py --probe` re-scores the frozen

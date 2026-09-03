@@ -284,6 +284,10 @@ jobs:
       # Data Preprocessing Steps
       # ============================================
 
+      - name: "Step 0: Unit tests (normalization, scorer, context builder, parsers, driver)"
+        run: |
+          for t in tests/test_*.py; do echo "== $t"; python "$t"; done
+
       - name: "Step 1: Clean Data"
         run: |
           echo "Cleaning data..."
