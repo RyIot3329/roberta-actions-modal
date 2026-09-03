@@ -1,53 +1,54 @@
-target,rows,status,proposed_target,proposed_in_eo66,collides_with_existing_class,rationale
-zoneTempMaxSP,63,merge_case,zoneTempMaxSp,True,True,case variant; eo66 canon is zoneTempMaxSp; training has BOTH as separate classes
-zoneTempMinSP,73,merge_case,zoneTempMinSp,True,True,case variant; eo66 canon is zoneTempMinSp; training has BOTH as separate classes
-condWaterLeavingFlow,63,rename,condLeavingFlow,True,False,"eo66 canon condLeavingFlow (""cond"" already means condenser water)"
-dischargeFanEnable,88,rename,dischargeFan,True,False,"eo66: dischargeFan = ""Discharge Fan Command"" (cmd marker); matches n4 convention"
-returnFanEnable,69,rename,returnFan,True,False,"eo66: returnFan = ""Return Fan Command"" (cmd marker); matches n4 convention"
-emergencyShutdown,58,merge_dup,emergencyStop,True,True,eo66 only defines emergencyStop; training has BOTH as separate classes (semantic duplicates)
-freezeProtectSp,57,rename,freezeProtectEnableSp,True,False,eo66 canon freezeProtectEnableSp
-dischargeFanHandMode,67,decision,dischargeFanMode,True,False,eo66 has dischargeFanMode but marks it blacklist -- map or keep as extension?
-dischargeFanDriveAlarm,68,decision,driveAlarm,True,True,"eo66 only has unscoped driveAlarm (also a training class, 63 rows) -- merge or keep fan-scoped?"
-dischargeFanFaultReset,65,decision,dischargeFanAlarmReset,True,True,"eo66 only has AlarmReset (also a training class, 67 rows) -- merge or keep?"
-dehumidSp,70,decision,dehumidEnableSp,True,True,"eo66 only has dehumidEnableSp (also a training class, 52 rows) -- merge or keep?"
-coolingStatus,69,decision,,False,False,no eo66 equivalent (only coolingStageStatus); unit-level status -- keep as extension?
-heatingStatus,59,decision,,False,False,no eo66 equivalent (only heatingStageStatus); keep as extension?
-econStatus,61,decision,,False,False,eo66 has econEnable/econMode but no status sensor; keep as extension?
-mixedDamper,61,extension,,False,False,genuine eo66 gap: mixed-air family has temp/humidity/pressure but no damper
-steamValve,67,extension,,False,False,genuine eo66 gap: steam family has pressure/temp only
-bypassFanStatus,59,extension,,False,False,no bypass fan family in eo66
-bypassPressure,76,extension,,False,False,no duct bypass pressure in eo66 (only hydronic priBypassPump*)
-dischargeFanBypass,65,extension,,False,False,VFD bypass; no eo66 equivalent
-dischargeFanFaultCode,65,extension,,False,False,"eo66 inconsistency: exhaustFanFaultCode exists, discharge variant missing"
-dischargeFanFrequency,68,extension,,False,False,electrical telemetry; eo66 has dischargeFanCurrent but not frequency
-dischargeFanVoltage,65,extension,,False,False,electrical telemetry; not in eo66
-dischargeFanEnergy,69,extension,,False,False,electrical telemetry; not in eo66
-dischargeFanMotorTemp,62,extension,,False,False,"eo66 inconsistency: exhaustFanMotorTemp exists, discharge variant missing"
-zoneO3,56,extension,,False,False,eo66 has outsideO3 but no zoneO3; consistent with zone gas-sensor naming
-zonePM1,56,extension,,False,False,eo66 has zonePM25/zonePM10 only
-zonePM4,57,extension,,False,False,eo66 has zonePM25/zonePM10 only
-zonePowerReal,57,extension,,False,False,"eo66 scopes PowerReal to equipment (comp/drive/fan), no zone-level"
-zoneTempAvgSp,57,extension,,False,False,eo66 has zoneTempAvg sensor but no setpoint for it
-condLeavringTemp,3,rename,condLeavingTemp,True,True,typo (Leavring) in Integ01 labels; eo66 canon condLeavingTemp
-ehaustDamperFb,4,rename,exhaustDamperFb,True,True,typo (ehaust) in Integ03 labels; eo66 canon exhaustDamperFb
-chillerEnabled,2,rename,chillerEnable,True,True,tense variant in Integ04 (name RunEnabled); eo66 canon chillerEnable
-reOaCoilEnteringTemp,1,rename,recOaCoilEnteringTemp,True,False,typo (re vs rec) in Integ01; eo66 canon recOaCoilEnteringTemp
-dischargeFlowHeatMinStpt,225,rename,dischargeFlowHeatMinSp,True,True,Stpt suffix variant in Integ03; eo66 canon dischargeFlowHeatMinSp
-secPressureDeltaS,1,rename,secPressureDeltaSp,True,True,truncated Sp in Integ03 (source name HWPrSpt is a setpoint)
-condensorPumpStatus,1,rename,condPumpStatus,True,True,misspelling (condensor); index-strip form of condensorPump01Status (Integ02)
-priValveA,3,merge_dup,priValve,True,True,A/B instance letters on HX steam valves (Integ01); same concept as priValve
-priValveB,3,merge_dup,priValve,True,True,A/B instance letters on HX steam valves (Integ01); same concept as priValve
-heatWheel,3,merge_dup,wheel,True,True,energy-recovery wheel (ERV/HRW names); eo66 wheel family
-heatWheelStatus,3,merge_dup,wheelStatus,True,True,energy-recovery wheel status; eo66 wheelStatus
-heatWheelExhaustTemp,1,merge_dup,wheelExhaustTemp,True,True,energy-recovery wheel exhaust temp; eo66 wheelExhaustTemp
-AHU,1,merge_case,ahu,False,True,both 1-row equipment-name mislabels (AhuSS / STK_AHUL3_2_FPH_ENA_Sp); consolidate case; DROP candidates
-BlrSts,4,rename,boilerStatus,True,True,Integ06 name-as-label rows (Blr1_Sts..Blr4_Sts index-strip to BlrSts); keeps the blr sts gold on boilerStatus
-dischargeTem,1,rename,dischargeTemp,True,True,truncated label (dischargeTem364; Integ05 name SATmp)
-towerFan,1,rename,twrFan,True,True,tower02Fan (Integ02; name Ct2Cmd); eo66 canon twrFan
-primaryPump,1,rename,priPump,True,True,primaryPump02 (Integ03; name CHWP_2_CMD); eo66 canon priPump
-primaryPumpStatus,1,rename,priPumpStatus,True,True,primaryPump02Status (Integ03; name CHWP_2_R); eo66 canon priPumpStatus
-condLeavingIso,1,rename,condLeavingIsoValve,True,True,condLeavingIso04 (Integ05; name ChM4CwVlvCmd); eo66 condLeavingIsoValve
-condLeavingIsoFb,1,rename,condLeavingIsoValveFb,True,True,condLeavingIso04Fb (Integ05; name ChM4CwVlvPos)
-evapLeavingIso,1,rename,evapLeavingIsoValve,True,True,evapLeavingIso04 (Integ05; name ChM4ChwVlvCmd)
-evapLeavingIsoFb,1,rename,evapLeavingIsoValveFb,True,True,evapLeavingIso04Fb (Integ05; name ChM4ChwVlvPos)
-ClgSignal,67,decision,coolingDemand,True,True,label_raw equals point name (Integ04 mapping artifact); likely coolingDemand -- needs human confirmation before applying
+target,rows,status,proposed_target,proposed_in_eo66,collides_with_existing_class,rationale,recommendation,recommendation_rationale
+zoneTempMaxSP,63,merge_case,zoneTempMaxSp,True,True,case variant; eo66 canon is zoneTempMaxSp; training has BOTH as separate classes,,
+zoneTempMinSP,73,merge_case,zoneTempMinSp,True,True,case variant; eo66 canon is zoneTempMinSp; training has BOTH as separate classes,,
+condWaterLeavingFlow,63,rename,condLeavingFlow,True,False,"eo66 canon condLeavingFlow (""cond"" already means condenser water)",,
+dischargeFanEnable,88,rename,dischargeFan,True,False,"eo66: dischargeFan = ""Discharge Fan Command"" (cmd marker); matches n4 convention",,
+returnFanEnable,69,rename,returnFan,True,False,"eo66: returnFan = ""Return Fan Command"" (cmd marker); matches n4 convention",,
+emergencyShutdown,58,merge_dup,emergencyStop,True,True,eo66 only defines emergencyStop; training has BOTH as separate classes (semantic duplicates),,
+freezeProtectSp,57,rename,freezeProtectEnableSp,True,False,eo66 canon freezeProtectEnableSp,,
+dischargeFanHandMode,67,decision,dischargeFanMode,True,False,eo66 has dischargeFanMode but marks it blacklist -- map or keep as extension?,keep_extension,eo66 blacklists dischargeFanMode; hand/auto mode is a real unit-level point
+dischargeFanDriveAlarm,68,decision,driveAlarm,True,True,"eo66 only has unscoped driveAlarm (also a training class, 63 rows) -- merge or keep fan-scoped?",keep_extension,fan-scoped drive alarm is distinct from the unscoped driveAlarm class
+dischargeFanFaultReset,65,decision,dischargeFanAlarmReset,True,True,"eo66 only has AlarmReset (also a training class, 67 rows) -- merge or keep?",keep_extension,fan-scoped reset is distinct from the unscoped AlarmReset class
+dehumidSp,70,decision,dehumidEnableSp,True,True,"eo66 only has dehumidEnableSp (also a training class, 52 rows) -- merge or keep?",merge_dup->dehumidEnableSp,same setpoint concept; the frozen test confuses the pair (moto ahu dehumid sp)
+coolingStatus,69,decision,,False,False,no eo66 equivalent (only coolingStageStatus); unit-level status -- keep as extension?,keep_extension,unit-level status; no eo66 equivalent
+heatingStatus,59,decision,,False,False,no eo66 equivalent (only heatingStageStatus); keep as extension?,keep_extension,unit-level status; no eo66 equivalent
+econStatus,61,decision,,False,False,eo66 has econEnable/econMode but no status sensor; keep as extension?,keep_extension,econ status sensor; eo66 only has econEnable/econMode
+mixedDamper,61,extension,,False,False,genuine eo66 gap: mixed-air family has temp/humidity/pressure but no damper,,
+steamValve,67,extension,,False,False,genuine eo66 gap: steam family has pressure/temp only,,
+bypassFanStatus,59,extension,,False,False,no bypass fan family in eo66,,
+bypassPressure,76,extension,,False,False,no duct bypass pressure in eo66 (only hydronic priBypassPump*),,
+dischargeFanBypass,65,extension,,False,False,VFD bypass; no eo66 equivalent,,
+dischargeFanFaultCode,65,extension,,False,False,"eo66 inconsistency: exhaustFanFaultCode exists, discharge variant missing",,
+dischargeFanFrequency,68,extension,,False,False,electrical telemetry; eo66 has dischargeFanCurrent but not frequency,,
+dischargeFanVoltage,65,extension,,False,False,electrical telemetry; not in eo66,,
+dischargeFanEnergy,69,extension,,False,False,electrical telemetry; not in eo66,,
+dischargeFanMotorTemp,62,extension,,False,False,"eo66 inconsistency: exhaustFanMotorTemp exists, discharge variant missing",,
+zoneO3,56,extension,,False,False,eo66 has outsideO3 but no zoneO3; consistent with zone gas-sensor naming,,
+zonePM1,56,extension,,False,False,eo66 has zonePM25/zonePM10 only,,
+zonePM4,57,extension,,False,False,eo66 has zonePM25/zonePM10 only,,
+zonePowerReal,57,extension,,False,False,"eo66 scopes PowerReal to equipment (comp/drive/fan), no zone-level",,
+zoneTempAvgSp,57,extension,,False,False,eo66 has zoneTempAvg sensor but no setpoint for it,,
+condLeavringTemp,3,rename,condLeavingTemp,True,True,typo (Leavring) in Integ01 labels; eo66 canon condLeavingTemp,,
+ehaustDamperFb,4,rename,exhaustDamperFb,True,True,typo (ehaust) in Integ03 labels; eo66 canon exhaustDamperFb,,
+chillerEnabled,2,rename,chillerEnable,True,True,tense variant in Integ04 (name RunEnabled); eo66 canon chillerEnable,,
+reOaCoilEnteringTemp,1,rename,recOaCoilEnteringTemp,True,False,typo (re vs rec) in Integ01; eo66 canon recOaCoilEnteringTemp,,
+dischargeFlowHeatMinStpt,225,rename,dischargeFlowHeatMinSp,True,True,Stpt suffix variant in Integ03; eo66 canon dischargeFlowHeatMinSp,,
+secPressureDeltaS,1,rename,secPressureDeltaSp,True,True,truncated Sp in Integ03 (source name HWPrSpt is a setpoint),,
+condensorPumpStatus,1,rename,condPumpStatus,True,True,misspelling (condensor); index-strip form of condensorPump01Status (Integ02),,
+priValveA,3,merge_dup,priValve,True,True,A/B instance letters on HX steam valves (Integ01); same concept as priValve,,
+priValveB,3,merge_dup,priValve,True,True,A/B instance letters on HX steam valves (Integ01); same concept as priValve,,
+heatWheel,3,merge_dup,wheel,True,True,energy-recovery wheel (ERV/HRW names); eo66 wheel family,,
+heatWheelStatus,3,merge_dup,wheelStatus,True,True,energy-recovery wheel status; eo66 wheelStatus,,
+heatWheelExhaustTemp,1,merge_dup,wheelExhaustTemp,True,True,energy-recovery wheel exhaust temp; eo66 wheelExhaustTemp,,
+AHU,1,merge_case,ahu,False,True,both 1-row equipment-name mislabels (AhuSS / STK_AHUL3_2_FPH_ENA_Sp); consolidate case; DROP candidates,,
+BlrSts,4,rename,boilerStatus,True,True,Integ06 name-as-label rows (Blr1_Sts..Blr4_Sts index-strip to BlrSts); keeps the blr sts gold on boilerStatus,,
+dischargeTem,1,rename,dischargeTemp,True,True,truncated label (dischargeTem364; Integ05 name SATmp),,
+towerFan,1,rename,twrFan,True,True,tower02Fan (Integ02; name Ct2Cmd); eo66 canon twrFan,,
+primaryPump,1,rename,priPump,True,True,primaryPump02 (Integ03; name CHWP_2_CMD); eo66 canon priPump,,
+primaryPumpStatus,1,rename,priPumpStatus,True,True,primaryPump02Status (Integ03; name CHWP_2_R); eo66 canon priPumpStatus,,
+condLeavingIso,1,rename,condLeavingIsoValve,True,True,condLeavingIso04 (Integ05; name ChM4CwVlvCmd); eo66 condLeavingIsoValve,,
+condLeavingIsoFb,1,rename,condLeavingIsoValveFb,True,True,condLeavingIso04Fb (Integ05; name ChM4CwVlvPos),,
+evapLeavingIso,1,rename,evapLeavingIsoValve,True,True,evapLeavingIso04 (Integ05; name ChM4ChwVlvCmd),,
+evapLeavingIsoFb,1,rename,evapLeavingIsoValveFb,True,True,evapLeavingIso04Fb (Integ05; name ChM4ChwVlvPos),,
+ClgSignal,67,decision,coolingDemand,True,True,label_raw equals point name (Integ04 mapping artifact); likely coolingDemand -- needs human confirmation before applying,rename->coolingDemand,label_raw equals the point name (Integ04 mapping artifact); coolingDemand matches the Integ04 heating twin
+cdwPolarityConvention,130,decision,supply->condLeaving/twrEntering; return->condEntering/twrLeaving,True,False,Condenser-water supply/return polarity is inconsistent across train sites (67 majority vs 42 minority rows in data/cdw_polarity_review.csv). Adopt the majority convention and override the minority texts once approved.,adopt_majority_convention,majority of train sites; keeps the model self-consistent; lenient scoring credits the other polarity for identical texts
