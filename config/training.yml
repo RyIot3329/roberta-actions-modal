@@ -27,8 +27,11 @@ label_smoothing: "0.1"
 # Checkpoint selection on validation. f1_weighted tracks the operational
 # row-match rate; f1_macro would be dominated by the ~280 singleton classes.
 metric_for_best_model: "f1_weighted"
-# Reproducibility: change for multi-seed variance runs (Actions tab).
-seed: 43
+# Reproducibility. `seeds` (comma-separated string) trains every seed in
+# parallel; the median-validation seed is the gated candidate and the logit
+# ensemble is reported. Single-seed noise on the 830-text test is ~0.5pp.
+seed: 42
+seeds: "42,43,44"
 push_to_hub: true
 hf_repo: "RyIoT33/haystack-autotagging"
 
