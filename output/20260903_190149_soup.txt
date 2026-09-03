@@ -1,0 +1,20 @@
+Weight soup of seeds [42, 43] (from [42, 43, 44]; greedy=True)
+Per-seed validation accuracy: {42: 0.6470588445663452, 43: 0.6470588445663452, 44: 0.6394686698913574}
+Validation strict 0.6499 | test strict 0.6590 lenient 0.7096 log1p-rows 0.7404
+test pairs name_on_pairs  strict 0.6937 lenient 0.7474
+test pairs context        strict 0.7810 lenient 0.8565
+test pairs ensemble       strict 0.7921 lenient 0.8678
+
+Gate: PASSED -- ok | paired bootstrap on 4593 texts: delta +0.1034 [+0.0919, +0.1154], P(worse) 0.00
+| axis | baseline | candidate | delta | ok |
+|---|---|---|---|---|
+| pairs_ensemble.strict.accuracy (paired bootstrap ci_lo) | 0.6887 | 0.7921 | 0.1034 | yes |
+| strict.accuracy | 0.6651 | 0.6590 | -0.0060 | yes (trade-off clause: pair view +0.1034 >= 0.05, name-only margin widened to 0.015) |
+| lenient.accuracy | 0.7048 | 0.7096 | 0.0048 | yes |
+| strict.log1p_rows_accuracy | 0.7418 | 0.7404 | -0.0013 | yes |
+| slices.seen_in_train:false.strict | 0.6050 | 0.6050 | 0.0000 | yes |
+| slices.seen_in_train:true.strict | 0.8217 | 0.8000 | -0.0217 | yes |
+| slices.site:Motorola_Points.strict | 0.6863 | 0.6961 | 0.0098 | yes |
+| slices.site:N4-Integ06.strict | 0.6581 | 0.6470 | -0.0112 | yes |
+
+Pushed to https://huggingface.co/RyIoT33/haystack-autotagging
