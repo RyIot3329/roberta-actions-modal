@@ -217,6 +217,27 @@ def test_gate_survives_unpairable_predictions():
     assert d["passed"] is False or d["passed"] is True  # decided, not raised
 
 
+def test_name_only_axis_uses_records_when_baseline_has_no_seed_summary():
+    fp = {"test_sha256": "1", "label_space_sha256": "1", "n_test": 1, "n_classes": 1,
+          "pairs_sha256": "p", "n_pairs": 1}
+    base_pairs = [dict(p, context="eq a") for p in _preds(65, 35, site="P")]
+    cand_pairs = [dict(p) for p in base_pairs]
+    for p in cand_pairs[65:78]:
+        p["predicted_label"] = p["actual_label"]
+    b = mc.build_metrics_record(mc.score_predictions(_preds(66, 34), tau=0.5), fp, model="deployed")
+    b["metrics"]["pairs_ensemble"] = mc.score_predictions(base_pairs, tau=0.5)
+    c = mc.build_metrics_record(mc.score_predictions(_preds(66, 34), tau=0.5), fp, model="cand")
+    c["metrics"]["pairs_ensemble"] = mc.score_predictions(cand_pairs, tau=0.5)
+    # the candidate's seeds were worse on average, but the deployable soup (record) matches
+    c["seed_summary"] = {"42": {"test_strict": 0.64, "test_lenient": 0.69},
+                         "43": {"test_strict": 0.64, "test_lenient": 0.69}}
+    d = mc.promote_decision(c, b, _preds(66, 34), _preds(66, 34), candidate_pairs=cand_pairs,
+                            baseline_pairs=base_pairs)
+    axis = next(a for a in d["axes"] if a["axis"].startswith("strict.accuracy"))
+    assert "seed means" not in axis["axis"] and abs(axis["candidate"] - 0.66) < 1e-9
+    assert d["passed"], d["reason"]
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):

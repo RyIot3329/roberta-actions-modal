@@ -370,6 +370,11 @@ def promote_decision(candidate: dict, baseline: dict,
     for key, path in mean_axes:
         b_val, b_is_mean = seed_mean(baseline, key, path)
         c_val, c_is_mean = seed_mean(candidate, key, path)
+        if not (b_is_mean and c_is_mean):
+            # Means only make sense on both sides; otherwise compare the two
+            # deployable models (the baseline record vs the candidate record)
+            b_val = _get(baseline.get("metrics", {}), path)
+            c_val = _get(candidate.get("metrics", {}), path)
         if b_val is None or c_val is None:
             continue
         label = path + (" (seed means)" if b_is_mean and c_is_mean else "")
