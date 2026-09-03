@@ -28,12 +28,22 @@ beats it on validation.
 
 | 2026-09-03 21:49 | 33807402626 | **A/B D**: logit adjustment tau 0.5 (macro-F1 probe, on A) | 63.95 / 64.33 / 64.61 (mean 64.30, -0.6pp vs A) | 64.58 / 62.41 / 62.65 (lenient 70.24 / 67.23 / 67.83); macro-F1 0.372 / 0.371 / 0.357 vs 0.377 on A | ensemble 63.86; soup[44,43] val 66.32, test 63.86 / 68.43 | soup[44,43] | FAILED: pair view -0.57pp [-1.35, +0.20]; name-only -2.05, lenient -2.53 | rejected: macro-F1 did not improve either; reverted |
 
+| 2026-09-03 22:39 | 33810280336 | **A/B H**: microsoft/deberta-v3-large (no DAPT), lr 2e-5, 20-epoch anneal, context, soup | 64.33 / 63.57 / 62.81 (mean 63.57, -1.3pp vs A) | 63.86 / 66.14 / 64.94 (lenient 68.55 / 71.45 / 70.36) | ensemble 66.63 / 71.93 (best ensemble seen); soup merged only [42] | seed 43 (median val) | FAILED: pair view -4.68pp [-5.7, -3.7] | rejected: the DAPT base handles context far better; reverted to RyIoT33/deberta-v3-bms-base, lr 4e-5 |
+
 Gate policy decided 2026-09-03 (user): trade-off clause -- a pair-view gain of at
 least 5pp allows the name-only strict accuracy to sit up to 1.5pp below the deployed
 model. Run 4's soup (pair +10.3pp, name-only -0.6pp) qualifies; it is promoted from the
 seeds still on the Modal volume via `promote.yml` instead of retraining.
 
-## Queued A/B sequence (one knob per push, 3 seeds each, adopt on >= +0.5pp validation mean)
+## A/B sequence outcome (one knob per push, 3 seeds each, adopt on >= +0.5pp validation mean)
+
+Adopted: **A** (20 epochs, no early stopping). Rejected: B (LLRD, +0.2pp val, pair view -0.7pp),
+E (EMA, +0.4pp val, pair view -1.4pp, EMA weights do not soup), C (R-Drop, -0.7pp val),
+D (logit adjustment, macro-F1 down), H (deberta-v3-large, -1.3pp val, pair view -4.7pp).
+Final recipe: DAPT base, context training with flip-aware dropout, fixed head init, 20-epoch
+cosine anneal, greedy soup. The remaining accuracy levers are data: more labeled sites, and
+callers sending point context (`points[]`) so the pair view is what production returns.
+
 
 1. **A – finish the anneal**: `early_stopping_patience: 0`, `epochs: 20` (today the best checkpoint is taken at ~70% of peak LR).
 2. **B – layer-wise LR decay**: `llrd_decay: 0.9`, `head_lr_multiplier: 10`.

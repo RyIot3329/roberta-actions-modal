@@ -5,11 +5,8 @@
 # For manual runs via GitHub Actions UI, you can override these with workflow_dispatch inputs.
 
 # model: "microsoft/deberta-v3-base"
-# A/B H: capacity probe. No DAPT checkpoint exists for the large model; the
-# adopted model stays RyIoT33/deberta-v3-bms-base unless this clears +1.5pp
-# (and would then be distilled back into the base for the edge).
-model: "microsoft/deberta-v3-large"
-# model: "RyIoT33/deberta-v3-bms-base"
+# (A/B H 2026-09-03: microsoft/deberta-v3-large scored -4.7pp on the pair view; rejected)
+model: "RyIoT33/deberta-v3-bms-base"
 
 # Epochs is the cosine-anneal horizon AND a ceiling -- early stopping
 # (patience 3) halts at the plateau. 30 lets the anneal actually complete:
@@ -19,8 +16,7 @@ model: "microsoft/deberta-v3-large"
 # schedule reaches zero; the best validation epoch is still the one kept.
 epochs: 20
 batch_size: 128
-# 2e-5 for the large probe (4e-5 for the base recipe)
-learning_rate: "2e-5"
+learning_rate: "4e-5"
 # 64 leaves room for the optional context string ("<name> | eq ... | unit ...")
 max_seq_length: 64
 optimizer: "adamw_torch"
