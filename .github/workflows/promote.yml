@@ -1,0 +1,120 @@
+# .github/workflows/promote.yml
+#
+# Promote a weight soup of ALREADY-TRAINED seeds (left on the Modal volume by the
+# latest training run) without retraining: rebuild the greedy soup, score it with
+# the shared scorer, apply the composite gate against output/best_metrics.json,
+# push to the Hub only when it passes, and open a results PR.
+
+name: Promote soup of trained seeds
+
+on:
+  workflow_dispatch:
+    inputs:
+      seeds:
+        description: "Comma-separated seeds whose final_model_seed{N} dirs are on the volume"
+        required: false
+        default: "42,43,44"
+      greedy:
+        description: "Greedy soup (drop seeds that lower validation accuracy)"
+        required: false
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+      push_to_hub:
+        description: "Push the soup when the gate passes"
+        required: false
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+
+env:
+  PYTHON_VERSION: "3.10"
+
+jobs:
+  promote:
+    name: Soup, gate, push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install modal
+
+      - name: Configure Modal
+        run: |
+          modal token set \
+            --token-id ${{ secrets.MODAL_TOKEN_ID }} \
+            --token-secret ${{ secrets.MODAL_TOKEN_SECRET }}
+
+      - name: Unit tests
+        run: |
+          for t in tests/test_*.py; do echo "== $t"; python "$t"; done
+
+      - name: Regenerate data (must match the committed scoreboard)
+        run: |
+          python scripts/clean_data.py
+          python scripts/convert_to_jsonl.py
+          python scripts/rescore_baseline.py --check
+
+      - name: Soup, gate, push
+        id: soup
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          HF_REPO=$(yq '.hf_repo' config/training.yml)
+          MAX_SEQ=$(yq '.max_seq_length' config/training.yml)
+          CMD="modal run ./scripts/finetune.py::soup --seeds '${{ github.event.inputs.seeds }}' --max-seq-length $MAX_SEQ --hf-repo $HF_REPO"
+          if [ "${{ github.event.inputs.greedy }}" == "false" ]; then CMD="$CMD --no-greedy"; fi
+          if [ "${{ github.event.inputs.push_to_hub }}" == "true" ]; then CMD="$CMD --push-to-hub"; fi
+          echo "Running: $CMD"
+          eval $CMD
+          OUTPUT_FILE=$(ls -t output/*_soup.txt | head -1)
+          echo "output_file=$OUTPUT_FILE" >> $GITHUB_OUTPUT
+          echo "## Soup promotion" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat "$OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          {
+            echo "summary<<SUMMARY_EOF"
+            cat "$OUTPUT_FILE"
+            echo "SUMMARY_EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          add-paths: |
+            output/
+          commit-message: |
+            Soup promotion results (seeds ${{ github.event.inputs.seeds }})
+          branch: soup-results-${{ github.run_id }}
+          delete-branch: true
+          title: "🤖 Soup promotion - seeds ${{ github.event.inputs.seeds }} - ${{ steps.soup.outputs.output_file }}"
+          body: |
+            ## Soup promotion (no retraining)
+
+            ```
+            ${{ steps.soup.outputs.summary }}
+            ```
+
+            📊 [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          labels: |
+            automated
+            training-results

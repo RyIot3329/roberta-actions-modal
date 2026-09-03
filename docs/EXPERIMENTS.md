@@ -16,6 +16,11 @@ beats it on validation.
 | 2026-09-03 17:44 | 33783782732 (dispatched) | flip-aware dropout, head_init_seed 1234, pair-primary gate | – | – | – | soup[42,43] | crashed in the gate (pair predictions file lacked `context`; fixed in 41ec19d) | CI re-scored the deployed model on the pair test: 68.87% name-only |
 | 2026-09-03 18:47 | 33789522186 (dispatched) | same as above, gate fixed | 64.61 / 64.52 / 64.04 | 64.58 / 64.46 / 63.98 (lenient 69.64 / 69.52 / 68.31) | ensemble 65.18; **soup[42,43] 65.90 / 70.96** (val 64.99) | soup[42,43] | FAILED on the name-only secondary only: **pair view 79.21 vs 68.87 (+10.34pp, CI +9.2..+11.5)**; name-only soup 65.90 vs deployed 66.51 (-0.61pp vs the 0.5pp margin) | pair view: name-only 69.4 / context 78.1 / ensemble 79.2, lenient 86.8, log1p 81.5; Integ06 pairs 81.7, Motorola 73.7, unseen pairs 73.0. Gate bug: candidate seed MEAN (64.3) was compared with the single deployed seed; fixed to deployable-vs-deployable |
 
+Gate policy decided 2026-09-03 (user): trade-off clause -- a pair-view gain of at
+least 5pp allows the name-only strict accuracy to sit up to 1.5pp below the deployed
+model. Run 4's soup (pair +10.3pp, name-only -0.6pp) qualifies; it is promoted from the
+seeds still on the Modal volume via `promote.yml` instead of retraining.
+
 ## Queued A/B sequence (one knob per push, 3 seeds each, adopt on >= +0.5pp validation mean)
 
 1. **A – finish the anneal**: `early_stopping_patience: 0`, `epochs: 20` (today the best checkpoint is taken at ~70% of peak LR).

@@ -238,6 +238,46 @@ def test_name_only_axis_uses_records_when_baseline_has_no_seed_summary():
     assert d["passed"], d["reason"]
 
 
+def test_tradeoff_clause_allows_bounded_name_only_dip():
+    """Pair view +10pp: the name-only view may sit up to 1.5pp below the deployed model."""
+    fp = {"test_sha256": "1", "label_space_sha256": "1", "n_test": 1, "n_classes": 1,
+          "pairs_sha256": "p", "n_pairs": 1}
+    base_pairs = [dict(p, context="eq a") for p in _preds(650, 350, site="P")]
+    cand_pairs = [dict(p) for p in base_pairs]
+    for p in cand_pairs[650:760]:            # +11pp on pairs
+        p["predicted_label"] = p["actual_label"]
+    base_name = _preds(665, 335)
+    for p in base_name[:20]:                 # site-variant credit keeps lenient unchanged
+        p["accept"] = ["x", "z"]
+    cand_name = [dict(p) for p in base_name]
+    for p in cand_name[:6]:                  # -0.6pp name-only strict, lenient equal
+        p["predicted_label"] = "z"
+    b = mc.build_metrics_record(mc.score_predictions(base_name, tau=0.5), fp, model="deployed")
+    b["metrics"]["pairs_ensemble"] = mc.score_predictions(base_pairs, tau=0.5)
+    c = mc.build_metrics_record(mc.score_predictions(cand_name, tau=0.5), fp, model="cand")
+    c["metrics"]["pairs_ensemble"] = mc.score_predictions(cand_pairs, tau=0.5)
+    d = mc.promote_decision(c, b, cand_name, base_name, candidate_pairs=cand_pairs, baseline_pairs=base_pairs)
+    axis = next(a for a in d["axes"] if a["axis"].startswith("strict.accuracy"))
+    assert axis["threshold"] == -mc.TRADEOFF_NAME_ONLY_MARGIN and axis["ok"] and "trade-off" in axis["note"]
+    assert d["passed"], d["reason"]
+    # a 2pp name-only dip is outside the clause even with the pair gain
+    for p in cand_name[6:20]:
+        p["predicted_label"] = "z"
+    c2 = mc.build_metrics_record(mc.score_predictions(cand_name, tau=0.5), fp, model="cand2")
+    c2["metrics"]["pairs_ensemble"] = mc.score_predictions(cand_pairs, tau=0.5)
+    d2 = mc.promote_decision(c2, b, cand_name, base_name, candidate_pairs=cand_pairs, baseline_pairs=base_pairs)
+    assert not d2["passed"] and "strict.accuracy regressed" in d2["reason"]
+    # without a large pair gain the strict 0.5pp margin applies
+    small_pairs = [dict(p) for p in base_pairs]
+    for p in small_pairs[650:660]:
+        p["predicted_label"] = p["actual_label"]
+    c3 = mc.build_metrics_record(mc.score_predictions(cand_name[:6] + base_name[6:], tau=0.5), fp, model="cand3")
+    c3["metrics"]["pairs_ensemble"] = mc.score_predictions(small_pairs, tau=0.5)
+    d3 = mc.promote_decision(c3, b, cand_name[:6] + base_name[6:], base_name,
+                             candidate_pairs=small_pairs, baseline_pairs=base_pairs)
+    assert not d3["passed"]
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):

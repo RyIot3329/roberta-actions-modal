@@ -35,6 +35,13 @@ THRESHOLD_GRID = [round(x, 2) for x in np.arange(0.05, 1.0, 0.05)]
 
 # Secondary axes (dotted paths into the metrics dict) that must not regress by
 # more than the margin. Slices are added dynamically from the baseline.
+# Trade-off clause (user decision 2026-09-03): when the operational pair view
+# improves by at least TRADEOFF_PRIMARY_GAIN, the name-only strict accuracy may
+# sit up to TRADEOFF_NAME_ONLY_MARGIN below the deployed model (today's callers
+# lose at most that much while callers sending context gain the primary's delta)
+TRADEOFF_PRIMARY_GAIN = 0.05
+TRADEOFF_NAME_ONLY_MARGIN = 0.015
+
 # coverage at the validation-fitted threshold is REPORTED but not gated: on
 # ~1k validation texts the fitted tau swings by tenths and the coverage with it
 # (0.4% .. 47% between otherwise similar models), so it cannot block a promotion.
@@ -367,6 +374,9 @@ def promote_decision(candidate: dict, baseline: dict,
     mean_axes = [("test_lenient", "lenient.accuracy")]
     if use_pairs:
         mean_axes.insert(0, ("test_strict", PRIMARY_METRIC))
+    primary_delta = boot["delta"] if boot is not None else (
+        None if primary_c is None or primary_b is None else primary_c - primary_b)
+    tradeoff = bool(use_pairs and primary_delta is not None and primary_delta >= TRADEOFF_PRIMARY_GAIN)
     for key, path in mean_axes:
         b_val, b_is_mean = seed_mean(baseline, key, path)
         c_val, c_is_mean = seed_mean(candidate, key, path)
@@ -378,9 +388,16 @@ def promote_decision(candidate: dict, baseline: dict,
         if b_val is None or c_val is None:
             continue
         label = path + (" (seed means)" if b_is_mean and c_is_mean else "")
-        ok = c_val - b_val > -margin
+        axis_margin = margin
+        note = None
+        if tradeoff and path == PRIMARY_METRIC:
+            axis_margin = max(margin, TRADEOFF_NAME_ONLY_MARGIN)
+            note = (f"trade-off clause: pair view +{primary_delta:.4f} >= {TRADEOFF_PRIMARY_GAIN}, "
+                    f"name-only margin widened to {TRADEOFF_NAME_ONLY_MARGIN}")
+        ok = c_val - b_val > -axis_margin
         axes.append({"axis": label, "baseline": b_val, "candidate": c_val,
-                     "delta": c_val - b_val, "threshold": -margin, "ok": bool(ok)})
+                     "delta": c_val - b_val, "threshold": -axis_margin, "ok": bool(ok),
+                     **({"note": note} if note else {})})
         if not ok:
             reasons.append(f"{label} regressed by {b_val - c_val:.4f}")
 

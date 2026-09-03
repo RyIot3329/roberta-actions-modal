@@ -97,7 +97,12 @@ Key data-quality guarantees:
   bound above -0.5pp, the name-only strict accuracy non-inferior to the
   baseline run's **seed mean** (a single deployed seed is a lucky draw), and no
   lenient / log1p-rows / per-name slice regression beyond a two-standard-error
-  margin. Coverage at the acceptance threshold is reported, not gated. A stale baseline
+  margin. Trade-off clause: when the pair view improves by at least 5pp the
+  name-only strict accuracy may sit up to 1.5pp below the deployed model
+  (today's name-only callers lose at most that much; callers sending context
+  gain the primary's delta). Coverage at the acceptance threshold is reported,
+  not gated. `promote.yml` (Actions tab) re-soups the seeds a run left on the
+  Modal volume and pushes them through the same gate without retraining. A stale baseline
   (fingerprint mismatch after new sites or a label-space change) never
   compares silently: CI re-scores the deployed model with
   `scripts/rescore_baseline.py` first. Never delete the baseline file by hand.

@@ -1662,16 +1662,20 @@ def soup_eval(seeds: list, val_data: list, test_data: list, val_ctx_data: list =
 @app.local_entrypoint()
 def soup(seeds: str = "42,43,44", greedy: bool = True, max_seq_length: int = 64,
          output_dir: str = "output", target_precision: float = 0.85,
-         baseline_path: str = "output/best_metrics.json"):
+         baseline_path: str = "output/best_metrics.json",
+         push_to_hub: bool = False, hf_repo: str = None, model: str = "soup"):
     """Evaluate a weight soup of already-trained seeds (on the volume) with
     the same scorer and gate as a training run; writes
     output/<timestamp>_soup_metrics.json (+ predictions) and prints the
-    composite comparison. Push manually with push_saved_model if adopted."""
+    composite comparison. With --push-to-hub the soup is pushed (and the
+    baseline rewritten) only when the gate passes: this promotes the seeds of
+    an earlier run without retraining."""
     import sys as _sys
     _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import metrics_core as mc
 
     seed_list = [int(x) for x in seeds.split(",") if x.strip()]
+    hf_token = os.environ.get("HF_TOKEN")
     val_data = _load_jsonl("data/validation.jsonl")
     test_data = _load_jsonl("data/test.jsonl")
     val_ctx = _load_jsonl("data/validation_ctx.jsonl") if os.path.exists("data/validation_ctx.jsonl") else None
@@ -1684,7 +1688,7 @@ def soup(seeds: str = "42,43,44", greedy: bool = True, max_seq_length: int = 64,
     tau = mc.fit_acceptance_threshold(val_preds, target_precision)
     val_m = mc.score_predictions(val_preds, tau=tau)
     test_m = mc.score_predictions(test_preds, tau=tau)
-    fp = mc.fingerprints(test_data, list(label2id))
+    fp = mc.fingerprints(test_data, list(label2id), pair_records=test_ctx)
     record = mc.build_metrics_record(test_m, fp, model=f"soup{res['selected_seeds']}",
                                      seeds=seed_list, selected_seed=None,
                                      timestamp=datetime.now().isoformat(), git_sha=_git_sha(),
@@ -1696,6 +1700,7 @@ def soup(seeds: str = "42,43,44", greedy: bool = True, max_seq_length: int = 64,
                                             "validation_metrics": {k: v for k, v in val_m.items()
                                                                    if k != "coverage_curve"}})
     ctx = None
+    pairs_preds = None
     if res.get("test_ctx_inference"):
         ctx = _score_context_views(res["validation_ctx_inference"]["predictions"],
                                    res["test_ctx_inference"]["predictions"],
@@ -1703,18 +1708,65 @@ def soup(seeds: str = "42,43,44", greedy: bool = True, max_seq_length: int = 64,
                                    res["test_ctx_name_inference"]["predictions"],
                                    target_precision, mc)
         record["context"] = {"test": _ctx_summary(ctx)}
+        pairs_preds = ctx["test_preds"]["ensemble"]
+        for view, key in (("ensemble", "pairs_ensemble"), ("context", "pairs_context"),
+                          ("name_on_pairs", "pairs_name")):
+            record["metrics"][key] = {k: v for k, v in ctx["test"][view].items() if k != "coverage_curve"}
     decision = {"passed": False, "reason": "no baseline", "axes": []}
     if os.path.exists(baseline_path):
         baseline = mc.legacy_baseline(baseline_path)
         bp = baseline.get("predictions_path")
         bpreds = mc.load_predictions_jsonl(bp) if bp and os.path.exists(bp) else None
-        decision = mc.promote_decision(record, baseline, test_preds, bpreds)
+        bpp = baseline.get("predictions_pairs_path")
+        bpairs = mc.load_predictions_jsonl(bpp) if bpp and os.path.exists(bpp) else None
+        try:
+            decision = mc.promote_decision(record, baseline, test_preds, bpreds,
+                                           candidate_pairs=pairs_preds, baseline_pairs=bpairs)
+        except Exception as e:  # noqa: BLE001
+            decision = {"passed": False, "reason": f"gate error: {type(e).__name__}: {e}", "axes": []}
+    hf_url = None
+    if decision["passed"] and push_to_hub and hf_repo and hf_token:
+        msg = (f"soup of seeds {res['selected_seeds']} (promoted without retraining): "
+               f"test strict {test_m['strict']['accuracy']:.4f}")
+        hf_url = push_saved_model.remote(res["save_name"], hf_repo, hf_token, msg)
+        pred_path = os.path.join(os.path.dirname(baseline_path) or ".", "best_predictions.jsonl")
+        record["predictions_path"] = pred_path
+        record["hf_repo"] = hf_repo
+        record["huggingface_url"] = hf_url
+        record["model"] = model
+        mc.write_predictions_jsonl(test_preds, pred_path)
+        if pairs_preds:
+            pairs_path = os.path.join(os.path.dirname(baseline_path) or ".", "best_predictions_pairs.jsonl")
+            record["predictions_pairs_path"] = pairs_path
+            mc.write_predictions_jsonl(pairs_preds, pairs_path)
+        os.makedirs(os.path.dirname(baseline_path) or ".", exist_ok=True)
+        with open(baseline_path, "w") as f:
+            json.dump(record, f, indent=2)
+        print(f"Soup pushed to {hf_url}; baseline updated: {baseline_path}")
+    elif decision["passed"] and push_to_hub:
+        print("Gate passed but no HF token/repo: nothing pushed, baseline unchanged")
     os.makedirs(output_dir, exist_ok=True)
     stem = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_soup"
     with open(os.path.join(output_dir, f"{stem}_metrics.json"), "w") as f:
-        json.dump({"candidate": record, "gate": decision, "context": _ctx_full(ctx)}, f, indent=2,
-                  default=str)
+        json.dump({"candidate": record, "gate": decision, "context": _ctx_full(ctx),
+                   "huggingface_url": hf_url}, f, indent=2, default=str)
     mc.write_predictions_jsonl(test_preds, os.path.join(output_dir, f"{stem}_predictions.jsonl"))
+    if pairs_preds:
+        mc.write_predictions_jsonl(pairs_preds, os.path.join(output_dir, f"{stem}_predictions_pairs.jsonl"))
+    with open(os.path.join(output_dir, f"{stem}.txt"), "w") as f:
+        f.write(f"Weight soup of seeds {res['selected_seeds']} (from {seed_list}; greedy={greedy})\n")
+        f.write(f"Per-seed validation accuracy: {res['per_seed_val_accuracy']}\n")
+        f.write(f"Validation strict {val_m['strict']['accuracy']:.4f} | test strict "
+                f"{test_m['strict']['accuracy']:.4f} lenient {test_m['lenient']['accuracy']:.4f} "
+                f"log1p-rows {test_m['strict']['log1p_rows_accuracy']:.4f}\n")
+        if ctx:
+            for view in ("name_on_pairs", "context", "ensemble"):
+                m = ctx["test"][view]
+                f.write(f"test pairs {view:<14} strict {m['strict']['accuracy']:.4f} "
+                        f"lenient {m['lenient']['accuracy']:.4f}\n")
+        f.write("\n" + mc.format_axes_table(decision) + "\n")
+        if hf_url:
+            f.write(f"\nPushed to {hf_url}\n")
     print(f"\nSoup of {res['selected_seeds']} (per-seed val {res['per_seed_val_accuracy']}):")
     print(f"  validation strict {val_m['strict']['accuracy']:.4f} | test strict "
           f"{test_m['strict']['accuracy']:.4f} lenient {test_m['lenient']['accuracy']:.4f} "
