@@ -83,12 +83,27 @@ Key data-quality guarantees:
   input contract — it's two calls to the same classifier with comparable,
   calibrated confidences. `scripts/evaluate_external.py` implements it; the
   production edge tagger should apply the same rule.
-- **Quality-gated deployment**: the Hub push is skipped when the new model's
-  test F1 is below the previous best (`output/best_metrics.json`), so a bad
-  run can never overwrite the production model. The baseline records the test
-  size and class count; a PR that changes the test composition (new holdout
-  sites, big coverage shifts) should deliberately delete the baseline file so
-  the next push re-seeds it against the new scoreboard.
+- **Quality-gated deployment (composite, v2)**: every run is scored by the
+  shared `scripts/metrics_core.py` scorer -- strict (exact label) and lenient
+  (accept-set) accuracy, log1p(rows)-weighted accuracy, per-site and
+  seen/unseen slices, top-k, and coverage at the validation-fitted acceptance
+  threshold (85% precision). The candidate is compared with
+  `output/best_metrics.json` (fingerprinted with the exact test set and label
+  space) using a paired bootstrap on `output/best_predictions.jsonl`: it is
+  promoted only when strict accuracy is non-inferior (CI lower bound above
+  -0.5pp) and no secondary axis drops more than 0.5pp. A stale baseline
+  (fingerprint mismatch after new sites or a label-space change) never
+  compares silently: CI re-scores the deployed model with
+  `scripts/rescore_baseline.py` first. Never delete the baseline file by hand.
+- **Multi-seed runs**: `seeds: [42, 43, 44]` in the config (or the `seeds`
+  workflow input) trains the seeds in parallel; the seed with the median
+  validation strict accuracy is the candidate, and the logit ensemble is
+  reported for reference. Single-seed noise on the 830-text test is ~0.5pp.
+- **Floors and regression suites**: `scripts/baseline_linear.py` (TF-IDF +
+  SGD hinge, seconds on CPU) writes the linear floor the transformer must
+  clear by >=5pp; `scripts/evaluate_external.py --probe` re-scores the frozen
+  110-point live-service probe (`output/live_probe_20260713_rows.csv`) and
+  fails on any correct -> wrong transition.
 
 ## Project Structure
 
@@ -240,9 +255,10 @@ What each step does, and what to check:
 
 To make a new site a **holdout instead of training data**, pass it explicitly:
 `python scripts/convert_to_jsonl.py --test-sites N4-Integ06,Motorola_Points,NewSite`
-(and remember: changing the test sites changes the scoreboard — deliberately
-delete `output/best_metrics.json` in the same commit so the quality-gate
-baseline re-seeds against the new benchmark).
+(changing the test sites changes the scoreboard: the fingerprint in
+`output/best_metrics.json` stops matching, `scripts/rescore_baseline.py --check`
+exits 3, and CI re-scores the deployed model on the new benchmark before
+comparing anything. Run it locally with `--model-id <hf repo>` to preview.)
 
 ### Local Testing
 

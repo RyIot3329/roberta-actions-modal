@@ -114,6 +114,10 @@ on:
         description: "Hugging Face repo (username/model-name)"
         required: false
         default: ""
+      seeds:
+        description: "Comma-separated seeds for a multi-seed run (e.g. 42,43,44); empty = config seeds/seed"
+        required: false
+        default: ""
 
   push:
     branches: [main]
@@ -203,11 +207,14 @@ jobs:
           LABEL_SMOOTHING=$(get_config "" "label_smoothing" "0.1")
           METRIC_FOR_BEST_MODEL=$(get_config "" "metric_for_best_model" "f1_weighted")
           SEED=$(get_config "" "seed" "42")
+          SEEDS=$(get_config "${{ github.event.inputs.seeds }}" "seeds" "")
+          if [ "$SEEDS" = "null" ]; then SEEDS=""; fi
           PUSH_TO_HUB=$(get_config "${{ github.event.inputs.push_to_hub }}" "push_to_hub" "true")
           HF_REPO=$(get_config "${{ github.event.inputs.hf_repo }}" "hf_repo" "RyIoT33/haystack-autotagging")
 
           # Export to GITHUB_OUTPUT
           echo "model=$MODEL" >> $GITHUB_OUTPUT
+          echo "seeds=$SEEDS" >> $GITHUB_OUTPUT
           echo "gpu=$GPU" >> $GITHUB_OUTPUT
           echo "epochs=$EPOCHS" >> $GITHUB_OUTPUT
           echo "batch_size=$BATCH_SIZE" >> $GITHUB_OUTPUT
@@ -274,6 +281,28 @@ jobs:
           echo "Converting to JSONL format..."
           python scripts/convert_to_jsonl.py
 
+      - name: "Step 4: Linear floor (TF-IDF + SGD)"
+        run: |
+          mkdir -p output
+          python scripts/baseline_linear.py
+
+      - name: "Step 5: Quality-gate baseline check (re-score the deployed model if stale)"
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set +e
+          python scripts/rescore_baseline.py --check
+          status=$?
+          set -e
+          if [ "$status" = "3" ]; then
+            echo "Baseline is stale for the current scoreboard -- re-scoring the deployed model"
+            pip install torch --index-url https://download.pytorch.org/whl/cpu
+            pip install transformers sentencepiece
+            python scripts/rescore_baseline.py --model-id "${{ steps.config.outputs.hf_repo }}"
+          elif [ "$status" != "0" ]; then
+            exit $status
+          fi
+
       # ============================================
       # Modal Training
       # ============================================
@@ -320,6 +349,9 @@ jobs:
           CMD="$CMD --label-smoothing ${{ steps.config.outputs.label_smoothing }}"
           CMD="$CMD --metric-for-best-model ${{ steps.config.outputs.metric_for_best_model }}"
           CMD="$CMD --seed ${{ steps.config.outputs.seed }}"
+          if [ -n "${{ steps.config.outputs.seeds }}" ]; then
+            CMD="$CMD --seeds '${{ steps.config.outputs.seeds }}'"
+          fi
 
           # Add HF Hub flags if pushing
           if [ "${{ steps.config.outputs.push_to_hub }}" == "true" ]; then

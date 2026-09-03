@@ -52,6 +52,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 sys.path.insert(0, str(Path(__file__).parent))
 from clean_data import normalize_text
 from convert_to_jsonl import build_label_canonicalizer
+import metrics_core as mc
 
 HF_REPO = "RyIoT33/haystack-autotagging"
 BATCH_SIZE = 256
@@ -91,6 +92,148 @@ def load_dataset(args):
     return df
 
 
+def build_accept_sets(args, canon):
+    """Lenient credit: labels that TRAIN sites (every site other than the one
+    being scored and the frozen held-out sites) used for the identical
+    normalized name, plus approved label equivalences."""
+    from convert_to_jsonl import VAL_SITES, TEST_SITES, load_equivalences
+    accept = {}
+    try:
+        rp = pd.read_csv("data/real_points.csv")
+    except FileNotFoundError:
+        return accept
+    excluded = set(VAL_SITES) | set(TEST_SITES) | ({args.site} if args.site else set())
+    rp = rp[~rp["site"].isin(excluded)]
+    rp["text"] = rp["name"].astype(str).map(normalize_text)
+    rp["label"] = rp["label"].astype(str).str.strip().map(canon)
+    for text, label in zip(rp["text"], rp["label"]):
+        accept.setdefault(text, set()).add(label)
+    equiv = load_equivalences("data/label_equivalences.csv", canon)
+    if equiv:
+        for text in list(accept):
+            for label in list(accept[text]):
+                accept[text] |= equiv.get(label, set())
+    return accept
+
+
+def run_probe(args):
+    """Score the frozen 110-row live-service probe as a regression suite.
+
+    Each row carries the raw name, its normalized form, a pre-registered
+    gold, `acceptables` (pipe-separated twins/upgrades credited on review)
+    and the verdict the deployed model earned. Reports the verdict transition
+    matrix against that stored verdict; any correct* -> wrong-* move is a
+    regression. OOD rows are excluded from accuracy and report abstention at
+    the model's stored acceptance threshold.
+    """
+    load_dotenv(Path(__file__).parent.parent / ".env")
+    token = os.environ.get("HUGGING_FACE_TOKEN") or os.environ.get("HF_TOKEN")
+    probe = pd.read_csv(args.probe)
+    needed = {"name", "gold", "verdict"}
+    if not needed.issubset(probe.columns):
+        print(f"ERROR: probe file lacks columns {sorted(needed - set(probe.columns))}")
+        sys.exit(1)
+    canon = build_label_canonicalizer("data/eo66.xlsx", "data/target_audit.csv")
+    probe["text"] = probe["name"].astype(str).map(normalize_text)
+    probe["gold_c"] = probe["gold"].fillna("").astype(str).str.strip().map(lambda g: canon(g) if g else "")
+    equiv = None
+    try:
+        from convert_to_jsonl import load_equivalences
+        equiv = load_equivalences("data/label_equivalences.csv", canon)
+    except Exception:  # noqa: BLE001
+        equiv = {}
+
+    def accept_set(row):
+        acc = {row["gold_c"]} if row["gold_c"] else set()
+        raw = row.get("acceptables")
+        if isinstance(raw, str) and raw.strip():
+            acc |= {canon(a.strip()) for a in raw.split("|") if a.strip()}
+        # A stored correct-upgrade / correct-twin verdict means the reviewer
+        # accepted the deployed model's prediction: it is part of the gold set
+        stored_pred = row.get("predicted")
+        if (str(row.get("verdict", "")).startswith("correct") and isinstance(stored_pred, str)
+                and stored_pred.strip()):
+            acc.add(canon(stored_pred.strip()))
+        for label in list(acc):
+            acc |= equiv.get(label, set())
+        return acc
+
+    probe["accept"] = probe.apply(accept_set, axis=1)
+
+    try:
+        if args.offline:
+            raise RuntimeError("offline requested")
+        tokenizer = AutoTokenizer.from_pretrained(args.hf_repo, token=token)
+        model = AutoModelForSequenceClassification.from_pretrained(args.hf_repo, token=token)
+    except Exception as e:  # noqa: BLE001
+        if not args.offline:
+            print(f"WARNING: Hub fetch failed ({type(e).__name__}); using local cache")
+        tokenizer = AutoTokenizer.from_pretrained(args.hf_repo, local_files_only=True)
+        model = AutoModelForSequenceClassification.from_pretrained(args.hf_repo, local_files_only=True)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model.to(device).eval()
+    id2label = {int(k): canon(v) for k, v in model.config.id2label.items()}
+    temperature = float(getattr(model.config, "calibration_temperature", None) or 1.0)
+    tau = getattr(model.config, "acceptance_threshold", None)
+    tau = float(tau) if tau else args.threshold
+    texts = probe["text"].tolist()
+    preds, confs = [], []
+    with torch.no_grad():
+        for i in range(0, len(texts), BATCH_SIZE):
+            batch = texts[i:i + BATCH_SIZE]
+            inputs = tokenizer(batch, padding=True, truncation=True, max_length=32,
+                               return_tensors="pt").to(device)
+            probs = torch.softmax(model(**inputs).logits / temperature, dim=1)
+            c, ids = probs.max(dim=1)
+            preds += [id2label[j] for j in ids.tolist()]
+            confs += c.tolist()
+    probe["stored_predicted"] = probe.get("predicted")
+    probe["predicted"] = preds
+    probe["confidence"] = confs
+
+    def new_verdict(row):
+        old = str(row["verdict"])
+        if old == "ood":
+            return "ood-abstained" if row["confidence"] < tau else "ood-tagged"
+        if row["predicted"] == row["gold_c"]:
+            return "correct"
+        if row["predicted"] in row["accept"]:
+            return "correct-twin"
+        return "wrong"
+
+    probe["new_verdict"] = probe.apply(new_verdict, axis=1)
+    old_ok = probe["verdict"].astype(str).str.startswith("correct")
+    new_ok = probe["new_verdict"].str.startswith("correct")
+    scoreable = probe["verdict"].astype(str) != "ood"
+    regressions = probe[scoreable & old_ok & ~new_ok]
+    fixes = probe[scoreable & ~old_ok & new_ok]
+    print("=" * 60)
+    print(f"PROBE {args.probe}: {len(probe)} rows, model {args.hf_repo} (T={temperature:.3f}, tau={tau:.3f})")
+    print("=" * 60)
+    print(f"Scoreable rows (non-OOD): {int(scoreable.sum())}  "
+          f"stored correct* {int((scoreable & old_ok).sum())} -> now correct* {int((scoreable & new_ok).sum())} "
+          f"({(scoreable & new_ok).sum() / scoreable.sum():.1%})")
+    print(f"OOD rows: {int((~scoreable).sum())}  abstained at tau: "
+          f"{int((probe['new_verdict'] == 'ood-abstained').sum())}")
+    trans = Counter(zip(probe["verdict"].astype(str), probe["new_verdict"]))
+    print("Verdict transitions (stored -> now):")
+    for (a, b), n in sorted(trans.items()):
+        print(f"  {a:<16} -> {b:<14} {n}")
+    if len(regressions):
+        print(f"\nREGRESSIONS ({len(regressions)}):")
+        for r in regressions.itertuples():
+            print(f"  {r.name!r} ({r.text}): gold {r.gold_c}, now {r.predicted} @ {r.confidence:.2f}")
+    if len(fixes):
+        print(f"\nFixed ({len(fixes)}):")
+        for r in fixes.itertuples():
+            print(f"  {r.name!r} ({r.text}): gold {r.gold_c}, now {r.predicted} @ {r.confidence:.2f}")
+    os.makedirs("output", exist_ok=True)
+    out = f"output/probe_eval_{args.hf_repo.split('/')[-1]}.csv"
+    probe.drop(columns=["accept"]).to_csv(out, index=False)
+    print(f"\nSaved: {out}")
+    return 1 if len(regressions) else 0
+
+
 def main():
     parser = argparse.ArgumentParser(description="Evaluate model on an external dataset")
     parser.add_argument("--csv", default="data/real_points.csv")
@@ -110,13 +253,27 @@ def main():
                              "models needed 0.999")
     parser.add_argument("--no-ensemble", action="store_true",
                         help="Score names only, ignoring descriptions")
+    parser.add_argument("--lenient", action="store_true",
+                        help="Also report lenient accuracy: credit any label a TRAIN site "
+                             "used for the identical normalized name (data/real_points.csv, "
+                             "sites outside --site/val/test) plus approved "
+                             "data/label_equivalences.csv rows")
+    parser.add_argument("--probe", nargs="?", const="output/live_probe_20260713_rows.csv",
+                        default=None, metavar="CSV",
+                        help="Score the frozen live-probe regression suite instead of a site "
+                             "export (columns: name,normalized,gold,acceptables,verdict,...)")
+    parser.add_argument("--offline", action="store_true",
+                        help="Load the model from the local HF cache only")
     args = parser.parse_args()
+
+    if args.probe:
+        return run_probe(args)
 
     # Token from .env at repo root
     load_dotenv(Path(__file__).parent.parent / ".env")
     token = os.environ.get("HUGGING_FACE_TOKEN") or os.environ.get("HF_TOKEN")
-    if not token:
-        print("ERROR: no HUGGING_FACE_TOKEN / HF_TOKEN in .env")
+    if not token and not args.offline:
+        print("ERROR: no HUGGING_FACE_TOKEN / HF_TOKEN in .env (or pass --offline)")
         sys.exit(1)
 
     df = load_dataset(args)
@@ -129,6 +286,8 @@ def main():
 
     print(f"\nDownloading model: {args.hf_repo}")
     try:
+        if args.offline:
+            raise RuntimeError("offline requested")
         tokenizer = AutoTokenizer.from_pretrained(args.hf_repo, token=token)
         model = AutoModelForSequenceClassification.from_pretrained(args.hf_repo, token=token)
     except Exception as e:
@@ -218,6 +377,15 @@ def main():
     print(f"  on labels the model knows:        {wacc(known):.2%}  "
           f"({known['weight'].sum() / total_w:.1%} of rows)")
     print(f"Unique-name accuracy (ensemble):    {uniq['correct'].mean():.2%}  ({len(uniq)} names)")
+    if args.lenient:
+        accept = build_accept_sets(args, canon)
+        df["correct_lenient"] = [
+            pred == gold or pred in accept.get(text, set())
+            for pred, gold, text in zip(df["predicted"], df["label"], df["text"])]
+        uniq = df.drop_duplicates("text")
+        print(f"Lenient accuracy (accept sets):     row-weighted {wacc(df, 'correct_lenient'):.2%}, "
+              f"unique-name {uniq['correct_lenient'].mean():.2%}  "
+              f"({sum(1 for t in uniq['text'] if len(accept.get(t, ())) > 0)} names have alternatives)")
 
     hi = df[df["confidence"] >= args.threshold]
     lo = df[df["confidence"] < args.threshold]
@@ -268,4 +436,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)

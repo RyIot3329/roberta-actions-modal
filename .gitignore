@@ -25,3 +25,6 @@ venv/
 
 # LibreOffice lock files
 .~lock.*#
+
+# Per-run probe evaluation dumps (evaluate_external --probe)
+output/probe_eval_*.csv
