@@ -2,8 +2,8 @@
   "schema_version": 2,
   "model": "IOTechSystems/haystack-autotagging",
   "hf_repo": "IOTechSystems/haystack-autotagging",
-  "git_sha": "26ad13b",
-  "timestamp": "2026-09-03T10:28:51.835320",
+  "git_sha": "408646f",
+  "timestamp": "2026-09-03T10:32:25.889817",
   "seeds": null,
   "selected_seed": null,
   "fingerprints": {

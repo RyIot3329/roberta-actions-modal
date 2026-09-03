@@ -30,7 +30,7 @@ SCHEMA_VERSION = 2
 PRIMARY_METRIC = "strict.accuracy"
 DEFAULT_MARGIN = 0.005          # ~ the measured single-seed spread on 830 texts
 DEFAULT_BOOTSTRAP_B = 10000
-DEFAULT_TARGET_PRECISION = 0.90
+DEFAULT_TARGET_PRECISION = 0.85   # 0.90 is unreachable at useful coverage today (val-fitted tau 0.94 -> 0.4% coverage)
 THRESHOLD_GRID = [round(x, 2) for x in np.arange(0.05, 1.0, 0.05)]
 
 # Secondary axes (dotted paths into the metrics dict) that must not regress by
