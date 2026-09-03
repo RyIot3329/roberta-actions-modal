@@ -1,6 +1,7 @@
 text,targets,resolution
 zn t,zoneTemp (2822) | zoneTempAvg (16) | returnTemp (6),zoneTemp
 rm tmp,zoneTemp (7174) | returnTemp (1),zoneTemp
+zn tmp,zoneTemp (1876) | heatingValve (1),zoneTemp
 ra rel hum,returnHumidity (165) | outsideHumidity (1),returnHumidity
 return temp,zoneTemp (1008) | returnTemp (103) | secEnteringTemp (12) | evapEnteringTemp (2),zoneTemp
 ret t,secEnteringTemp (3) | returnTemp (2),secEnteringTemp
@@ -67,12 +68,12 @@ zone temp low sp,zoneTempMinSp (2) | zoneTempLoSp (1),zoneTempMinSp (override)
 zone temperature low setpoint,zoneTempMinSp (1) | zoneTempLoSp (1),DROPPED (override)
 zone hum sp,dehumidSp (5) | zoneHumiditySp (2),dehumidSp (override)
 space hum spt,dehumidSp (4) | zoneHumiditySp (1),dehumidSp (override)
-hum sp,dischargeHumiditySp (12) | humidifierEnableSp (4) | zoneHumiditySp (2),dischargeHumiditySp
+hum sp,dischargeHumiditySp (12) | humidifierEnableSp (4) | zoneHumiditySp (3),dischargeHumiditySp
 zone energy,zoneEnergy (9) | energy (1),zoneEnergy (override)
 dew point,zoneDewpoint (6) | outsideDewpoint (1),zoneDewpoint
 zone co,zoneCO (11) | zoneCO2 (2),zoneCO
 zn co,zoneCO (13) | zoneCO2 (4),zoneCO
-rm co2,zoneCO2 (238) | zoneCO (1),zoneCO2
+rm co2,zoneCO2 (239) | zoneCO (1),zoneCO2
 dehumidifier status,dehumidifierStatus (4) | dehumidifier (3),dehumidifierStatus (override)
 dehum status,dehumidifierStatus (7) | dehumidifier (3),dehumidifierStatus (override)
 dpr o,dischargeDamper (612) | outsideDamper (3),dischargeDamper
@@ -82,7 +83,7 @@ economizer status,econStatus (5) | econEnable (2),econStatus (override)
 econ status,econStatus (5) | econEnable (1),econStatus (override)
 econo status,econStatus (4) | econEnable (1),econStatus (override)
 econ sp,econEnableSp (8) | econSp (1),econEnableSp
-econ sts,econStatus (22) | econEnable (1),econStatus
+econ sts,econStatus (23) | econEnable (1),econStatus
 econ state,econStatus (3) | econMode (2),econStatus (override)
 economizer state,econStatus (3) | econMode (2),econStatus (override)
 econo state,econStatus (3) | econMode (2),econStatus (override)
@@ -105,7 +106,7 @@ heat setpt,heatingEnableSp (1) | zoneHeatSp (1),DROPPED (tie)
 heat enable,heatingEnable (5) | heatingEnableSp (1),heatingEnable
 htg cmd,heatingStage (18) | heatingDemand (12) | heatingEnable (2) | heatingValve (1),heatingStage
 htg status,heatingStatus (4) | heatingStageStatus (1),heatingStatus
-htg sts,heatingStageStatus (91) | heatingStatus (2),heatingStageStatus
+htg sts,heatingStageStatus (91) | heatingStatus (4),heatingStageStatus
 heat status,heatingEnable (23) | heatingStatus (3) | heatingDemand (1),heatingEnable
 humidifier enable cmd,humidifierEnable (3) | humidifier (1),humidifierEnable (override)
 humidifier en cmd,humidifier (2) | humidifierEnable (2),humidifierEnable (override)
@@ -131,7 +132,7 @@ cold deck damper pos,coldDeckDamper (1) | coldDeckDamperFb (1),coldDeckDamperFb 
 sa fan status,dischargeFanStatus (42) | dischargeFanStatuss (13),dischargeFanStatus
 sf cmd,dischargeFan (870) | dischageFan (9),dischargeFan
 dis fan cmd,dischargeFan (2) | dischargeFanSpeed (1),dischargeFan (override)
-saflow sp,dischargeFlowSp (574) | dischargeTempSp (23),dischargeFlowSp
+sa flow sp,dischargeFlowSp (576) | dischargeTempSp (23),dischargeFlowSp
 supply static,dischargePressure (35) | dischargePressureSp (2),dischargePressure
 supply temp,dischargeTemp (1263) | secLeavingTemp (12) | evapLeavingTemp (2) | dischargeTempSp (1) | zoneTemp (1),dischargeTemp
 sa temp clg lo sp,dischargeTempCoolMinSp (1) | dischargeTempLoSp (1),DROPPED (override)
@@ -142,7 +143,7 @@ sa dehum cmd sp,dischargeTempDehumidSp (1) | dischargeDehumidSp (1),DROPPED (ove
 sup dehum sp,dischargeTempDehumidSp (1) | dischargeDehumidSp (1),DROPPED (override)
 da dehum sp,dischargeDehumidSp (2) | dischargeTempDehumidSp (1),dischargeDehumidSp (override)
 disch dehum sp,dischargeTempDehumidSp (1) | dischargeDehumidSp (1),dischargeDehumidSp (override)
-chw vlv,coolingValve (47) | mixingValve (1),coolingValve
+chw vlv,coolingValve (79) | mixingValve (1),coolingValve
 chw v,coolingValve (2) | secEnteringIsoValve (2),DROPPED (tie)
 chw pos,coolingValveFb (2) | coolingValve (1),coolingValveFb (override)
 cool valve position,coolingValve (1) | coolingValveFb (1),coolingValveFb (override)
@@ -182,7 +183,7 @@ sup dpt hi limit,dischargeDewpointHiAlarm (1) | dischargeDewpointHiSp (1),DROPPE
 discharge dpt hi thresh,dischargeDewpointHiAlarm (1) | dischargeDewpointHiSp (1),dischargeDewpointHiSp (override)
 supply fan hz,dischargeFanFrequency (2) | dischargeFanSpeed (1),dischargeFanFrequency (override)
 saf out,dischargeFanSpeed (1) | dischargeFan (1),DROPPED (tie)
-sf spd,dischargeFanSpeed (334) | dischargeFanSpeedFb (32) | dischargeFanFrequency (7),dischargeFanSpeed
+sf spd,dischargeFanSpeed (348) | dischargeFanSpeedFb (32) | dischargeFanFrequency (7),dischargeFanSpeed
 sf spd sp,dischargeFanSpeedSp (1) | dischargeFanSpeedFb (1),DROPPED (tie)
 ef status,exhaustFanStatus (16) | exhaustFan (1),exhaustFanStatus
 ea fan cmd,exhaustFanEnable (3) | exhaustFan (1),exhaustFanEnable
@@ -248,13 +249,13 @@ min oa flow,outsideFlowMinSp (3) | minOutsideFlow (2),outsideFlowMinSp
 oa min flow,outsideFlow (2) | minOutsideFlow (1),outsideFlow
 min oa cfm sp,minOutsideFlow (1) | minOutsideFlowSp (1),minOutsideFlowSp (override)
 oa min cfm,outsideFlow (4) | minOutsideFlow (1),outsideFlow
-oa minflow sp,minOutsideFlow (1) | minOutsideFlowSp (1),minOutsideFlowSp (override)
+oa min flow sp,minOutsideFlowSp (2) | minOutsideFlow (1),minOutsideFlowSp (override)
 minoa flow sp,minOutsideFlow (1) | minOutsideFlowSp (1),minOutsideFlowSp (override)
 oa min setting,minOutsideFlow (1) | minOutsideFlowSp (1),minOutsideFlowSp (override)
 oa min cfm setpt,minOutsideFlow (1) | minOutsideFlowSp (1),minOutsideFlowSp (override)
 oa min cfm target,minOutsideFlow (1) | minOutsideFlowSp (1),minOutsideFlowSp (override)
 oa cfm min sp,minOutsideFlow (1) | minOutsideFlowSp (1),minOutsideFlowSp (override)
-oa flow min sp,outsideFlowMinSp (7) | minOutsideFlowSp (2),outsideFlowMinSp
+oa flow min sp,outsideFlowMinSp (7) | minOutsideFlowSp (3),outsideFlowMinSp
 ma dmpr,outsideDamper (8) | mixedDamper (2),outsideDamper
 ma dmp,outsideDamper (98) | mixedDamper (2) | exhaustDamper (1),outsideDamper
 oa humidity,outsideHumidity (6) | outsideHumidty (1),outsideHumidity
@@ -385,6 +386,7 @@ fan sts,dischargeFanStatus (81) | exhaustFanStatus (7),dischargeFanStatus
 ftr sig,perimeterValve (11) | perimeterHeatingValve (1),perimeterValve
 fan command,dischargeFanSpeed (22) | dischargeFan (11) | exhaustFan (6),dischargeFanSpeed
 flow,dischargeFlow (1629) | inletDamperFb (113),dischargeFlow
+flow stpt,dischargeFlowSp (206) | inletDamper (113),dischargeFlowSp
 hc vlv cmd,heatingValve (562) | heatingValveFb (3),heatingValve
 hc vlv pos,heatingValve (72) | heatingValveFb (17),heatingValve
 hdcd dmp cmd,dischargeDamper (55) | hotDeckDamper (6),dischargeDamper
@@ -432,24 +434,24 @@ lvg cnd w temp,condLeavingTemp (7) | condEnteringTemp (1),condLeavingTemp
 ma dmp cmd,outsideDamper (58) | minOutsideDamper (1),outsideDamper
 minoacmd,minOutsideDamperFb (14) | minOutsideDamper (4),minOutsideDamperFb
 max cl vol sp,dischargeFlowCoolMaxSp (456) | dischargeFlowMaxSp (88) | coldDeckDischargeFlowMaxSp (29),dischargeFlowCoolMaxSp
-max flow,dischargeFlowCoolMaxSp (664) | dischargeFlowMaxSp (46),dischargeFlowCoolMaxSp
+max flow,dischargeFlowCoolMaxSp (856) | dischargeFlowMaxSp (46),dischargeFlowCoolMaxSp
 max inlet air flw sp,dischargeFlowMinSp (69) | dischargeFlowMaxSp (61),dischargeFlowMinSp
 min cl vol sp,dischargeFlowCoolMinSp (456) | dischargeFlowMinSp (88) | coldDeckDischargeFlowMinSp (29),dischargeFlowCoolMinSp
-min flow,dischargeFlowCoolMinSp (664) | dischargeFlowMinSp (1),dischargeFlowCoolMinSp
+min flow,dischargeFlowCoolMinSp (856) | dischargeFlowMinSp (1),dischargeFlowCoolMinSp
 min flow sp,dischargeFlowMinSp (50) | dischargeFlowCoolMinSp (44) | outsideFlowMinSp (30) | dischargeFlowHeatMinSp (2),dischargeFlowMinSp
 min ht vol sp,dischargeFlowHeatMinSp (451) | dischargeFlowHeatSp (88) | hotDeckDischargeFlowMinSp (29),dischargeFlowHeatMinSp
 min oa dpr pos,outsideDamperMinSp (22) | minOutsideDamper (11),outsideDamperMinSp
 minimum damper,outsideDamperMinSp (18) | returnDamperMinSp (1),outsideDamperMinSp
 oa damper pos,outsideDamperFb (38) | dischargeDamper (6),outsideDamperFb
 oa dmp cmd,outsideDamper (99) | outsideIsoDamper (1),outsideDamper
-occ cmd,occupancyMode (1435) | occupancyModeOvr (42),occupancyMode
+occ cmd,occupancyMode (2329) | occupancyModeOvr (42),occupancyMode
 oa cfm,outsideFlow (61) | dischargeFlow (1),outsideFlow
 oa dpr pos,outsideDamperSp (32) | outsideDamper (25) | outsideDamperFb (2),outsideDamperSp
 occ sts,occupancyMode (1214) | occupancySensor (9),occupancyMode
 output frequency,twrFanFrequency (5) | condPumpFrequency (4) | priPumpFrequency (4) | secPumpFrequency (3),twrFanFrequency
 output percent,condPumpSpeed (4) | priPumpSpeed (4) | twrFanFrequency (3),DROPPED (tie)
 output volt,condPumpVoltage (4) | priPumpVoltage (4) | twrFanVoltage (3),DROPPED (tie)
-p1 ctsts,circPumpStatus (1) | secPumpStatus (1),DROPPED (tie)
+p1 ct sts,circPumpStatus (1) | secPumpStatus (1),DROPPED (tie)
 p1 spd,circPumpSpeed (1) | secPumpSpeed (1),DROPPED (tie)
 p2 spd,circPumpSpeed (1) | secPumpSpeed (1),DROPPED (tie)
 p8 cmd,secPump (1) | condPump (1),DROPPED (tie)
@@ -467,7 +469,7 @@ pump status,pumpStatus (14) | secPumpStatus (2) | pump (2),pumpStatus
 ra tmp,returnTemp (531) | occupiedHeatSp (1),returnTemp
 rco2 st pt,returnCO2Sp (43) | returnCO2 (1),returnCO2Sp
 rf cmd sts,returnFan (3) | exhaustFan (1),returnFan
-rf spd,returnFanSpeed (159) | returnFanSpeedFb (6) | returnFanFrequency (2),returnFanSpeed
+rf spd,returnFanSpeed (172) | returnFanSpeedFb (6) | returnFanFrequency (2),returnFanSpeed
 rhc vlv cmd,heatingValve (1207) | reHeatingValve (405),heatingValve
 ra dmpr pos,outsideDamper (12) | returnDamperFb (1),outsideDamper
 rm rel hum,zoneHumidity (19) | returnHumidity (4),zoneHumidity
@@ -477,7 +479,7 @@ run sts,chillerStatus (8) | condPumpStatus (5) | secPumpStatus (4) | exhaustFanS
 sa st prs,dischargePressure (256) | dischargeFanLeavingPressure (1),dischargePressure
 sa tmp,dischargeTemp (5227) | zoneHumidity (11) | coldDeckDischargeTemp (2),dischargeTemp
 sa tmp sp,dischargeTempSp (330) | dischageTempSp (9),dischargeTempSp
-sa sp,dischargeTempSp (10) | dischargePressure (7),dischargeTempSp
+sa sp,dischargeTempSp (20) | dischargePressure (7),dischargeTempSp
 sf run status bi,dischargeFanStatus (16) | dischargeFan (1),dischargeFanStatus
 sf cmd sts,dischargeFan (15) | returnFan (2),dischargeFan
 schw dp sp,secPressureDeltaSp (1) | secLeavingPressureSp (1),DROPPED (tie)
@@ -500,7 +502,6 @@ vfd spd,dischargeFanSpeed (39) | twrFanSpeedFb (4) | secPumpSpeed (1),dischargeF
 vfd sts,dischargeFanStatus (72) | twrFanStatus (4),dischargeFanStatus
 zn t sp clg,zoneCoolSp (429) | occupiedCoolSp (250),zoneCoolSp
 zn t sp htg,zoneHeatSp (429) | occupiedHeatSp (250),zoneHeatSp
-zn tmp,zoneTemp (1875) | heatingValve (1),zoneTemp
 nci max flow,dischargeFlowMaxSp (1316) | dischargeFlowCoolMaxSp (245),dischargeFlowMaxSp
 nci min flow,dischargeFlowMinSp (1316) | dischargeFlowCoolMinSp (75),dischargeFlowMinSp
 nvi ref pcnt vfd speed stpt,secPumpSpeedSp (2) | twrFanSpeedSp (1),secPumpSpeedSp
@@ -591,7 +592,7 @@ ea tmp,exhaustTemp (21) | wheelExhaustTemp (1),exhaustTemp
 ef s,exhaustFanStatus (21) | exhaustFan (2),exhaustFanStatus
 ef cmd,exhaustFan (97) | returnFan (2),exhaustFan
 ef cur sw,exhaustFan (3) | exhaustFanStatus (2),exhaustFan
-ef spd,exhaustFanSpeed (13) | exhaustFan (3) | exhaustFanSpeedFb (3),exhaustFanSpeed
+ef spd,exhaustFanSpeed (14) | exhaustFan (3) | exhaustFanSpeedFb (3),exhaustFanSpeed
 erp,wheelExhaustPressure (4) | recPump (4),DROPPED (tie)
 est dmpr pos cd,coldDeckDamper (52) | dischargeDamperFb (29),coldDeckDamper
 est dmpr pos hd,hotDeckDamper (52) | hotDeckDamperFb (29),hotDeckDamper

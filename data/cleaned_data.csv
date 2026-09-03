@@ -53,7 +53,7 @@ zone t snsr,zoneTemp
 zoneairtemp,zoneTemp
 zone air temp,zoneTemp
 zne tmp,zoneTemp
-zntmp,zoneTemp
+zn tmp,zoneTemp
 zone t,zoneTemp
 zn meas temp,zoneTemp
 zntempreading,zoneTemp
@@ -77,7 +77,7 @@ roomtemp input,zoneTemp
 spctemp val,zoneTemp
 rtemp value,zoneTemp
 rtemp read,zoneTemp
-zntemp meas,zoneTemp
+zn temp meas,zoneTemp
 ra h,returnHumidity
 ra hum,returnHumidity
 ra humidity,returnHumidity
@@ -114,7 +114,7 @@ return humidity level,returnHumidity
 ra rh sensor,returnHumidity
 ra hum rh signal,returnHumidity
 return air hum,returnHumidity
-rahum,returnHumidity
+ra hum,returnHumidity
 ra humid,returnHumidity
 return hum snsr,returnHumidity
 ret rh lvl,returnHumidity
@@ -170,10 +170,10 @@ return temp target,returnTempSp
 return temp target,returnTempSp
 return temp target,returnTempSp
 rtnsp,returnTempSp
-rasp,returnTempSp
+ra sp,returnTempSp
 ra temp sp,returnTempSp
 ra t sp,returnTempSp
-ratspt,returnTempSp
+rat spt,returnTempSp
 ret t setpt,returnTempSp
 rtn t sp,returnTempSp
 rtn t sp,returnTempSp
@@ -222,8 +222,8 @@ returnairtempsetpoint,returnTempSp
 returnairtempsetpoint,returnTempSp
 rtntempsp,returnTempSp
 rtnstpt,returnTempSp
-rettempspt,returnTempSp
-ratempsp,returnTempSp
+ret temp spt,returnTempSp
+ra temp sp,returnTempSp
 return air temp set point,returnTempSp
 oa dampr,outsideDamper
 outside damper,outsideDamper
@@ -298,8 +298,8 @@ outdoorairdamper,outsideDamper
 freshairdamper,outsideDamper
 freshairdamper,outsideDamper
 oadamper,outsideDamper
-oadmpr,outsideDamper
-oadmpr,outsideDamper
+oa dmpr,outsideDamper
+oa dmpr,outsideDamper
 outside air intake damper,outsideDamper
 return co2,returnCO2
 return co2,returnCO2
@@ -381,8 +381,8 @@ returnco2 level,returnCO2
 returnco2 level,returnCO2
 returnco2 ppm,returnCO2
 returnco2 ppm,returnCO2
-raco2,returnCO2
-raco2,returnCO2
+ra co2,returnCO2
+ra co2,returnCO2
 rtnco2,returnCO2
 rtnco2,returnCO2
 rtrn air tmp,returnTemp
@@ -546,8 +546,8 @@ zn p,zonePressure
 zn p,zonePressure
 znp,zonePressure
 znp,zonePressure
-znprs,zonePressure
-znprs,zonePressure
+zn prs,zonePressure
+zn prs,zonePressure
 zn prs,zonePressure
 zn prs,zonePressure
 zn prs,zonePressure
@@ -731,13 +731,13 @@ spacevoc,zoneVOC
 znt sp,zoneTempSp
 znt spt,zoneTempSp
 znt spt,zoneTempSp
-zntspt,zoneTempSp
-zntsp,zoneTempSp
+znt spt,zoneTempSp
+znt sp,zoneTempSp
 zn tsp,zoneTempSp
 zn t sp,zoneTempSp
 zn t spt,zoneTempSp
 zn tsp,zoneTempSp
-zn tempspt,zoneTempSp
+zn temp spt,zoneTempSp
 zn temp sp,zoneTempSp
 zn temp setpoint,zoneTempSp
 zone temp sp,zoneTempSp
@@ -774,12 +774,12 @@ spc temp set point,zoneTempSp
 spc temperature spt,zoneTempSp
 spc temp setpoint,zoneTempSp
 spc temp spt,zoneTempSp
-spc tempspt,zoneTempSp
+spc temp spt,zoneTempSp
 spctempspt,zoneTempSp
 spc temp spt,zoneTempSp
 spc temp spt,zoneTempSp
-zntsp set,zoneTempSp
-zntsp setpoint,zoneTempSp
+znt sp set,zoneTempSp
+znt sp setpoint,zoneTempSp
 ztsp,zoneTempSp
 ztsp,zoneTempSp
 z tsp,zoneTempSp
@@ -830,8 +830,8 @@ znt max spt,zoneTempMaxSP
 znt max sp,zoneTempMaxSP
 znt max spt,zoneTempMaxSP
 znt max sp,zoneTempMaxSP
-zntmaxspt,zoneTempMaxSP
-zntmaxsp,zoneTempMaxSP
+znt max spt,zoneTempMaxSP
+znt max sp,zoneTempMaxSP
 zn temp max spt,zoneTempMaxSP
 zn temp max sp,zoneTempMaxSP
 zone temp max spt,zoneTempMaxSP
@@ -960,7 +960,7 @@ chlr alm,chillerAlarm
 chlr alm,chillerAlarm
 chl alm,chillerAlarm
 chl alm,chillerAlarm
-chlralm,chillerAlarm
+chlr alm,chillerAlarm
 chilleralarm,chillerAlarm
 chalarm,chillerAlarm
 chiller alarm,chillerAlarm
@@ -1078,7 +1078,7 @@ blr alm,boilerAlarm
 blr alm,boilerAlarm
 blr alm,boilerAlarm
 blr alm,boilerAlarm
-blralm,boilerAlarm
+blr alm,boilerAlarm
 blr alm,boilerAlarm
 blr alm,boilerAlarm
 blr alarm,boilerAlarm
@@ -1784,7 +1784,7 @@ chlr status,chillerStatus
 chlr status,chillerStatus
 chlr sts,chillerStatus
 chlr sts,chillerStatus
-chlrstat,chillerStatus
+chlr stat,chillerStatus
 chlr stat,chillerStatus
 chlr stat,chillerStatus
 chlr status,chillerStatus
@@ -2141,7 +2141,7 @@ comp status,compStatus
 comp sts,compStatus
 comp sts,compStatus
 comp sts,compStatus
-compstat,compStatus
+comp stat,compStatus
 comp stat,compStatus
 comp stat,compStatus
 compstate,compStatus
@@ -2320,7 +2320,7 @@ cond alarm,condAlarm
 cond alarm,condAlarm
 cond alarm,condAlarm
 cond alarm,condAlarm
-condalm,condAlarm
+cond alm,condAlarm
 cond alm,condAlarm
 cond alm,condAlarm
 cond alm,condAlarm
@@ -3579,13 +3579,13 @@ znt min spt,zoneTempMinSP
 znt min sp,zoneTempMinSP
 znt min spt,zoneTempMinSP
 znt min sp,zoneTempMinSP
-zntminspt,zoneTempMinSP
-zntminsp,zoneTempMinSP
+znt min spt,zoneTempMinSP
+znt min sp,zoneTempMinSP
 zn temp min spt,zoneTempMinSP
 zn temp min sp,zoneTempMinSP
 zn temp min spt,zoneTempMinSP
 zn temp min sp,zoneTempMinSP
-zntempminspt,zoneTempMinSP
+zn temp min spt,zoneTempMinSP
 zonetemp min spt,zoneTempMinSP
 zonetemp min sp,zoneTempMinSP
 zone temp min spt,zoneTempMinSP
@@ -3656,10 +3656,10 @@ zn p sp,zonePressureSp
 zn p spt,zonePressureSp
 zn p spt,zonePressureSp
 zn p sp,zonePressureSp
-znpress spt,zonePressureSp
-znpress sp,zonePressureSp
-znpress spt,zonePressureSp
-znpress sp,zonePressureSp
+zn press spt,zonePressureSp
+zn press sp,zonePressureSp
+zn press spt,zonePressureSp
+zn press sp,zonePressureSp
 zonp spt,zonePressureSp
 zonp sp,zonePressureSp
 zonep spt,zonePressureSp
@@ -3855,8 +3855,8 @@ hum spt,zoneHumiditySp
 hum sp,zoneHumiditySp
 hum spt,zoneHumiditySp
 hum sp,zoneHumiditySp
-humspt,zoneHumiditySp
-humsp,zoneHumiditySp
+hum spt,zoneHumiditySp
+hum sp,zoneHumiditySp
 humid spt,zoneHumiditySp
 humid sp,zoneHumiditySp
 humid spt,zoneHumiditySp
@@ -3920,7 +3920,7 @@ spc humidity max spt,zoneHumidityMaxSp
 spc humidity max sp,zoneHumidityMaxSp
 spc humidity max sp,zoneHumidityMaxSp
 hum max spt,zoneHumidityMaxSp
-hummaxspt,zoneHumidityMaxSp
+hum max spt,zoneHumidityMaxSp
 humid max spt,zoneHumidityMaxSp
 humidmaxspt,zoneHumidityMaxSp
 humid max spt,zoneHumidityMaxSp
@@ -4172,8 +4172,8 @@ zn co2,zoneCO2
 zn co2,zoneCO2
 zn co2,zoneCO2
 zn co2,zoneCO2
-znco2,zoneCO2
-znco2,zoneCO2
+zn co2,zoneCO2
+zn co2,zoneCO2
 zn co,zoneCO2
 zn co,zoneCO2
 zn co,zoneCO2
@@ -4194,7 +4194,7 @@ zone co2,zoneCO2
 zone co2,zoneCO2
 zn co2,zoneCO2
 zn co2,zoneCO2
-znco2,zoneCO2
+zn co2,zoneCO2
 zn co2,zoneCO2
 zn co2,zoneCO2
 zone co2,zoneCO2
@@ -4203,7 +4203,7 @@ zone co2,zoneCO2
 zone co2,zoneCO2
 rm co2,zoneCO2
 rm co2,zoneCO2
-rmco2,zoneCO2
+rm co2,zoneCO2
 rm co2,zoneCO2
 rm co2,zoneCO2
 room co2,zoneCO2
@@ -5673,8 +5673,8 @@ econo sts,econStatus
 econ stat,econStatus
 econ sts,econStatus
 econ sts,econStatus
-econsts,econStatus
-econstat,econStatus
+econ sts,econStatus
+econ stat,econStatus
 econ state,econStatus
 econ state,econStatus
 econ state,econStatus
@@ -6373,8 +6373,8 @@ htg sts,heatingStatus
 htg stat,heatingStatus
 htg stat,heatingStatus
 htg status,heatingStatus
-htgsts,heatingStatus
-htgsts,heatingStatus
+htg sts,heatingStatus
+htg sts,heatingStatus
 htg stat,heatingStatus
 heat status,heatingStatus
 heat status,heatingStatus
@@ -8103,7 +8103,7 @@ saf cmd out,dischargeFanEnable
 sa fan,dischargeFanEnable
 da fan,dischargeFanEnable
 sa flow sp,dischargeFlowSp
-saflow sp,dischargeFlowSp
+sa flow sp,dischargeFlowSp
 sa flow sp,dischargeFlowSp
 saf flow sp,dischargeFlowSp
 saf flow sp,dischargeFlowSp
@@ -8572,7 +8572,7 @@ sa stat setpt,dischargePressureSp
 supply stat pressure sp,dischargePressureSp
 sair static sp,dischargePressureSp
 sa static setpoint,dischargePressureSp
-suppress sp,dischargePressureSp
+sup press sp,dischargePressureSp
 supply dsp sp,dischargePressureSp
 sa p sp,dischargePressureSp
 supply air sp pressure,dischargePressureSp
@@ -9861,7 +9861,7 @@ cool valve fdbk,coolingValveFb
 cooling vlv fb,coolingValveFb
 chw status,coolingStatus
 chw sts,coolingStatus
-chwsts,coolingStatus
+chw sts,coolingStatus
 chw sys status,coolingStatus
 chw active,coolingStatus
 chw on,coolingStatus
@@ -10879,8 +10879,8 @@ zone hum sp,dehumidSp
 zone hum sp,dehumidSp
 zone hum sp,dehumidSp
 zone hum sp,dehumidSp
-znhumsp,dehumidSp
-znhumsp,dehumidSp
+zn hum sp,dehumidSp
+zn hum sp,dehumidSp
 zn hum sp,dehumidSp
 zn hum sp,dehumidSp
 zone dehum sp,dehumidSp
@@ -11474,7 +11474,7 @@ sf alm,dischargeFanAlarm
 sf alm,dischargeFanAlarm
 s f alarm,dischargeFanAlarm
 sa f alarm,dischargeFanAlarm
-sa fanalm,dischargeFanAlarm
+sa fan alm,dischargeFanAlarm
 sa f alm,dischargeFanAlarm
 saf alarm,dischargeFanAlarm
 sfa alarm,dischargeFanAlarm
@@ -13282,7 +13282,7 @@ ex fan sts,exhaustFanStatus
 exfan sts,exhaustFanStatus
 exfanstatus,exhaustFanStatus
 ex fan sts,exhaustFanStatus
-ex fanstat,exhaustFanStatus
+ex fan stat,exhaustFanStatus
 exhaust f sts,exhaustFanStatus
 exf status,exhaustFanStatus
 exfan stat,exhaustFanStatus
@@ -13551,7 +13551,7 @@ outdoor air temp,outsideTemp
 oa temp read,outsideTemp
 oa temp sensor input,outsideTemp
 oa temperature,outsideTemp
-oatmp,outsideTemp
+oa tmp,outsideTemp
 oa temperature sensor,outsideTemp
 oa temperature reading,outsideTemp
 outdoor temperature sensor,outsideTemp
@@ -13630,7 +13630,7 @@ mixed temp sensor,mixedTemp
 mixed temperature sensor,mixedTemp
 mair temp,mixedTemp
 ma temperature,mixedTemp
-matemp,mixedTemp
+ma temp,mixedTemp
 mixed tmp read,mixedTemp
 mixedair temp,mixedTemp
 mixd air t,mixedTemp
@@ -13683,7 +13683,7 @@ zn hi spt,zoneTempHiSp
 zone temp hi sp,zoneTempHiSp
 zone hi temp sp,zoneTempHiSp
 zone temp high sp,zoneTempHiSp
-zone hitemp setpoint,zoneTempHiSp
+zone hi temp setpoint,zoneTempHiSp
 zone hi sp,zoneTempHiSp
 zne temp hi sp,zoneTempHiSp
 zone hi sp temp,zoneTempHiSp
@@ -13691,7 +13691,7 @@ roomtemp hi sp,zoneTempHiSp
 rm hi temp spt,zoneTempHiSp
 space hi temp spt,zoneTempHiSp
 spc hi spt,zoneTempHiSp
-spc hitemp sp,zoneTempHiSp
+spc hi temp sp,zoneTempHiSp
 spc hi temp sp,zoneTempHiSp
 hi room temp sp,zoneTempHiSp
 hi temp set zone,zoneTempHiSp
@@ -13706,14 +13706,14 @@ zn hi tmp sp,zoneTempHiSp
 zn temp limit high,zoneTempHiSp
 zn hi temperature sp,zoneTempHiSp
 zn t hi spt,zoneTempHiSp
-zn hitemp setpt,zoneTempHiSp
+zn hi temp setpt,zoneTempHiSp
 zne temp hi spt,zoneTempHiSp
 zone high temp set,zoneTempHiSp
 zn sp high,zoneTempHiSp
 zn temp high sp,zoneTempHiSp
 znt hi sp,zoneTempHiSp
 zone temp spt high,zoneTempHiSp
-zn hitemp spt,zoneTempHiSp
+zn hi temp spt,zoneTempHiSp
 zn tmp high spt,zoneTempHiSp
 zn temp thresh hi,zoneTempHiSp
 zone temp spt high,zoneTempHiSp
@@ -13750,7 +13750,7 @@ zn lo spt,zoneTempLoSp
 zone temp lo sp,zoneTempLoSp
 zone lo temp sp,zoneTempLoSp
 zone temp low sp,zoneTempLoSp
-zone lotemp setpoint,zoneTempLoSp
+zone lo temp setpoint,zoneTempLoSp
 zone lo sp,zoneTempLoSp
 zne temp lo sp,zoneTempLoSp
 zone lo sp temp,zoneTempLoSp
@@ -13758,7 +13758,7 @@ roomtemp lo sp,zoneTempLoSp
 rm lo temp spt,zoneTempLoSp
 space lo temp spt,zoneTempLoSp
 spc lo spt,zoneTempLoSp
-spc lotemp sp,zoneTempLoSp
+spc lo temp sp,zoneTempLoSp
 spc lo temp sp,zoneTempLoSp
 lo room temp sp,zoneTempLoSp
 lo temp set zone,zoneTempLoSp
@@ -13773,14 +13773,14 @@ zn lo tmp sp,zoneTempLoSp
 zn temp limit low,zoneTempLoSp
 zn lo temperature sp,zoneTempLoSp
 zn t lo spt,zoneTempLoSp
-zn lotemp setpt,zoneTempLoSp
+zn lo temp setpt,zoneTempLoSp
 zne temp lo spt,zoneTempLoSp
 zone low temp set,zoneTempLoSp
 zn sp low,zoneTempLoSp
 zn temp low sp,zoneTempLoSp
 znt lo sp,zoneTempLoSp
 zone temp spt low,zoneTempLoSp
-zn lotemp spt,zoneTempLoSp
+zn lo temp spt,zoneTempLoSp
 zn tmp low spt,zoneTempLoSp
 zn temp thresh lo,zoneTempLoSp
 zone temp spt low,zoneTempLoSp
@@ -14520,7 +14520,7 @@ zone co2 hi sensor sp,zoneCO2HiSp
 zone co2 threshold high,zoneCO2HiSp
 zn high co2 sp,zoneCO2HiSp
 space co2 high limit,zoneCO2HiSp
-znco2 upper limit,zoneCO2HiSp
+zn co2 upper limit,zoneCO2HiSp
 co2 upper spt,zoneCO2HiSp
 zn co2 alm high sp,zoneCO2HiSp
 zn co2 hi point,zoneCO2HiSp
@@ -14534,7 +14534,7 @@ zn co2 max,zoneCO2HiSp
 zone co2 max limit,zoneCO2HiSp
 co2 high alarm sp zn,zoneCO2HiSp
 zn co2 hl spt,zoneCO2HiSp
-znco2 alert high sp,zoneCO2HiSp
+zn co2 alert high sp,zoneCO2HiSp
 zoneco2 peak limit,zoneCO2HiSp
 zn co2 lvl high sp,zoneCO2HiSp
 zone co2 high trigger,zoneCO2HiSp
@@ -14545,15 +14545,15 @@ zone co2 limit max,zoneCO2HiSp
 room co2 peak sp,zoneCO2HiSp
 zn co2 hi band,zoneCO2HiSp
 zn co2 hi signal set,zoneCO2HiSp
-znco2 alarm threshold,zoneCO2HiSp
-znco2 max threshold,zoneCO2HiSp
+zn co2 alarm threshold,zoneCO2HiSp
+zn co2 max threshold,zoneCO2HiSp
 zn co2 ppm hi spt,zoneCO2HiSp
 zn co2 hi bound,zoneCO2HiSp
 zn co2 cutoff high,zoneCO2HiSp
 co2 zn high signal,zoneCO2HiSp
 zn hi co2 limit,zoneCO2HiSp
 zn hi co2 trip,zoneCO2HiSp
-znco2 alert lvl high,zoneCO2HiSp
+zn co2 alert lvl high,zoneCO2HiSp
 room co2 upper sp,zoneCO2HiSp
 zone co2 alarm limit,zoneCO2HiSp
 zn co2 alm,zoneCO2Alarm
@@ -14581,7 +14581,7 @@ zone co2 alm status,zoneCO2Alarm
 zone co2 high alert,zoneCO2Alarm
 zn high co2 alarm,zoneCO2Alarm
 space co2 alert,zoneCO2Alarm
-znco2 upper alarm,zoneCO2Alarm
+zn co2 upper alarm,zoneCO2Alarm
 co2 alarm triggered zone,zoneCO2Alarm
 zn co2 alm high,zoneCO2Alarm
 zn co2 hi alm,zoneCO2Alarm
@@ -14603,21 +14603,21 @@ co2 high zone alarm,zoneCO2Alarm
 zn co2 cutoff alm,zoneCO2Alarm
 co2 alert zn,zoneCO2Alarm
 zn hi co2 trip,zoneCO2Alarm
-znco2 alarm signal,zoneCO2Alarm
+zn co2 alarm signal,zoneCO2Alarm
 room co2 exceeded,zoneCO2Alarm
 zone co2 critical alarm,zoneCO2Alarm
 zn co2 alert hi,zoneCO2Alarm
 zn co2 overlimit alm,zoneCO2Alarm
 zn co2 danger level,zoneCO2Alarm
 room co2 safety alarm,zoneCO2Alarm
-znco2 warn alarm,zoneCO2Alarm
+zn co2 warn alarm,zoneCO2Alarm
 room co2 trip,zoneCO2Alarm
 zone co2 air alarm,zoneCO2Alarm
 zone co2 safety alert,zoneCO2Alarm
-znco2 threshold alarm,zoneCO2Alarm
+zn co2 threshold alarm,zoneCO2Alarm
 zone co2 violation,zoneCO2Alarm
 room co2 emergency alarm,zoneCO2Alarm
-znco2 hi event,zoneCO2Alarm
+zn co2 hi event,zoneCO2Alarm
 room co2 high trigger,zoneCO2Alarm
 zone co2 warning,zoneCO2Alarm
 stm vlv,steamValve
@@ -15230,7 +15230,7 @@ outside air temp hi limit,outsideTempHiSp
 oa hi temp threshold,outsideTempHiSp
 oat high thresh,outsideTempHiSp
 oa hi thresh temp,outsideTempHiSp
-oa hitemp sp,outsideTempHiSp
+oa hi temp sp,outsideTempHiSp
 oa t hilim,outsideTempHiSp
 oa t high sp set,outsideTempHiSp
 outdoor temp hi sp,outsideTempHiSp
@@ -15316,7 +15316,7 @@ chwr t,evapEnteringTemp
 chilled water return temp,evapEnteringTemp
 chwrettmp,evapEnteringTemp
 chw ret tmp,evapEnteringTemp
-ch rettemp,evapEnteringTemp
+ch ret temp,evapEnteringTemp
 chiller return temperature,evapEnteringTemp
 chw rt,evapEnteringTemp
 chw ret t,evapEnteringTemp
@@ -15343,8 +15343,8 @@ evap entrance temp,evapEnteringTemp
 evap entr tmp,evapEnteringTemp
 evp ent tmp,evapEnteringTemp
 evapentrtmp,evapEnteringTemp
-ch rettemp,evapEnteringTemp
-ch rettemp,evapEnteringTemp
+ch ret temp,evapEnteringTemp
+ch ret temp,evapEnteringTemp
 cwrettemp,evapEnteringTemp
 cw ret temp,evapEnteringTemp
 cw ret temp,evapEnteringTemp
@@ -15418,7 +15418,7 @@ chill wtr sup temp,evapLeavingTemp
 clg wtr sup tmp,evapLeavingTemp
 clg water supply temp,evapLeavingTemp
 clg wtr sup temp,evapLeavingTemp
-clgwt suptemp,evapLeavingTemp
+clgwt sup temp,evapLeavingTemp
 clg wtr sup temp,evapLeavingTemp
 clg wtr sup temperature,evapLeavingTemp
 clg wtr sup temp,evapLeavingTemp
@@ -15482,8 +15482,8 @@ heating coil leaving temp,heatingCoilLeavingTemp
 heating coil out temp,heatingCoilLeavingTemp
 heating coil leaving temp,heatingCoilLeavingTemp
 heating coil supply temp,heatingCoilLeavingTemp
-blr suptemp,heatingCoilLeavingTemp
-blr suptemp,heatingCoilLeavingTemp
+blr sup temp,heatingCoilLeavingTemp
+blr sup temp,heatingCoilLeavingTemp
 blr supply temp,heatingCoilLeavingTemp
 blr sup temp,heatingCoilLeavingTemp
 blr sup temp,heatingCoilLeavingTemp
@@ -16286,7 +16286,7 @@ htg temp stby spt,standbyHeatSp
 sbyhtgsetpoint,standbyHeatSp
 htg temp stby sp,standbyHeatSp
 stbyhtg spt,standbyHeatSp
-htgsp stby mode,standbyHeatSp
+htg sp stby mode,standbyHeatSp
 zn stbyhtg spt,standbyHeatSp
 sby htg temp sp,standbyHeatSp
 htg temp spt sb,standbyHeatSp
@@ -16350,7 +16350,7 @@ spc active clg sp,zoneCoolSp
 spc clg sp act,zoneCoolSp
 effclgsp act,zoneCoolSp
 coolsp effective,zoneCoolSp
-clgsp zone eff,zoneCoolSp
+clg sp zone eff,zoneCoolSp
 zn cooling setpt active,zoneCoolSp
 effsp zoneclg,zoneCoolSp
 zne cool spt,zoneCoolSp
@@ -16420,7 +16420,7 @@ spc active htg sp,zoneHeatSp
 spc htg sp act,zoneHeatSp
 effhtgsp act,zoneHeatSp
 heatsp effective,zoneHeatSp
-htgsp zone eff,zoneHeatSp
+htg sp zone eff,zoneHeatSp
 zn heating setpt active,zoneHeatSp
 effsp zonehtg,zoneHeatSp
 zne heat spt,zoneHeatSp
@@ -16440,7 +16440,7 @@ min oa flow,minOutsideFlow
 minoa flow,minOutsideFlow
 min oa flow,minOutsideFlow
 oa min flow,minOutsideFlow
-oaflow min,minOutsideFlow
+oa flow min,minOutsideFlow
 oa flow min,minOutsideFlow
 min oa cfmspt,minOutsideFlow
 min oa cfm sp,minOutsideFlow
@@ -16454,7 +16454,7 @@ minoutsideairflow,minOutsideFlow
 min oa volume,minOutsideFlow
 min oa vel,minOutsideFlow
 oa min flowrate,minOutsideFlow
-oa minflow sp,minOutsideFlow
+oa min flow sp,minOutsideFlow
 oa flow minimum,minOutsideFlow
 minoairflowrate,minOutsideFlow
 oa min rate,minOutsideFlow
@@ -16505,14 +16505,14 @@ min oa flow sp,minOutsideFlowSp
 minoa flow sp,minOutsideFlowSp
 min oa flow sp,minOutsideFlowSp
 oa min flow sp,minOutsideFlowSp
-oaflow min sp,minOutsideFlowSp
+oa flow min sp,minOutsideFlowSp
 oa flow min sp,minOutsideFlowSp
 min oa cfm sp,minOutsideFlowSp
 oa min cfm setpt,minOutsideFlowSp
 min oa cfm setpoint,minOutsideFlowSp
 oa min flow setpoint,minOutsideFlowSp
 oa min sp,minOutsideFlowSp
-oa minflow sp,minOutsideFlowSp
+oa min flow sp,minOutsideFlowSp
 oa min vent sp,minOutsideFlowSp
 oa min req sp,minOutsideFlowSp
 minoa sp,minOutsideFlowSp
@@ -16555,14 +16555,14 @@ oa cfm target min sp,minOutsideFlowSp
 oa min airflow spt,minOutsideFlowSp
 min vent rate outside sp,minOutsideFlowSp
 oa flow sp minimum,minOutsideFlowSp
-oa minflow control sp,minOutsideFlowSp
-oa req minflow sp,minOutsideFlowSp
+oa min flow control sp,minOutsideFlowSp
+oa req min flow sp,minOutsideFlowSp
 oa flow limit min sp,minOutsideFlowSp
-oa minflow setpoint,minOutsideFlowSp
+oa min flow setpoint,minOutsideFlowSp
 oa cfm setpoint low,minOutsideFlowSp
 oa min spt,minOutsideFlowSp
 oa cfm minimum sp,minOutsideFlowSp
-oa minflow ref sp,minOutsideFlowSp
+oa min flow ref sp,minOutsideFlowSp
 mxd dmp,mixedDamper
 ma damper,mixedDamper
 ma dmpr,mixedDamper
@@ -16943,7 +16943,7 @@ supply flow ceiling clg,dischargeFlowCoolMaxSp
 maxcoolmodeflowsp,dischargeFlowCoolMaxSp
 maxcoolairflwsp,dischargeFlowCoolMaxSp
 clg flow max range sp,dischargeFlowCoolMaxSp
-flowsp clg maximum,dischargeFlowCoolMaxSp
+flow sp clg maximum,dischargeFlowCoolMaxSp
 dairflow max clg sp,dischargeFlowCoolMaxSp
 max clg sply flw sp,dischargeFlowCoolMaxSp
 max disch flow clg sp,dischargeFlowCoolMaxSp
@@ -17005,7 +17005,7 @@ supply flow floor clg,dischargeFlowCoolMinSp
 mincoolmodeflowsp,dischargeFlowCoolMinSp
 mincoolairflwsp,dischargeFlowCoolMinSp
 clg flow min range sp,dischargeFlowCoolMinSp
-flowsp clg minimum,dischargeFlowCoolMinSp
+flow sp clg minimum,dischargeFlowCoolMinSp
 dairflow min clg sp,dischargeFlowCoolMinSp
 min clg sply flw sp,dischargeFlowCoolMinSp
 min disch flow clg sp,dischargeFlowCoolMinSp
@@ -17014,7 +17014,7 @@ min clg flowsignal sp,dischargeFlowCoolMinSp
 flowrate clg min spt,dischargeFlowCoolMinSp
 min clg flow valve sp,dischargeFlowCoolMinSp
 max flow heat sp,dischargeFlowHeatMaxSp
-htg maxflow sp,dischargeFlowHeatMaxSp
+htg max flow sp,dischargeFlowHeatMaxSp
 heating max flow sptp,dischargeFlowHeatMaxSp
 htg max flo setpoint,dischargeFlowHeatMaxSp
 htg max flow sp,dischargeFlowHeatMaxSp
@@ -17056,14 +17056,14 @@ htgcfm limit sp,dischargeFlowHeatMaxSp
 sp htg flow ceil,dischargeFlowHeatMaxSp
 sp htg cfm top,dischargeFlowHeatMaxSp
 maxhtgcfmsp,dischargeFlowHeatMaxSp
-heatingairflow maxsp,dischargeFlowHeatMaxSp
+heatingairflow max sp,dischargeFlowHeatMaxSp
 sa max htg flowpoint,dischargeFlowHeatMaxSp
 htg flow max range sp,dischargeFlowHeatMaxSp
 htg maxflowsetpoint,dischargeFlowHeatMaxSp
 htg flow cutoff sp,dischargeFlowHeatMaxSp
-htg discharge maxflow,dischargeFlowHeatMaxSp
+htg discharge max flow,dischargeFlowHeatMaxSp
 htg airflow limit sp,dischargeFlowHeatMaxSp
-htg flow maxspt,dischargeFlowHeatMaxSp
+htg flow max spt,dischargeFlowHeatMaxSp
 htg sp top flow,dischargeFlowHeatMaxSp
 max heating flow limit,dischargeFlowHeatMaxSp
 htg limit airflow sp,dischargeFlowHeatMaxSp
@@ -17075,7 +17075,7 @@ htg sp flow limit,dischargeFlowHeatMaxSp
 htg flow upr limit,dischargeFlowHeatMaxSp
 sup htg flow ceiling,dischargeFlowHeatMaxSp
 min flow heat sp,dischargeFlowHeatMinSp
-htg minflow sp,dischargeFlowHeatMinSp
+htg min flow sp,dischargeFlowHeatMinSp
 heating min flow sptp,dischargeFlowHeatMinSp
 htg min flo setpoint,dischargeFlowHeatMinSp
 htg min flow sp,dischargeFlowHeatMinSp
@@ -17117,14 +17117,14 @@ htgcfm baseline,dischargeFlowHeatMinSp
 sp htg flow floor,dischargeFlowHeatMinSp
 sp htg cfm btm,dischargeFlowHeatMinSp
 minhtgcfmsp,dischargeFlowHeatMinSp
-heatingairflow minsp,dischargeFlowHeatMinSp
+heatingairflow min sp,dischargeFlowHeatMinSp
 sa min htg flowpoint,dischargeFlowHeatMinSp
 htg flow min range sp,dischargeFlowHeatMinSp
 htg minflowsetpoint,dischargeFlowHeatMinSp
 htg flow startup sp,dischargeFlowHeatMinSp
-htg discharge minflow,dischargeFlowHeatMinSp
+htg discharge min flow,dischargeFlowHeatMinSp
 htg airflow base sp,dischargeFlowHeatMinSp
-htg flow minspt,dischargeFlowHeatMinSp
+htg flow min spt,dischargeFlowHeatMinSp
 htg sp base flow,dischargeFlowHeatMinSp
 min heating flow limit,dischargeFlowHeatMinSp
 htg limit airflow min sp,dischargeFlowHeatMinSp
@@ -17210,7 +17210,7 @@ stby supply cool sp,dischargeFlowStandbyCoolSp
 cool stby min flow spt,dischargeFlowStandbyCoolSp
 supflowstbyclgsp,dischargeFlowStandbyCoolSp
 da stby cfm sp clg,dischargeFlowStandbyCoolSp
-daflow min stby cool,dischargeFlowStandbyCoolSp
+da flow min stby cool,dischargeFlowStandbyCoolSp
 stbyclgspflow,dischargeFlowStandbyCoolSp
 da stby clg flow sp,dischargeFlowStandbyCoolSp
 clg stby sp min flow,dischargeFlowStandbyCoolSp
@@ -17239,8 +17239,8 @@ stby clg mode min flow,dischargeFlowStandbyCoolSp
 clgstbyminflowspt,dischargeFlowStandbyCoolSp
 sp stby cool flow lim,dischargeFlowStandbyCoolSp
 da stby cool flow sp,dischargeFlowStandbyCoolSp
-min clg stby supflow,dischargeFlowStandbyCoolSp
-daflow clg stby sp,dischargeFlowStandbyCoolSp
+min clg stby sup flow,dischargeFlowStandbyCoolSp
+da flow clg stby sp,dischargeFlowStandbyCoolSp
 supplyair clg stby sp,dischargeFlowStandbyCoolSp
 cool stby flow ceiling,dischargeFlowStandbyCoolSp
 cool stby min airflow sp,dischargeFlowStandbyCoolSp
@@ -17266,7 +17266,7 @@ stby supply htg sp,dischargeFlowStandbyHeatSp
 htg stby min flow spt,dischargeFlowStandbyHeatSp
 supflowstbyhtgsp,dischargeFlowStandbyHeatSp
 da stby cfm sp htg,dischargeFlowStandbyHeatSp
-daflow min stby htg,dischargeFlowStandbyHeatSp
+da flow min stby htg,dischargeFlowStandbyHeatSp
 stbyhtgspflow,dischargeFlowStandbyHeatSp
 da stby htg flow sp,dischargeFlowStandbyHeatSp
 htg stby sp min flow,dischargeFlowStandbyHeatSp
@@ -17294,8 +17294,8 @@ stby htg mode min flow,dischargeFlowStandbyHeatSp
 htgstbyminflowspt,dischargeFlowStandbyHeatSp
 sp stby htg flow lim,dischargeFlowStandbyHeatSp
 da stby heat flow sp,dischargeFlowStandbyHeatSp
-min htg stby supflow,dischargeFlowStandbyHeatSp
-daflow htg stby sp,dischargeFlowStandbyHeatSp
+min htg stby sup flow,dischargeFlowStandbyHeatSp
+da flow htg stby sp,dischargeFlowStandbyHeatSp
 supplyair htg stby sp,dischargeFlowStandbyHeatSp
 htg stby flow ceiling,dischargeFlowStandbyHeatSp
 htg stby min airflow sp,dischargeFlowStandbyHeatSp
@@ -17324,7 +17324,7 @@ unocc supply cool sp,dischargeFlowUnoccCoolSp
 cool unocc min flow spt,dischargeFlowUnoccCoolSp
 supflowunoccclgsp,dischargeFlowUnoccCoolSp
 da unocc cfm sp clg,dischargeFlowUnoccCoolSp
-daflow min unocc cool,dischargeFlowUnoccCoolSp
+da flow min unocc cool,dischargeFlowUnoccCoolSp
 unoccclgspflow,dischargeFlowUnoccCoolSp
 da unocc clg flow sp,dischargeFlowUnoccCoolSp
 clg unocc sp min flow,dischargeFlowUnoccCoolSp
@@ -17352,8 +17352,8 @@ unocc clg mode min flow,dischargeFlowUnoccCoolSp
 clgunoccminflowspt,dischargeFlowUnoccCoolSp
 sp unocc clg flow lim,dischargeFlowUnoccCoolSp
 da unocc cool flow sp,dischargeFlowUnoccCoolSp
-min clg unocc supflow,dischargeFlowUnoccCoolSp
-daflow clg unocc sp,dischargeFlowUnoccCoolSp
+min clg unocc sup flow,dischargeFlowUnoccCoolSp
+da flow clg unocc sp,dischargeFlowUnoccCoolSp
 supplyair clg unocc sp,dischargeFlowUnoccCoolSp
 cool unocc flow ceiling,dischargeFlowUnoccCoolSp
 cool unocc min airflow sp,dischargeFlowUnoccCoolSp
@@ -17382,7 +17382,7 @@ unocc supply heat sp,dischargeFlowUnoccHeatSp
 heat unocc min flow spt,dischargeFlowUnoccHeatSp
 supflowunochtgsp,dischargeFlowUnoccHeatSp
 da unocc cfm sp htg,dischargeFlowUnoccHeatSp
-daflow min unocc htg,dischargeFlowUnoccHeatSp
+da flow min unocc htg,dischargeFlowUnoccHeatSp
 unochtgspflow,dischargeFlowUnoccHeatSp
 da unocc htg flow sp,dischargeFlowUnoccHeatSp
 htg unocc sp min flow,dischargeFlowUnoccHeatSp
@@ -17410,8 +17410,8 @@ unocc htg mode min flow,dischargeFlowUnoccHeatSp
 htgunoccminflowspt,dischargeFlowUnoccHeatSp
 sp unocc htg flow lim,dischargeFlowUnoccHeatSp
 da unocc heat flow sp,dischargeFlowUnoccHeatSp
-min htg unocc supflow,dischargeFlowUnoccHeatSp
-daflow htg unocc sp,dischargeFlowUnoccHeatSp
+min htg unocc sup flow,dischargeFlowUnoccHeatSp
+da flow htg unocc sp,dischargeFlowUnoccHeatSp
 supplyair htg unocc sp,dischargeFlowUnoccHeatSp
 htg unocc flow ceiling,dischargeFlowUnoccHeatSp
 htg unocc min airflow sp,dischargeFlowUnoccHeatSp
@@ -17496,7 +17496,7 @@ cfm k fct,kFactor
 k coefficient,kFactor
 box flow constant,kFactor
 box air k,kFactor
-saflow k factor,kFactor
+sa flow k factor,kFactor
 flowkfactor,kFactor
 air flow correction,kFactor
 calibration factor,kFactor

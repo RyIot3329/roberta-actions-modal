@@ -159,6 +159,43 @@ def load_overrides(path, canon):
     return overrides
 
 
+def load_equivalences(path, canon):
+    """
+    Approved label equivalences for LENIENT scoring (never for training).
+
+    data/label_equivalences.csv columns (drafted by scripts/draft_equivalences.py):
+      label_a,label_b,relation,direction,...,status
+    relation: same | site_variant (symmetric credit), parent (directional:
+    predicting the parent when the child is gold is acceptable), confusable
+    (report-only). Only rows with status == approved count.
+    Returns {gold_label: set(acceptable predicted labels)}.
+    """
+    equiv = defaultdict(set)
+    if not os.path.exists(path):
+        return equiv
+    df = pd.read_csv(path)
+    needed = {'label_a', 'label_b', 'relation', 'status'}
+    if not needed.issubset(df.columns):
+        print(f"WARNING: {path} lacks columns {sorted(needed - set(df.columns))}; ignored")
+        return equiv
+    for row in df.itertuples():
+        if str(row.status).strip().lower() != 'approved':
+            continue
+        a = canon(str(row.label_a).strip())
+        b = canon(str(row.label_b).strip())
+        relation = str(row.relation).strip().lower()
+        direction = str(getattr(row, 'direction', 'both') or 'both').strip().lower()
+        if relation in ('same', 'site_variant'):
+            equiv[a].add(b)
+            equiv[b].add(a)
+        elif relation == 'parent':
+            if direction in ('both', 'a_to_b'):
+                equiv[b].add(a)  # gold b (child) accepts prediction a (parent)
+            if direction in ('both', 'b_to_a'):
+                equiv[a].add(b)
+    return equiv
+
+
 def resolve_training_pool(weights, overrides):
     """
     Collapse {text: {label: weight}} to one label per text.
@@ -330,6 +367,16 @@ def convert_to_jsonl(
         for row in generated.itertuples():
             weights[row.text][row.target] += 0.5
     organic_labels = set(synth['target']) | set(real_train['label'])
+    # Accept sets for LENIENT scoring: every label a TRAIN site used for the
+    # identical text (site-convention credit) plus approved equivalences.
+    # Held-out sites never contribute their own alternatives.
+    train_site_labels = defaultdict(set)
+    for row in real_train.itertuples():
+        train_site_labels[row.text].add(row.label)
+    equivalences = load_equivalences(os.path.join(output_dir, 'label_equivalences.csv'), canon)
+    if equivalences:
+        print(f"Label equivalences: {sum(len(v) for v in equivalences.values())} "
+              f"approved directed credits")
 
     overrides = load_overrides(os.path.join(output_dir, 'label_overrides.csv'), canon)
     if overrides:
@@ -409,6 +456,8 @@ def convert_to_jsonl(
                     'site': site,
                     'rows': rows,
                     'seen_in_train': text in train_texts,
+                    'accept': sorted({label} | train_site_labels.get(text, set())
+                                     | equivalences.get(label, set())),
                 }
                 if label in label2id:
                     record['label_id'] = label2id[label]
@@ -418,10 +467,12 @@ def convert_to_jsonl(
         total = len(covered) + len(uncovered)
         seen = sum(1 for r in covered + uncovered if r['seen_in_train'])
         gen_only = sum(1 for r in covered if r['label'] in generated_only)
+        multi = sum(1 for r in covered if len(r['accept']) > 1)
         print(f"{name}: {total} unique texts from {split_sites} "
               f"({len(covered)} covered = {len(covered) / total:.1%}, "
               f"{gen_only} covered only via generated classes, "
-              f"{seen} seen in train, {ambiguous} ambiguous-gold dropped)")
+              f"{seen} seen in train, {ambiguous} ambiguous-gold dropped, "
+              f"{multi} with lenient accept sets)")
         return covered, uncovered, ambiguous
 
     val_records, val_uncovered, val_ambiguous = build_split(val_sites, 'Validation')
@@ -461,6 +512,7 @@ def convert_to_jsonl(
             'rows_total': sum(r['rows'] for r in records + uncovered),
             'seen_in_train': sum(1 for r in records + uncovered if r['seen_in_train']),
             'ambiguous_gold_dropped': ambiguous,
+            'multi_accept': sum(1 for r in records if len(r.get('accept', [])) > 1),
         }
 
     summary_path = os.path.join(output_dir, 'dataset_summary.json')

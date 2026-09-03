@@ -1,10 +1,10 @@
-{"text": "ex f r02 bypass dmp", "label": "exhaustFanBypass", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
-{"text": "flow setpoint", "label": "dischargeFlowsSp", "site": "N4-Integ05", "rows": 8, "seen_in_train": true}
-{"text": "gly dif pr spt", "label": "secLeavingPressureDeltaSp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
-{"text": "gly dif prs", "label": "secLeavingPressureDelta", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
-{"text": "gly dif prs n", "label": "secLeavingPressureDelta", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
-{"text": "gly dif prs s", "label": "secLeavingPressureDelta", "site": "N4-Integ05", "rows": 1, "seen_in_train": false}
-{"text": "oa dmp open", "label": "ousideDamperFb", "site": "N4-Integ05", "rows": 4, "seen_in_train": false}
-{"text": "rh cmd", "label": "heatingCoil", "site": "N4-Integ05", "rows": 8, "seen_in_train": false}
-{"text": "rwa mode", "label": "schedule", "site": "N4-Integ05", "rows": 55, "seen_in_train": false}
-{"text": "temp control cap", "label": "TempControlCap", "site": "N4-Integ05", "rows": 32, "seen_in_train": false}
+{"text": "ex f r02 bypass dmp", "label": "exhaustFanBypass", "site": "N4-Integ05", "rows": 1, "seen_in_train": false, "accept": ["exhaustFanBypass"]}
+{"text": "flow setpoint", "label": "dischargeFlowsSp", "site": "N4-Integ05", "rows": 8, "seen_in_train": true, "accept": ["dischargeFlowSp", "dischargeFlowsSp"]}
+{"text": "gly dif pr spt", "label": "secLeavingPressureDeltaSp", "site": "N4-Integ05", "rows": 1, "seen_in_train": false, "accept": ["secLeavingPressureDeltaSp"]}
+{"text": "gly dif prs", "label": "secLeavingPressureDelta", "site": "N4-Integ05", "rows": 1, "seen_in_train": false, "accept": ["secLeavingPressureDelta"]}
+{"text": "gly dif prs n", "label": "secLeavingPressureDelta", "site": "N4-Integ05", "rows": 1, "seen_in_train": false, "accept": ["secLeavingPressureDelta"]}
+{"text": "gly dif prs s", "label": "secLeavingPressureDelta", "site": "N4-Integ05", "rows": 1, "seen_in_train": false, "accept": ["secLeavingPressureDelta"]}
+{"text": "oa dmp open", "label": "ousideDamperFb", "site": "N4-Integ05", "rows": 4, "seen_in_train": false, "accept": ["ousideDamperFb"]}
+{"text": "rh cmd", "label": "heatingCoil", "site": "N4-Integ05", "rows": 8, "seen_in_train": false, "accept": ["heatingCoil"]}
+{"text": "rwa mode", "label": "schedule", "site": "N4-Integ05", "rows": 55, "seen_in_train": false, "accept": ["schedule"]}
+{"text": "temp control cap", "label": "TempControlCap", "site": "N4-Integ05", "rows": 32, "seen_in_train": false, "accept": ["TempControlCap"]}

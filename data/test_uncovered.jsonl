@@ -1,3 +1,3 @@
-{"text": "hx cw flw", "label": "priFlow", "site": "N4-Integ06", "rows": 1, "seen_in_train": false}
-{"text": "rm int dmp out", "label": "RmIntDmpOut", "site": "N4-Integ06", "rows": 2, "seen_in_train": false}
-{"text": "vav avg dmp cmd", "label": "zoneDischargeDamperAvg", "site": "N4-Integ06", "rows": 10, "seen_in_train": false}
+{"text": "hx cw flw", "label": "priFlow", "site": "N4-Integ06", "rows": 1, "seen_in_train": false, "accept": ["priFlow"]}
+{"text": "rm int dmp out", "label": "RmIntDmpOut", "site": "N4-Integ06", "rows": 2, "seen_in_train": false, "accept": ["RmIntDmpOut"]}
+{"text": "vav avg dmp cmd", "label": "zoneDischargeDamperAvg", "site": "N4-Integ06", "rows": 10, "seen_in_train": false, "accept": ["zoneDischargeDamperAvg"]}
