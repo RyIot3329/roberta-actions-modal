@@ -26,8 +26,7 @@ weight_decay: "0.01"
 warmup_ratio: "0.1"
 # Softens the saturated 0.99+ confidences so the auto-accept threshold has
 # headroom to separate sure from unsure predictions.
-# A/B C pairs R-Drop with lighter smoothing (both regularise the output distribution)
-label_smoothing: "0.05"
+label_smoothing: "0.1"
 # Checkpoint selection on validation. f1_weighted tracks the operational
 # row-match rate; f1_macro would be dominated by the ~280 singleton classes.
 metric_for_best_model: "f1_weighted"
@@ -69,9 +68,10 @@ field_dropout: 0.2
 early_stopping_patience: 0
 llrd_decay: 1.0
 head_lr_multiplier: 1.0
-# A/B C: R-Drop consistency between two dropout passes (2 forward passes per step)
-rdrop_alpha: 1.0
-logit_adjustment_tau: 0.0
+rdrop_alpha: 0.0
+# A/B D: logit adjustment (tau*log class prior in the train loss) -- judged on
+# macro-F1 / tail classes only, never on the primary
+logit_adjustment_tau: 0.5
 ema_decay: 0.0
 
 # Preprocessing knobs, read by scripts/convert_to_jsonl.py (the workflow's

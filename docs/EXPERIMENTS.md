@@ -24,6 +24,8 @@ beats it on validation.
 
 | 2026-09-03 20:29 | 33799746751 | **A/B E**: EMA 0.999 (on A) | 65.46 / 66.03 / 64.42 (mean 65.30, +0.4pp vs A) | 65.30 / 65.66 / 66.75 (lenient 70.12 / 70.48 / 71.45; best test mean so far 65.90) | ensemble 65.90 / 70.84; soup merged only [43] (EMA weights do not average across seeds) | seed 42 (median val) | FAILED: pair view -1.35pp [-1.9, -0.8]; name-only -0.60, lenient -0.84 | rejected (below the +0.5pp validation rule; pair view regressed); reverted |
 
+| 2026-09-03 21:18 | 33802655051 | **A/B C**: R-Drop alpha 1.0 + label smoothing 0.05 (on A) | 63.85 / 63.85 / 64.99 (mean 64.23, -0.7pp vs A) | 63.61 / 64.58 / 65.30 (lenient 68.92 / 69.88 / 70.24) | ensemble 64.58 / 70.00; soup[44,42] val 66.32, test 65.30 / 70.36 | soup[44,42] | FAILED: pair view -1.02pp [-1.6, -0.5]; name-only -0.60, lenient -0.60 | rejected (validation mean down, pair view down); reverted |
+
 Gate policy decided 2026-09-03 (user): trade-off clause -- a pair-view gain of at
 least 5pp allows the name-only strict accuracy to sit up to 1.5pp below the deployed
 model. Run 4's soup (pair +10.3pp, name-only -0.6pp) qualifies; it is promoted from the
