@@ -1,0 +1,2591 @@
+{
+  "candidate": {
+    "schema_version": 2,
+    "model": "RyIoT33/deberta-v3-bms-base",
+    "hf_repo": "RyIoT33/haystack-autotagging",
+    "git_sha": "b1b4a80",
+    "timestamp": "2026-09-03T23:05:33.983986",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "selected_seed": 42,
+    "fingerprints": {
+      "test_sha256": "25728716aeb0f7dc0ae537317e47dc066c3f9c8e2feded375c7792dc5316599c",
+      "label_space_sha256": "c9c2c0fb08534be6150cd74ee288fac07cbb6bbed33ec3bd5405593bff7804dd",
+      "n_test": 830,
+      "n_classes": 947,
+      "pairs_sha256": "582a4505088458bfb747cb422f6c91763894c221355714c9e5236dbe2231d1ac",
+      "n_pairs": 4593
+    },
+    "predictions_path": null,
+    "metrics": {
+      "strict": {
+        "accuracy": 0.6493975903614457,
+        "rows_accuracy": 0.8685978819594972,
+        "log1p_rows_accuracy": 0.7164996251326352,
+        "n": 830,
+        "f1_weighted": 0.6303803594857599,
+        "f1_macro": 0.3850459945831328
+      },
+      "lenient": {
+        "accuracy": 0.7,
+        "rows_accuracy": 0.9177091719824116,
+        "log1p_rows_accuracy": 0.7636953470073199,
+        "n": 830
+      },
+      "slices": {
+        "seen_in_train:false": {
+          "n": 600,
+          "strict": 0.5916666666666667,
+          "lenient": 0.595,
+          "log1p_rows_strict": 0.6229347990251468
+        },
+        "seen_in_train:true": {
+          "n": 230,
+          "strict": 0.8,
+          "lenient": 0.9739130434782609,
+          "log1p_rows_strict": 0.869874443777897
+        },
+        "site:Motorola_Points": {
+          "n": 204,
+          "strict": 0.6519607843137255,
+          "lenient": 0.6617647058823529,
+          "log1p_rows_strict": 0.7101725817566961
+        },
+        "site:N4-Integ06": {
+          "n": 626,
+          "strict": 0.6485623003194888,
+          "lenient": 0.7124600638977636,
+          "log1p_rows_strict": 0.7188141349522968
+        }
+      },
+      "topk": {
+        "top3": 0.8168674698795181,
+        "top5": 0.8578313253012049,
+        "top10": 0.8987951807228916
+      },
+      "calibration": {
+        "ece": 0.06446370719875918,
+        "mean_confidence": 0.7087216735649181,
+        "mean_confidence_correct": 0.7946169820919993,
+        "mean_confidence_wrong": 0.5496234904168192
+      },
+      "coverage": {
+        "tau": 0.8540662527084351,
+        "coverage_texts": 0.4771084337349398,
+        "coverage_log1p_rows": 0.5862075975152351,
+        "precision_at_tau": 0.8434343434343434,
+        "tau_source": "validation"
+      },
+      "pairs_ensemble": {
+        "strict": {
+          "accuracy": 0.8020901371652515,
+          "rows_accuracy": 0.8795566912109345,
+          "log1p_rows_accuracy": 0.8264798472133705,
+          "n": 4593,
+          "f1_weighted": 0.7872158905167572,
+          "f1_macro": 0.3844506088626025
+        },
+        "lenient": {
+          "accuracy": 0.8545612889179186,
+          "rows_accuracy": 0.9305553455601082,
+          "log1p_rows_accuracy": 0.8805640368402452,
+          "n": 4593
+        },
+        "slices": {
+          "seen_in_train:false": {
+            "n": 2243,
+            "strict": 0.7035220686580472,
+            "lenient": 0.7044137316094516,
+            "log1p_rows_strict": 0.7341145823850626
+          },
+          "seen_in_train:true": {
+            "n": 2350,
+            "strict": 0.8961702127659574,
+            "lenient": 0.997872340425532,
+            "log1p_rows_strict": 0.9015186416873775
+          },
+          "site:Motorola_Points": {
+            "n": 1428,
+            "strict": 0.6995798319327731,
+            "lenient": 0.7002801120448179,
+            "log1p_rows_strict": 0.7208928376713801
+          },
+          "site:N4-Integ06": {
+            "n": 3165,
+            "strict": 0.8483412322274881,
+            "lenient": 0.9241706161137441,
+            "log1p_rows_strict": 0.8651338357406673
+          }
+        },
+        "topk": {
+          "top3": 0.8948399738732854,
+          "top5": 0.9113868930981929,
+          "top10": 0.9375136076638363
+        },
+        "calibration": {
+          "ece": 0.021107064286316195,
+          "mean_confidence": 0.8036664846555395,
+          "mean_confidence_correct": 0.8532987129141402,
+          "mean_confidence_wrong": 0.6025167278847089
+        },
+        "coverage": {
+          "tau": 0.8358883857727051,
+          "coverage_texts": 0.7872849989113869,
+          "coverage_log1p_rows": 0.8266824334084127,
+          "precision_at_tau": 0.9043141592920354,
+          "tau_source": "validation"
+        }
+      },
+      "pairs_context": {
+        "strict": {
+          "accuracy": 0.7990420204659264,
+          "rows_accuracy": 0.8778330485795068,
+          "log1p_rows_accuracy": 0.8217816900830544,
+          "n": 4593,
+          "f1_weighted": 0.7874734136015767,
+          "f1_macro": 0.3851229992348141
+        },
+        "lenient": {
+          "accuracy": 0.8563030698889614,
+          "rows_accuracy": 0.9313869275314112,
+          "log1p_rows_accuracy": 0.8822196532430762,
+          "n": 4593
+        },
+        "slices": {
+          "seen_in_train:false": {
+            "n": 2243,
+            "strict": 0.7079803834150691,
+            "lenient": 0.7084262148907713,
+            "log1p_rows_strict": 0.7384120944628243
+          },
+          "seen_in_train:true": {
+            "n": 2350,
+            "strict": 0.8859574468085106,
+            "lenient": 0.9974468085106383,
+            "log1p_rows_strict": 0.889512280827923
+          },
+          "site:Motorola_Points": {
+            "n": 1428,
+            "strict": 0.7058823529411765,
+            "lenient": 0.7065826330532213,
+            "log1p_rows_strict": 0.7271762412008227
+          },
+          "site:N4-Integ06": {
+            "n": 3165,
+            "strict": 0.8410742496050553,
+            "lenient": 0.9238546603475514,
+            "log1p_rows_strict": 0.8564154764889403
+          }
+        },
+        "topk": {
+          "top3": 0.8911386893098193,
+          "top5": 0.9157413455258001,
+          "top10": 0.9460047898976703
+        },
+        "calibration": {
+          "ece": 0.03900322960452417,
+          "mean_confidence": 0.7673328509134533,
+          "mean_confidence_correct": 0.8184808563776009,
+          "mean_confidence_wrong": 0.5639599581145129
+        },
+        "coverage": {
+          "tau": 0.777980387210846,
+          "coverage_texts": 0.731330285216634,
+          "coverage_log1p_rows": 0.7644363938693849,
+          "precision_at_tau": 0.8850848466805596,
+          "tau_source": "validation"
+        }
+      },
+      "pairs_name": {
+        "strict": {
+          "accuracy": 0.6640539952101023,
+          "rows_accuracy": 0.846081736947943,
+          "log1p_rows_accuracy": 0.7125768391836375,
+          "n": 4593,
+          "f1_weighted": 0.6952546422849656,
+          "f1_macro": 0.3563228644551318
+        },
+        "lenient": {
+          "accuracy": 0.7171783148269105,
+          "rows_accuracy": 0.8971559896581442,
+          "log1p_rows_accuracy": 0.7670977746332638,
+          "n": 4593
+        },
+        "slices": {
+          "seen_in_train:false": {
+            "n": 2243,
+            "strict": 0.422648238965671,
+            "lenient": 0.42353990191707536,
+            "log1p_rows_strict": 0.48148969914116535
+          },
+          "seen_in_train:true": {
+            "n": 2350,
+            "strict": 0.894468085106383,
+            "lenient": 0.9974468085106383,
+            "log1p_rows_strict": 0.9003151674336168
+          },
+          "site:Motorola_Points": {
+            "n": 1428,
+            "strict": 0.25980392156862747,
+            "lenient": 0.2619047619047619,
+            "log1p_rows_strict": 0.302050988415888
+          },
+          "site:N4-Integ06": {
+            "n": 3165,
+            "strict": 0.8464454976303317,
+            "lenient": 0.9225908372827805,
+            "log1p_rows_strict": 0.8628648489925012
+          }
+        },
+        "topk": {
+          "top3": 0.7611582843457435,
+          "top5": 0.772262138036142,
+          "top10": 0.782495101241019
+        },
+        "calibration": {
+          "ece": 0.05168490383945177,
+          "mean_confidence": 0.6747593524179024,
+          "mean_confidence_correct": 0.8565578135945758,
+          "mean_confidence_wrong": 0.3154040014205895
+        },
+        "coverage": {
+          "tau": 0.8358883857727051,
+          "coverage_texts": 0.6729806226866971,
+          "coverage_log1p_rows": 0.7319956853280809,
+          "precision_at_tau": 0.9113555483662246,
+          "tau_source": "validation"
+        }
+      }
+    },
+    "gate": {
+      "primary": "strict.accuracy",
+      "margin": 0.005,
+      "bootstrap_B": 10000
+    },
+    "candidate": "soup[43, 42]",
+    "candidate_save_name": "final_model_soup",
+    "calibration_temperature": 1.1012658476829529,
+    "acceptance_threshold": 0.8540662527084351,
+    "target_precision": 0.85,
+    "validation_metrics": {
+      "strict": {
+        "accuracy": 0.6584440227703985,
+        "rows_accuracy": 0.780274267089683,
+        "log1p_rows_accuracy": 0.7146615657276502,
+        "n": 1054,
+        "f1_weighted": 0.6466779358469481,
+        "f1_macro": 0.43541808731207127
+      },
+      "lenient": {
+        "accuracy": 0.7343453510436433,
+        "rows_accuracy": 0.8981640401518698,
+        "log1p_rows_accuracy": 0.8109274071644749,
+        "n": 1054
+      },
+      "slices": {
+        "seen_in_train:false": {
+          "n": 624,
+          "strict": 0.5641025641025641,
+          "lenient": 0.5673076923076923,
+          "log1p_rows_strict": 0.5719198037618034
+        },
+        "seen_in_train:true": {
+          "n": 430,
+          "strict": 0.7953488372093023,
+          "lenient": 0.9767441860465116,
+          "log1p_rows_strict": 0.8221241487270292
+        },
+        "site:N4-Integ05": {
+          "n": 1054,
+          "strict": 0.6584440227703985,
+          "lenient": 0.7343453510436433,
+          "log1p_rows_strict": 0.7146615657276502
+        }
+      },
+      "topk": {
+        "top3": 0.8263757115749526,
+        "top5": 0.8719165085388995,
+        "top10": 0.9127134724857685
+      },
+      "calibration": {
+        "ece": 0.08746530919687459,
+        "mean_confidence": 0.7295143341493618,
+        "mean_confidence_correct": 0.7960714627948378,
+        "mean_confidence_wrong": 0.6012069805939164
+      },
+      "coverage": {
+        "tau": 0.8540662527084351,
+        "coverage_texts": 0.4686907020872865,
+        "coverage_log1p_rows": 0.5892833221555458,
+        "precision_at_tau": 0.8502024291497976,
+        "tau_source": "validation"
+      }
+    },
+    "soup": {
+      "selected_seeds": [
+        43,
+        42
+      ],
+      "per_seed_val_accuracy": {
+        "42": 0.6508538722991943,
+        "43": 0.6537001729011536,
+        "44": 0.6432637572288513
+      },
+      "val_strict": 0.6584440227703985,
+      "test_strict": 0.6493975903614457,
+      "test_lenient": 0.7,
+      "test_log1p_rows": 0.7164996251326352,
+      "is_candidate": true
+    },
+    "seed_summary": {
+      "42": {
+        "val_strict": 0.6499051233396584,
+        "test_strict": 0.6337349397590362,
+        "test_f1_weighted": 0.622694935574525,
+        "test_lenient": 0.6819277108433734,
+        "tau": 1.0
+      },
+      "43": {
+        "val_strict": 0.6537001897533207,
+        "test_strict": 0.6457831325301204,
+        "test_f1_weighted": 0.6277555930586161,
+        "test_lenient": 0.7,
+        "tau": 0.9297736883163452
+      },
+      "44": {
+        "val_strict": 0.6432637571157496,
+        "test_strict": 0.6469879518072289,
+        "test_f1_weighted": 0.6344588771708588,
+        "test_lenient": 0.6987951807228916,
+        "tau": 0.8341260552406311
+      }
+    },
+    "seed_agreement": {
+      "pairwise_mean": 0.8244979919678714,
+      "unanimous": 0.7626506024096386
+    },
+    "context": {
+      "context_version": "1",
+      "context_dropout": 0.5,
+      "field_dropout": 0.2,
+      "test": {
+        "name_on_pairs": {
+          "strict": 0.6640539952101023,
+          "lenient": 0.7171783148269105,
+          "log1p_rows": 0.7125768391836375,
+          "n": 4593,
+          "tau": 0.8358883857727051
+        },
+        "context": {
+          "strict": 0.7990420204659264,
+          "lenient": 0.8563030698889614,
+          "log1p_rows": 0.8217816900830544,
+          "n": 4593,
+          "tau": 0.777980387210846
+        },
+        "ensemble": {
+          "strict": 0.8020901371652515,
+          "lenient": 0.8545612889179186,
+          "log1p_rows": 0.8264798472133705,
+          "n": 4593,
+          "tau": 0.8358883857727051
+        }
+      }
+    },
+    "ensemble": {
+      "test_strict": 0.653012048192771,
+      "test_lenient": 0.7048192771084337,
+      "val_strict": 0.6593927893738141,
+      "test_log1p_rows": 0.7274178590130401
+    }
+  },
+  "gate": {
+    "passed": false,
+    "reason": "strict.accuracy regressed by 0.0096; lenient.accuracy regressed by 0.0096; strict.log1p_rows_accuracy regressed by 0.0239",
+    "primary": "pairs_ensemble.strict.accuracy",
+    "margin": 0.005,
+    "bootstrap": {
+      "n_paired": 4593,
+      "n_baseline": 4593,
+      "n_candidate": 4593,
+      "delta": 0.010015240583496626,
+      "ci_lo": 0.0032658393207054214,
+      "ci_hi": 0.01676464184628783,
+      "p_worse": 0.0013,
+      "B": 10000
+    },
+    "axes": [
+      {
+        "axis": "pairs_ensemble.strict.accuracy (paired bootstrap ci_lo)",
+        "baseline": 0.7920748965817549,
+        "candidate": 0.8020901371652515,
+        "delta": 0.010015240583496626,
+        "ci_lo": 0.0032658393207054214,
+        "ci_hi": 0.01676464184628783,
+        "threshold": -0.005,
+        "ok": true
+      },
+      {
+        "axis": "strict.accuracy",
+        "baseline": 0.6590361445783133,
+        "candidate": 0.6493975903614457,
+        "delta": -0.009638554216867545,
+        "threshold": -0.005,
+        "ok": false
+      },
+      {
+        "axis": "lenient.accuracy",
+        "baseline": 0.7096385542168675,
+        "candidate": 0.7,
+        "delta": -0.009638554216867545,
+        "threshold": -0.005,
+        "ok": false
+      },
+      {
+        "axis": "strict.log1p_rows_accuracy",
+        "baseline": 0.7404336599874437,
+        "candidate": 0.7164996251326352,
+        "delta": -0.023934034854808495,
+        "threshold": -0.015,
+        "ok": false
+      },
+      {
+        "axis": "slices.seen_in_train:false.strict",
+        "baseline": 0.605,
+        "candidate": 0.5916666666666667,
+        "delta": -0.013333333333333308,
+        "threshold": -0.039914491937974944,
+        "ok": true
+      },
+      {
+        "axis": "slices.seen_in_train:true.strict",
+        "baseline": 0.8,
+        "candidate": 0.8,
+        "delta": 0.0,
+        "threshold": -0.05275043787166296,
+        "ok": true
+      },
+      {
+        "axis": "slices.site:Motorola_Points.strict",
+        "baseline": 0.696078431372549,
+        "candidate": 0.6519607843137255,
+        "delta": -0.044117647058823484,
+        "threshold": -0.06440576772833385,
+        "ok": true
+      },
+      {
+        "axis": "slices.site:N4-Integ06.strict",
+        "baseline": 0.646964856230032,
+        "candidate": 0.6485623003194888,
+        "delta": 0.0015974440894568342,
+        "threshold": -0.03820253165868485,
+        "ok": true
+      }
+    ]
+  },
+  "baseline_note": "baseline soup strict 0.6590 on the same scoreboard",
+  "linear_floor_strict": 0.5650602409638554,
+  "per_seed": {
+    "42": {
+      "tau": 1.0,
+      "validation": {
+        "strict": {
+          "accuracy": 0.6499051233396584,
+          "rows_accuracy": 0.7918552036199095,
+          "log1p_rows_accuracy": 0.7096428230219882,
+          "n": 1054,
+          "f1_weighted": 0.6406421747184932,
+          "f1_macro": 0.42841639654300706
+        },
+        "lenient": {
+          "accuracy": 0.7267552182163188,
+          "rows_accuracy": 0.9102130684280786,
+          "log1p_rows_accuracy": 0.8078195608395691,
+          "n": 1054
+        },
+        "slices": {
+          "seen_in_train:false": {
+            "n": 624,
+            "strict": 0.5512820512820513,
+            "lenient": 0.5528846153846154,
+            "log1p_rows_strict": 0.5636979684902458
+          },
+          "seen_in_train:true": {
+            "n": 430,
+            "strict": 0.7930232558139535,
+            "lenient": 0.9790697674418605,
+            "log1p_rows_strict": 0.819516841861704
+          },
+          "site:N4-Integ05": {
+            "n": 1054,
+            "strict": 0.6499051233396584,
+            "lenient": 0.7267552182163188,
+            "log1p_rows_strict": 0.7096428230219882
+          }
+        },
+        "topk": {
+          "top3": 0.816888045540797,
+          "top5": 0.8681214421252372,
+          "top10": 0.9070208728652751
+        },
+        "calibration": {
+          "ece": 0.07945300109571368,
+          "mean_confidence": 0.7147563703223865,
+          "mean_confidence_correct": 0.7823315579090675,
+          "mean_confidence_wrong": 0.589311916401312
+        },
+        "coverage": {
+          "tau": 1.0,
+          "coverage_texts": 0.0,
+          "coverage_log1p_rows": 0.0,
+          "precision_at_tau": NaN,
+          "tau_source": "validation"
+        }
+      },
+      "test": {
+        "strict": {
+          "accuracy": 0.6337349397590362,
+          "rows_accuracy": 0.8841890134390289,
+          "log1p_rows_accuracy": 0.7073045957531494,
+          "n": 830,
+          "f1_weighted": 0.622694935574525,
+          "f1_macro": 0.37663076556048025
+        },
+        "lenient": {
+          "accuracy": 0.6819277108433734,
+          "rows_accuracy": 0.933145475939803,
+          "log1p_rows_accuracy": 0.7520204988512937,
+          "n": 830
+        },
+        "slices": {
+          "seen_in_train:false": {
+            "n": 600,
+            "strict": 0.565,
+            "lenient": 0.5683333333333334,
+            "log1p_rows_strict": 0.6033973972588843
+          },
+          "seen_in_train:true": {
+            "n": 230,
+            "strict": 0.8130434782608695,
+            "lenient": 0.9782608695652174,
+            "log1p_rows_strict": 0.8776330021426058
+          },
+          "site:Motorola_Points": {
+            "n": 204,
+            "strict": 0.6274509803921569,
+            "lenient": 0.6372549019607843,
+            "log1p_rows_strict": 0.6769393826116609
+          },
+          "site:N4-Integ06": {
+            "n": 626,
+            "strict": 0.6357827476038339,
+            "lenient": 0.6964856230031949,
+            "log1p_rows_strict": 0.7184125619572952
+          }
+        },
+        "topk": {
+          "top3": 0.7951807228915663,
+          "top5": 0.8409638554216867,
+          "top10": 0.8903614457831325
+        },
+        "calibration": {
+          "ece": 0.07516699546880753,
+          "mean_confidence": 0.6952979180872081,
+          "mean_confidence_correct": 0.7833228612127413,
+          "mean_confidence_wrong": 0.5429916020213185
+        },
+        "coverage": {
+          "tau": 1.0,
+          "coverage_texts": 0.0,
+          "coverage_log1p_rows": 0.0,
+          "precision_at_tau": NaN,
+          "tau_source": "validation"
+        }
+      },
+      "context": {
+        "val": {
+          "context": {
+            "strict": {
+              "accuracy": 0.7465564738292011,
+              "rows_accuracy": 0.7446963520616142,
+              "log1p_rows_accuracy": 0.746904666576342,
+              "n": 7623,
+              "f1_weighted": 0.7137057714943922,
+              "f1_macro": 0.4057087332260122
+            },
+            "lenient": {
+              "accuracy": 0.8883641610914338,
+              "rows_accuracy": 0.8858783326683898,
+              "log1p_rows_accuracy": 0.8804855979539198,
+              "n": 7623
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 1756,
+                "strict": 0.5290432801822323,
+                "lenient": 0.5301822323462415,
+                "log1p_rows_strict": 0.5107324469891056
+              },
+              "seen_in_train:true": {
+                "n": 5867,
+                "strict": 0.8116584284983808,
+                "lenient": 0.9955684336117266,
+                "log1p_rows_strict": 0.8207792584223351
+              },
+              "site:N4-Integ05": {
+                "n": 7623,
+                "strict": 0.7465564738292011,
+                "lenient": 0.8883641610914338,
+                "log1p_rows_strict": 0.746904666576342
+              }
+            },
+            "topk": {
+              "top3": 0.9247015610651974,
+              "top5": 0.9442476715203988,
+              "top10": 0.9574970484061394
+            },
+            "calibration": {
+              "ece": 0.08922268713126971,
+              "mean_confidence": 0.7893091721535237,
+              "mean_confidence_correct": 0.8380469847604713,
+              "mean_confidence_wrong": 0.6457445284961019
+            },
+            "coverage": {
+              "tau": 0.7217755913734436,
+              "coverage_texts": 0.8050636232454415,
+              "coverage_log1p_rows": 0.8003904647404058,
+              "precision_at_tau": 0.8500896203356689,
+              "tau_source": "validation"
+            }
+          },
+          "name_on_pairs": {
+            "strict": {
+              "accuracy": 0.7664961301324937,
+              "rows_accuracy": 0.7864316813821576,
+              "log1p_rows_accuracy": 0.7753167628007441,
+              "n": 7623,
+              "f1_weighted": 0.7343589775776734,
+              "f1_macro": 0.41319380005904366
+            },
+            "lenient": {
+              "accuracy": 0.9030565394201758,
+              "rows_accuracy": 0.9093999895921872,
+              "log1p_rows_accuracy": 0.8990796620870786,
+              "n": 7623
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 1756,
+                "strict": 0.5848519362186788,
+                "lenient": 0.5854214123006833,
+                "log1p_rows_strict": 0.5811362682457055
+              },
+              "seen_in_train:true": {
+                "n": 5867,
+                "strict": 0.8208624509971024,
+                "lenient": 0.9981251065280382,
+                "log1p_rows_strict": 0.8360563570035577
+              },
+              "site:N4-Integ05": {
+                "n": 7623,
+                "strict": 0.7664961301324937,
+                "lenient": 0.9030565394201758,
+                "log1p_rows_strict": 0.7753167628007441
+              }
+            },
+            "topk": {
+              "top3": 0.8949232585596222,
+              "top5": 0.9438541256723075,
+              "top10": 0.9598583234946871
+            },
+            "calibration": {
+              "ece": 0.07753507462496925,
+              "mean_confidence": 0.803455664052881,
+              "mean_confidence_correct": 0.8305808964829198,
+              "mean_confidence_wrong": 0.7144148027670852
+            },
+            "coverage": {
+              "tau": 0.8153756260871887,
+              "coverage_texts": 0.7817132362586908,
+              "coverage_log1p_rows": 0.7722755846896128,
+              "precision_at_tau": 0.8452760530290317,
+              "tau_source": "validation"
+            }
+          },
+          "ensemble": {
+            "strict": {
+              "accuracy": 0.7499672045126591,
+              "rows_accuracy": 0.7562316779128866,
+              "log1p_rows_accuracy": 0.7538904459528135,
+              "n": 7623,
+              "f1_weighted": 0.71650551780997,
+              "f1_macro": 0.4145852633515675
+            },
+            "lenient": {
+              "accuracy": 0.8925619834710744,
+              "rows_accuracy": 0.8937535776856493,
+              "log1p_rows_accuracy": 0.8856384210479251,
+              "n": 7623
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 1756,
+                "strict": 0.5387243735763098,
+                "lenient": 0.5404328018223234,
+                "log1p_rows_strict": 0.525270976480477
+              },
+              "seen_in_train:true": {
+                "n": 5867,
+                "strict": 0.8131924322481677,
+                "lenient": 0.9979546616669508,
+                "log1p_rows_strict": 0.825402540071393
+              },
+              "site:N4-Integ05": {
+                "n": 7623,
+                "strict": 0.7499672045126591,
+                "lenient": 0.8925619834710744,
+                "log1p_rows_strict": 0.7538904459528135
+              }
+            },
+            "topk": {
+              "top3": 0.895054440508986,
+              "top5": 0.9392627574445757,
+              "top10": 0.957103502558048
+            },
+            "calibration": {
+              "ece": 0.08311998078905734,
+              "mean_confidence": 0.8195697031504687,
+              "mean_confidence_correct": 0.8510532573149591,
+              "mean_confidence_wrong": 0.7251355587861502
+            },
+            "coverage": {
+              "tau": 0.8160642385482788,
+              "coverage_texts": 0.7868293322838777,
+              "coverage_log1p_rows": 0.7792399102343828,
+              "precision_at_tau": 0.8501167055685228,
+              "tau_source": "validation"
+            }
+          }
+        },
+        "test": {
+          "context": {
+            "strict": {
+              "accuracy": 0.774657086871326,
+              "rows_accuracy": 0.8685495698453257,
+              "log1p_rows_accuracy": 0.8004602597817558,
+              "n": 4593,
+              "f1_weighted": 0.7676201379304957,
+              "f1_macro": 0.363115486908877
+            },
+            "lenient": {
+              "accuracy": 0.8299586327019377,
+              "rows_accuracy": 0.923086227490588,
+              "log1p_rows_accuracy": 0.8587344485624058,
+              "n": 4593
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 2243,
+                "strict": 0.6535889433794025,
+                "lenient": 0.654480606330807,
+                "log1p_rows_strict": 0.6856486081970357
+              },
+              "seen_in_train:true": {
+                "n": 2350,
+                "strict": 0.8902127659574468,
+                "lenient": 0.9974468085106383,
+                "log1p_rows_strict": 0.8937348034373349
+              },
+              "site:Motorola_Points": {
+                "n": 1428,
+                "strict": 0.6351540616246498,
+                "lenient": 0.6358543417366946,
+                "log1p_rows_strict": 0.6510495915589768
+              },
+              "site:N4-Integ06": {
+                "n": 3165,
+                "strict": 0.8375987361769353,
+                "lenient": 0.9175355450236967,
+                "log1p_rows_strict": 0.8551575021829837
+              }
+            },
+            "topk": {
+              "top3": 0.8826475070759852,
+              "top5": 0.9153059002830394,
+              "top10": 0.9344654909645113
+            },
+            "calibration": {
+              "ece": 0.037039443906076226,
+              "mean_confidence": 0.7727174264213182,
+              "mean_confidence_correct": 0.8352458772415472,
+              "mean_confidence_wrong": 0.557764549108879
+            },
+            "coverage": {
+              "tau": 0.7217755913734436,
+              "coverage_texts": 0.766819072501633,
+              "coverage_log1p_rows": 0.799762485352043,
+              "precision_at_tau": 0.893526405451448,
+              "tau_source": "validation"
+            }
+          },
+          "name_on_pairs": {
+            "strict": {
+              "accuracy": 0.661441323753538,
+              "rows_accuracy": 0.8612770075144771,
+              "log1p_rows_accuracy": 0.7104948142870124,
+              "n": 4593,
+              "f1_weighted": 0.6924231394034248,
+              "f1_macro": 0.3535144174012685
+            },
+            "lenient": {
+              "accuracy": 0.7134770302634443,
+              "rows_accuracy": 0.9122000635026233,
+              "log1p_rows_accuracy": 0.764221322813667,
+              "n": 4593
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 2243,
+                "strict": 0.41462327240303165,
+                "lenient": 0.415514935354436,
+                "log1p_rows_strict": 0.47483896429105327
+              },
+              "seen_in_train:true": {
+                "n": 2350,
+                "strict": 0.8970212765957447,
+                "lenient": 0.997872340425532,
+                "log1p_rows_strict": 0.901944824497178
+              },
+              "site:Motorola_Points": {
+                "n": 1428,
+                "strict": 0.2556022408963585,
+                "lenient": 0.25700280112044815,
+                "log1p_rows_strict": 0.29386686081698415
+              },
+              "site:N4-Integ06": {
+                "n": 3165,
+                "strict": 0.8445497630331753,
+                "lenient": 0.919431279620853,
+                "log1p_rows_strict": 0.8630167220807649
+              }
+            },
+            "topk": {
+              "top3": 0.7561506640539952,
+              "top5": 0.7672545177443937,
+              "top10": 0.780753320269976
+            },
+            "calibration": {
+              "ece": 0.06503988017956468,
+              "mean_confidence": 0.706476264465953,
+              "mean_confidence_correct": 0.8567664950320876,
+              "mean_confidence_wrong": 0.4128545792827269
+            },
+            "coverage": {
+              "tau": 0.8153756260871887,
+              "coverage_texts": 0.6620944916176791,
+              "coverage_log1p_rows": 0.7124685544673547,
+              "precision_at_tau": 0.870437356132851,
+              "tau_source": "validation"
+            }
+          },
+          "ensemble": {
+            "strict": {
+              "accuracy": 0.772262138036142,
+              "rows_accuracy": 0.8713013501867279,
+              "log1p_rows_accuracy": 0.8012411356426887,
+              "n": 4593,
+              "f1_weighted": 0.7687014474881888,
+              "f1_macro": 0.37622076967687285
+            },
+            "lenient": {
+              "accuracy": 0.8238623993032876,
+              "rows_accuracy": 0.9224965602745733,
+              "log1p_rows_accuracy": 0.8550659503478031,
+              "n": 4593
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 2243,
+                "strict": 0.6402139991083371,
+                "lenient": 0.6411056620597414,
+                "log1p_rows_strict": 0.6769972389115925
+              },
+              "seen_in_train:true": {
+                "n": 2350,
+                "strict": 0.8982978723404256,
+                "lenient": 0.9982978723404256,
+                "log1p_rows_strict": 0.9021785632436882
+              },
+              "site:Motorola_Points": {
+                "n": 1428,
+                "strict": 0.6113445378151261,
+                "lenient": 0.6120448179271709,
+                "log1p_rows_strict": 0.6345579778847248
+              },
+              "site:N4-Integ06": {
+                "n": 3165,
+                "strict": 0.8448657187993681,
+                "lenient": 0.919431279620853,
+                "log1p_rows_strict": 0.8622616048805039
+              }
+            },
+            "topk": {
+              "top3": 0.8900500762029174,
+              "top5": 0.9076856085347268,
+              "top10": 0.9283692575658611
+            },
+            "calibration": {
+              "ece": 0.05652784599705431,
+              "mean_confidence": 0.8114248571461993,
+              "mean_confidence_correct": 0.8610421260637668,
+              "mean_confidence_wrong": 0.6431720341532625
+            },
+            "coverage": {
+              "tau": 0.8160642385482788,
+              "coverage_texts": 0.7700849118223383,
+              "coverage_log1p_rows": 0.801974355134955,
+              "precision_at_tau": 0.8713599095278485,
+              "tau_source": "validation"
+            }
+          }
+        },
+        "tau": {
+          "context": 0.7217755913734436,
+          "name_on_pairs": 0.8153756260871887,
+          "ensemble": 0.8160642385482788
+        }
+      }
+    },
+    "43": {
+      "tau": 0.9297736883163452,
+      "validation": {
+        "strict": {
+          "accuracy": 0.6537001897533207,
+          "rows_accuracy": 0.7759400842565143,
+          "log1p_rows_accuracy": 0.7095042325329681,
+          "n": 1054,
+          "f1_weighted": 0.6451767529626015,
+          "f1_macro": 0.4206987519977436
+        },
+        "lenient": {
+          "accuracy": 0.7352941176470589,
+          "rows_accuracy": 0.8944539796466774,
+          "log1p_rows_accuracy": 0.8105694948954668,
+          "n": 1054
+        },
+        "slices": {
+          "seen_in_train:false": {
+            "n": 624,
+            "strict": 0.5641025641025641,
+            "lenient": 0.5673076923076923,
+            "log1p_rows_strict": 0.5693548459402067
+          },
+          "seen_in_train:true": {
+            "n": 430,
+            "strict": 0.7837209302325582,
+            "lenient": 0.9790697674418605,
+            "log1p_rows_strict": 0.8150151557667743
+          },
+          "site:N4-Integ05": {
+            "n": 1054,
+            "strict": 0.6537001897533207,
+            "lenient": 0.7352941176470589,
+            "log1p_rows_strict": 0.7095042325329681
+          }
+        },
+        "topk": {
+          "top3": 0.8159392789373814,
+          "top5": 0.8529411764705882,
+          "top10": 0.9032258064516129
+        },
+        "calibration": {
+          "ece": 0.08445391768282115,
+          "mean_confidence": 0.7301801832841684,
+          "mean_confidence_correct": 0.7945358649934324,
+          "mean_confidence_wrong": 0.6086978142494208
+        },
+        "coverage": {
+          "tau": 0.9297736883163452,
+          "coverage_texts": 0.006641366223908918,
+          "coverage_log1p_rows": 0.006330935062911158,
+          "precision_at_tau": 0.8571428571428571,
+          "tau_source": "validation"
+        }
+      },
+      "test": {
+        "strict": {
+          "accuracy": 0.6457831325301204,
+          "rows_accuracy": 0.8700842261720444,
+          "log1p_rows_accuracy": 0.7210932898889838,
+          "n": 830,
+          "f1_weighted": 0.6277555930586161,
+          "f1_macro": 0.3769195566219454
+        },
+        "lenient": {
+          "accuracy": 0.7,
+          "rows_accuracy": 0.9194587229825973,
+          "log1p_rows_accuracy": 0.7716644617654159,
+          "n": 830
+        },
+        "slices": {
+          "seen_in_train:false": {
+            "n": 600,
+            "strict": 0.59,
+            "lenient": 0.5933333333333334,
+            "log1p_rows_strict": 0.6350249699360462
+          },
+          "seen_in_train:true": {
+            "n": 230,
+            "strict": 0.7913043478260869,
+            "lenient": 0.9782608695652174,
+            "log1p_rows_strict": 0.8621795667845238
+          },
+          "site:Motorola_Points": {
+            "n": 204,
+            "strict": 0.6715686274509803,
+            "lenient": 0.6862745098039216,
+            "log1p_rows_strict": 0.7478296901745116
+          },
+          "site:N4-Integ06": {
+            "n": 626,
+            "strict": 0.6373801916932907,
+            "lenient": 0.7044728434504792,
+            "log1p_rows_strict": 0.7113127877924454
+          }
+        },
+        "topk": {
+          "top3": 0.8156626506024096,
+          "top5": 0.8590361445783132,
+          "top10": 0.8963855421686747
+        },
+        "calibration": {
+          "ece": 0.0796176690204316,
+          "mean_confidence": 0.7254008015505521,
+          "mean_confidence_correct": 0.8015501524057629,
+          "mean_confidence_wrong": 0.5865706925083991
+        },
+        "coverage": {
+          "tau": 0.9297736883163452,
+          "coverage_texts": 0.004819277108433735,
+          "coverage_log1p_rows": 0.0032973048971214397,
+          "precision_at_tau": 0.75,
+          "tau_source": "validation"
+        }
+      },
+      "context": {
+        "val": {
+          "context": {
+            "strict": {
+              "accuracy": 0.7626918536009445,
+              "rows_accuracy": 0.7585387430831411,
+              "log1p_rows_accuracy": 0.7621969176671449,
+              "n": 7623,
+              "f1_weighted": 0.7332494200410512,
+              "f1_macro": 0.41923461888039887
+            },
+            "lenient": {
+              "accuracy": 0.8991210809392628,
+              "rows_accuracy": 0.8783326683897379,
+              "log1p_rows_accuracy": 0.887475242595067,
+              "n": 7623
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 1756,
+                "strict": 0.5774487471526196,
+                "lenient": 0.5785876993166287,
+                "log1p_rows_strict": 0.5445595047803757
+              },
+              "seen_in_train:true": {
+                "n": 5867,
+                "strict": 0.8181353332197034,
+                "lenient": 0.9950570990284643,
+                "log1p_rows_strict": 0.8302738281332767
+              },
+              "site:N4-Integ05": {
+                "n": 7623,
+                "strict": 0.7626918536009445,
+                "lenient": 0.8991210809392628,
+                "log1p_rows_strict": 0.7621969176671449
+              }
+            },
+            "topk": {
+              "top3": 0.9315230224321134,
+              "top5": 0.945821854912764,
+              "top10": 0.9662862390135117
+            },
+            "calibration": {
+              "ece": 0.03874071398497053,
+              "mean_confidence": 0.7822439595035574,
+              "mean_confidence_correct": 0.8241335876327037,
+              "mean_confidence_wrong": 0.6476136123820225
+            },
+            "coverage": {
+              "tau": 0.7658070921897888,
+              "coverage_texts": 0.8135904499540864,
+              "coverage_log1p_rows": 0.8048525169187712,
+              "precision_at_tau": 0.8500483714930668,
+              "tau_source": "validation"
+            }
+          },
+          "name_on_pairs": {
+            "strict": {
+              "accuracy": 0.7594123048668503,
+              "rows_accuracy": 0.7697965272597963,
+              "log1p_rows_accuracy": 0.763937059037944,
+              "n": 7623,
+              "f1_weighted": 0.7259135894088935,
+              "f1_macro": 0.40199433962820813
+            },
+            "lenient": {
+              "accuracy": 0.8979404433949888,
+              "rows_accuracy": 0.8933025724643966,
+              "log1p_rows_accuracy": 0.8890350868841624,
+              "n": 7623
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 1756,
+                "strict": 0.5615034168564921,
+                "lenient": 0.5626423690205011,
+                "log1p_rows_strict": 0.5384064364061728
+              },
+              "seen_in_train:true": {
+                "n": 5867,
+                "strict": 0.8186466678029657,
+                "lenient": 0.9982955513891256,
+                "log1p_rows_strict": 0.8344829628907068
+              },
+              "site:N4-Integ05": {
+                "n": 7623,
+                "strict": 0.7594123048668503,
+                "lenient": 0.8979404433949888,
+                "log1p_rows_strict": 0.763937059037944
+              }
+            },
+            "topk": {
+              "top3": 0.9325724780270235,
+              "top5": 0.9439853076216712,
+              "top10": 0.9631378722287813
+            },
+            "calibration": {
+              "ece": 0.047811990489695186,
+              "mean_confidence": 0.8072242953565456,
+              "mean_confidence_correct": 0.8419776813076102,
+              "mean_confidence_wrong": 0.6975256305415439
+            },
+            "coverage": {
+              "tau": 0.9296103119850159,
+              "coverage_texts": 0.0041978223796405615,
+              "coverage_log1p_rows": 0.0033929533542176034,
+              "precision_at_tau": 0.75,
+              "tau_source": "validation"
+            }
+          },
+          "ensemble": {
+            "strict": {
+              "accuracy": 0.7586252131706677,
+              "rows_accuracy": 0.7603601103228157,
+              "log1p_rows_accuracy": 0.760937447031656,
+              "n": 7623,
+              "f1_weighted": 0.7259198788870384,
+              "f1_macro": 0.4140996843585369
+            },
+            "lenient": {
+              "accuracy": 0.89728453364817,
+              "rows_accuracy": 0.8854967128657912,
+              "log1p_rows_accuracy": 0.8870810314207087,
+              "n": 7623
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 1756,
+                "strict": 0.5592255125284739,
+                "lenient": 0.5603644646924829,
+                "log1p_rows_strict": 0.5308711014298073
+              },
+              "seen_in_train:true": {
+                "n": 5867,
+                "strict": 0.8183057780807909,
+                "lenient": 0.9981251065280382,
+                "log1p_rows_strict": 0.8329021235229898
+              },
+              "site:N4-Integ05": {
+                "n": 7623,
+                "strict": 0.7586252131706677,
+                "lenient": 0.89728453364817,
+                "log1p_rows_strict": 0.760937447031656
+              }
+            },
+            "topk": {
+              "top3": 0.9324412960776597,
+              "top5": 0.944116489571035,
+              "top10": 0.9635314180768726
+            },
+            "calibration": {
+              "ece": 0.05892518726969799,
+              "mean_confidence": 0.8175504004403658,
+              "mean_confidence_correct": 0.8494000228480363,
+              "mean_confidence_wrong": 0.7174491143623448
+            },
+            "coverage": {
+              "tau": 0.9531069397926331,
+              "coverage_texts": 0.0005247277974550702,
+              "coverage_log1p_rows": 0.0007645776057950145,
+              "precision_at_tau": 1.0,
+              "tau_source": "validation"
+            }
+          }
+        },
+        "test": {
+          "context": {
+            "strict": {
+              "accuracy": 0.772915305900283,
+              "rows_accuracy": 0.8558944042093167,
+              "log1p_rows_accuracy": 0.7969097117071396,
+              "n": 4593,
+              "f1_weighted": 0.759386237599011,
+              "f1_macro": 0.38082311295740784
+            },
+            "lenient": {
+              "accuracy": 0.8489005007620292,
+              "rows_accuracy": 0.9281966766960492,
+              "log1p_rows_accuracy": 0.8743929015317401,
+              "n": 4593
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 2243,
+                "strict": 0.7231386535889434,
+                "lenient": 0.7240303165403478,
+                "log1p_rows_strict": 0.7536983447318201
+              },
+              "seen_in_train:true": {
+                "n": 2350,
+                "strict": 0.8204255319148936,
+                "lenient": 0.9680851063829787,
+                "log1p_rows_strict": 0.8320152125837866
+              },
+              "site:Motorola_Points": {
+                "n": 1428,
+                "strict": 0.6848739495798319,
+                "lenient": 0.6876750700280112,
+                "log1p_rows_strict": 0.6997928025489811
+              },
+              "site:N4-Integ06": {
+                "n": 3165,
+                "strict": 0.8126382306477093,
+                "lenient": 0.9216429699842023,
+                "log1p_rows_strict": 0.8324629100474439
+              }
+            },
+            "topk": {
+              "top3": 0.8885260178532549,
+              "top5": 0.9418680600914435,
+              "top10": 0.9577618114522098
+            },
+            "calibration": {
+              "ece": 0.045680296912078866,
+              "mean_confidence": 0.7610489883845976,
+              "mean_confidence_correct": 0.8132917993673137,
+              "mean_confidence_wrong": 0.5832330929017193
+            },
+            "coverage": {
+              "tau": 0.7658070921897888,
+              "coverage_texts": 0.7498367080339647,
+              "coverage_log1p_rows": 0.7858555420813641,
+              "precision_at_tau": 0.8899535423925667,
+              "tau_source": "validation"
+            }
+          },
+          "name_on_pairs": {
+            "strict": {
+              "accuracy": 0.6601349880252558,
+              "rows_accuracy": 0.8483345681065635,
+              "log1p_rows_accuracy": 0.7129622748073509,
+              "n": 4593,
+              "f1_weighted": 0.6880957180200099,
+              "f1_macro": 0.34427427635810964
+            },
+            "lenient": {
+              "accuracy": 0.715654256477248,
+              "rows_accuracy": 0.8996658552442584,
+              "log1p_rows_accuracy": 0.768912228091842,
+              "n": 4593
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 2243,
+                "strict": 0.4190815871600535,
+                "lenient": 0.41997325011145786,
+                "log1p_rows_strict": 0.48530390567069087
+              },
+              "seen_in_train:true": {
+                "n": 2350,
+                "strict": 0.8902127659574468,
+                "lenient": 0.997872340425532,
+                "log1p_rows_strict": 0.8979150230475944
+              },
+              "site:Motorola_Points": {
+                "n": 1428,
+                "strict": 0.2619047619047619,
+                "lenient": 0.2647058823529412,
+                "log1p_rows_strict": 0.3104604303511232
+              },
+              "site:N4-Integ06": {
+                "n": 3165,
+                "strict": 0.8398104265402844,
+                "lenient": 0.9191153238546603,
+                "log1p_rows_strict": 0.8603128034880541
+              }
+            },
+            "topk": {
+              "top3": 0.7284998911386893,
+              "top5": 0.7716089701720009,
+              "top10": 0.7835837143479207
+            },
+            "calibration": {
+              "ece": 0.06374327029449708,
+              "mean_confidence": 0.6628676462450527,
+              "mean_confidence_correct": 0.8421205496562935,
+              "mean_confidence_wrong": 0.31469672815223904
+            },
+            "coverage": {
+              "tau": 0.9296103119850159,
+              "coverage_texts": 0.0013063357282821686,
+              "coverage_log1p_rows": 0.0010216985596886341,
+              "precision_at_tau": 0.8333333333333334,
+              "tau_source": "validation"
+            }
+          },
+          "ensemble": {
+            "strict": {
+              "accuracy": 0.8094927062921837,
+              "rows_accuracy": 0.883986755167148,
+              "log1p_rows_accuracy": 0.8357317642137889,
+              "n": 4593,
+              "f1_weighted": 0.7925097592326708,
+              "f1_macro": 0.3822994150989835
+            },
+            "lenient": {
+              "accuracy": 0.8647942521227956,
+              "rows_accuracy": 0.9353180423048428,
+              "log1p_rows_accuracy": 0.8916204502264304,
+              "n": 4593
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 2243,
+                "strict": 0.7235844850646456,
+                "lenient": 0.72447614801605,
+                "log1p_rows_strict": 0.7584497020511061
+              },
+              "seen_in_train:true": {
+                "n": 2350,
+                "strict": 0.8914893617021277,
+                "lenient": 0.9987234042553191,
+                "log1p_rows_strict": 0.8985167601744748
+              },
+              "site:Motorola_Points": {
+                "n": 1428,
+                "strict": 0.7359943977591037,
+                "lenient": 0.738795518207283,
+                "log1p_rows_strict": 0.7633726427911737
+              },
+              "site:N4-Integ06": {
+                "n": 3165,
+                "strict": 0.842654028436019,
+                "lenient": 0.9216429699842023,
+                "log1p_rows_strict": 0.8622214684060715
+              }
+            },
+            "topk": {
+              "top3": 0.8865665142608317,
+              "top5": 0.9370781624210756,
+              "top10": 0.9538428042673633
+            },
+            "calibration": {
+              "ece": 0.039539608329002426,
+              "mean_confidence": 0.8015150644644307,
+              "mean_confidence_correct": 0.838048665078418,
+              "mean_confidence_wrong": 0.6462785763697965
+            },
+            "coverage": {
+              "tau": 0.9531069397926331,
+              "coverage_texts": 0.0,
+              "coverage_log1p_rows": 0.0,
+              "precision_at_tau": NaN,
+              "tau_source": "validation"
+            }
+          }
+        },
+        "tau": {
+          "context": 0.7658070921897888,
+          "name_on_pairs": 0.9296103119850159,
+          "ensemble": 0.9531069397926331
+        }
+      }
+    },
+    "44": {
+      "tau": 0.8341260552406311,
+      "validation": {
+        "strict": {
+          "accuracy": 0.6432637571157496,
+          "rows_accuracy": 0.7950451621851217,
+          "log1p_rows_accuracy": 0.7082233429564925,
+          "n": 1054,
+          "f1_weighted": 0.6328641547032712,
+          "f1_macro": 0.41928263045874725
+        },
+        "lenient": {
+          "accuracy": 0.7210626185958254,
+          "rows_accuracy": 0.9161248938125206,
+          "log1p_rows_accuracy": 0.8079903414439153,
+          "n": 1054
+        },
+        "slices": {
+          "seen_in_train:false": {
+            "n": 624,
+            "strict": 0.5448717948717948,
+            "lenient": 0.5480769230769231,
+            "log1p_rows_strict": 0.5731065189409008
+          },
+          "seen_in_train:true": {
+            "n": 430,
+            "strict": 0.786046511627907,
+            "lenient": 0.9720930232558139,
+            "log1p_rows_strict": 0.8099455209331252
+          },
+          "site:N4-Integ05": {
+            "n": 1054,
+            "strict": 0.6432637571157496,
+            "lenient": 0.7210626185958254,
+            "log1p_rows_strict": 0.7082233429564925
+          }
+        },
+        "topk": {
+          "top3": 0.8235294117647058,
+          "top5": 0.8624288425047438,
+          "top10": 0.9032258064516129
+        },
+        "calibration": {
+          "ece": 0.07672244477204171,
+          "mean_confidence": 0.718408998236258,
+          "mean_confidence_correct": 0.7998986783214902,
+          "mean_confidence_wrong": 0.5714675006357596
+        },
+        "coverage": {
+          "tau": 0.8341260552406311,
+          "coverage_texts": 0.5142314990512334,
+          "coverage_log1p_rows": 0.6383814089491224,
+          "precision_at_tau": 0.8505535055350554,
+          "tau_source": "validation"
+        }
+      },
+      "test": {
+        "strict": {
+          "accuracy": 0.6469879518072289,
+          "rows_accuracy": 0.8859695299436428,
+          "log1p_rows_accuracy": 0.7171645680571085,
+          "n": 830,
+          "f1_weighted": 0.6344588771708588,
+          "f1_macro": 0.37732509436122363
+        },
+        "lenient": {
+          "accuracy": 0.6987951807228916,
+          "rows_accuracy": 0.9351272682231994,
+          "log1p_rows_accuracy": 0.7652101466943984,
+          "n": 830
+        },
+        "slices": {
+          "seen_in_train:false": {
+            "n": 600,
+            "strict": 0.59,
+            "lenient": 0.5933333333333334,
+            "log1p_rows_strict": 0.6274002062026532
+          },
+          "seen_in_train:true": {
+            "n": 230,
+            "strict": 0.7956521739130434,
+            "lenient": 0.9739130434782609,
+            "log1p_rows_strict": 0.8643095293956601
+          },
+          "site:Motorola_Points": {
+            "n": 204,
+            "strict": 0.6568627450980392,
+            "lenient": 0.6666666666666666,
+            "log1p_rows_strict": 0.7107880571160066
+          },
+          "site:N4-Integ06": {
+            "n": 626,
+            "strict": 0.6437699680511182,
+            "lenient": 0.7092651757188498,
+            "log1p_rows_strict": 0.7194971737168838
+          }
+        },
+        "topk": {
+          "top3": 0.8060240963855422,
+          "top5": 0.8506024096385543,
+          "top10": 0.8879518072289156
+        },
+        "calibration": {
+          "ece": 0.05140767329967167,
+          "mean_confidence": 0.6959055138370359,
+          "mean_confidence_correct": 0.7950265677559087,
+          "mean_confidence_wrong": 0.5142399645044942
+        },
+        "coverage": {
+          "tau": 0.8341260552406311,
+          "coverage_texts": 0.4927710843373494,
+          "coverage_log1p_rows": 0.6118451809494359,
+          "precision_at_tau": 0.8679706601466992,
+          "tau_source": "validation"
+        }
+      },
+      "context": {
+        "val": {
+          "context": {
+            "strict": {
+              "accuracy": 0.7744982290436836,
+              "rows_accuracy": 0.802893371957883,
+              "log1p_rows_accuracy": 0.7812645778948675,
+              "n": 7623,
+              "f1_weighted": 0.7414595884392045,
+              "f1_macro": 0.4187883982989319
+            },
+            "lenient": {
+              "accuracy": 0.9072543617998163,
+              "rows_accuracy": 0.9113948203784975,
+              "log1p_rows_accuracy": 0.9010020258859712,
+              "n": 7623
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 1756,
+                "strict": 0.6173120728929385,
+                "lenient": 0.6184510250569476,
+                "log1p_rows_strict": 0.6091509617531552
+              },
+              "seen_in_train:true": {
+                "n": 5867,
+                "strict": 0.8215442304414522,
+                "lenient": 0.9936935401397647,
+                "log1p_rows_strict": 0.8351016598591597
+              },
+              "site:N4-Integ05": {
+                "n": 7623,
+                "strict": 0.7744982290436836,
+                "lenient": 0.9072543617998163,
+                "log1p_rows_strict": 0.7812645778948675
+              }
+            },
+            "topk": {
+              "top3": 0.934015479470025,
+              "top5": 0.9547422274695002,
+              "top10": 0.9675980585071494
+            },
+            "calibration": {
+              "ece": 0.05057973399656695,
+              "mean_confidence": 0.8128003718461693,
+              "mean_confidence_correct": 0.848521568254646,
+              "mean_confidence_wrong": 0.6901139590505634
+            },
+            "coverage": {
+              "tau": 0.7706097364425659,
+              "coverage_texts": 0.8251344614980979,
+              "coverage_log1p_rows": 0.820660584234326,
+              "precision_at_tau": 0.8500794912559618,
+              "tau_source": "validation"
+            }
+          },
+          "name_on_pairs": {
+            "strict": {
+              "accuracy": 0.7664961301324937,
+              "rows_accuracy": 0.7898142205415531,
+              "log1p_rows_accuracy": 0.7733754955438328,
+              "n": 7623,
+              "f1_weighted": 0.7362268599081252,
+              "f1_macro": 0.40508627624388277
+            },
+            "lenient": {
+              "accuracy": 0.9064672701036337,
+              "rows_accuracy": 0.9150549012125102,
+              "log1p_rows_accuracy": 0.9009003894404105,
+              "n": 7623
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 1756,
+                "strict": 0.6059225512528473,
+                "lenient": 0.6070615034168565,
+                "log1p_rows_strict": 0.6005713798849069
+              },
+              "seen_in_train:true": {
+                "n": 5867,
+                "strict": 0.8145559911368673,
+                "lenient": 0.9960797681949889,
+                "log1p_rows_strict": 0.8274285655277709
+              },
+              "site:N4-Integ05": {
+                "n": 7623,
+                "strict": 0.7664961301324937,
+                "lenient": 0.9064672701036337,
+                "log1p_rows_strict": 0.7733754955438328
+              }
+            },
+            "topk": {
+              "top3": 0.9324412960776597,
+              "top5": 0.9532992260264987,
+              "top10": 0.96274432638069
+            },
+            "calibration": {
+              "ece": 0.06745591004361133,
+              "mean_confidence": 0.8288358548573272,
+              "mean_confidence_correct": 0.863911953326439,
+              "mean_confidence_wrong": 0.7136956057814735
+            },
+            "coverage": {
+              "tau": 0.835425615310669,
+              "coverage_texts": 0.8147710874983602,
+              "coverage_log1p_rows": 0.8112294132706911,
+              "precision_at_tau": 0.8410883915633554,
+              "tau_source": "validation"
+            }
+          },
+          "ensemble": {
+            "strict": {
+              "accuracy": 0.7687262232716778,
+              "rows_accuracy": 0.7940640774341272,
+              "log1p_rows_accuracy": 0.7757026463132124,
+              "n": 7623,
+              "f1_weighted": 0.7358635054789191,
+              "f1_macro": 0.40524934820654157
+            },
+            "lenient": {
+              "accuracy": 0.90633608815427,
+              "rows_accuracy": 0.9109785078665719,
+              "log1p_rows_accuracy": 0.9001770239933401,
+              "n": 7623
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 1756,
+                "strict": 0.6099088838268792,
+                "lenient": 0.6110478359908884,
+                "log1p_rows_strict": 0.60334612777102
+              },
+              "seen_in_train:true": {
+                "n": 5867,
+                "strict": 0.8162604397477417,
+                "lenient": 0.9947162093062895,
+                "log1p_rows_strict": 0.8296157080676986
+              },
+              "site:N4-Integ05": {
+                "n": 7623,
+                "strict": 0.7687262232716778,
+                "lenient": 0.90633608815427,
+                "log1p_rows_strict": 0.7757026463132124
+              }
+            },
+            "topk": {
+              "top3": 0.9319165682802046,
+              "top5": 0.9521185884822249,
+              "top10": 0.9652367834186016
+            },
+            "calibration": {
+              "ece": 0.07213276814487085,
+              "mean_confidence": 0.8389103560232356,
+              "mean_confidence_correct": 0.8684045041558482,
+              "mean_confidence_wrong": 0.7408753542891972
+            },
+            "coverage": {
+              "tau": 0.835425615310669,
+              "coverage_texts": 0.8235602781057326,
+              "coverage_log1p_rows": 0.8187276967665856,
+              "precision_at_tau": 0.8394393118827652,
+              "tau_source": "validation"
+            }
+          }
+        },
+        "test": {
+          "context": {
+            "strict": {
+              "accuracy": 0.7744393642499455,
+              "rows_accuracy": 0.859840638654954,
+              "log1p_rows_accuracy": 0.8002799314529769,
+              "n": 4593,
+              "f1_weighted": 0.7520656493916354,
+              "f1_macro": 0.3602249607158053
+            },
+            "lenient": {
+              "accuracy": 0.8506422817330721,
+              "rows_accuracy": 0.9304495078546697,
+              "log1p_rows_accuracy": 0.8779469230931265,
+              "n": 4593
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 2243,
+                "strict": 0.6963887650468124,
+                "lenient": 0.6972804279982167,
+                "log1p_rows_strict": 0.7294840572118299
+              },
+              "seen_in_train:true": {
+                "n": 2350,
+                "strict": 0.8489361702127659,
+                "lenient": 0.9970212765957447,
+                "log1p_rows_strict": 0.8577954603334931
+              },
+              "site:Motorola_Points": {
+                "n": 1428,
+                "strict": 0.6918767507002801,
+                "lenient": 0.6946778711484594,
+                "log1p_rows_strict": 0.7195217264271628
+              },
+              "site:N4-Integ06": {
+                "n": 3165,
+                "strict": 0.8116903633491311,
+                "lenient": 0.9210110584518167,
+                "log1p_rows_strict": 0.829844427541025
+              }
+            },
+            "topk": {
+              "top3": 0.8944045286305247,
+              "top5": 0.9255388634879164,
+              "top10": 0.9372958850424559
+            },
+            "calibration": {
+              "ece": 0.04182945506478121,
+              "mean_confidence": 0.790895303887705,
+              "mean_confidence_correct": 0.8499923984313031,
+              "mean_confidence_wrong": 0.5879914763861814
+            },
+            "coverage": {
+              "tau": 0.7706097364425659,
+              "coverage_texts": 0.8003483561942086,
+              "coverage_log1p_rows": 0.8414108502479233,
+              "precision_at_tau": 0.8745919477693145,
+              "tau_source": "validation"
+            }
+          },
+          "name_on_pairs": {
+            "strict": {
+              "accuracy": 0.6618767689962988,
+              "rows_accuracy": 0.8630460091625214,
+              "log1p_rows_accuracy": 0.7119415546017391,
+              "n": 4593,
+              "f1_weighted": 0.6829870239909392,
+              "f1_macro": 0.3471803432395832
+            },
+            "lenient": {
+              "accuracy": 0.7160897017200087,
+              "rows_accuracy": 0.9141656208893392,
+              "log1p_rows_accuracy": 0.7670020958785897,
+              "n": 4593
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 2243,
+                "strict": 0.4208649130628622,
+                "lenient": 0.4217565760142666,
+                "log1p_rows_strict": 0.4821139045539636
+              },
+              "seen_in_train:true": {
+                "n": 2350,
+                "strict": 0.8919148936170213,
+                "lenient": 0.9970212765957447,
+                "log1p_rows_strict": 0.8986566560896909
+              },
+              "site:Motorola_Points": {
+                "n": 1428,
+                "strict": 0.2612044817927171,
+                "lenient": 0.26330532212885155,
+                "log1p_rows_strict": 0.30235329697969876
+              },
+              "site:N4-Integ06": {
+                "n": 3165,
+                "strict": 0.842654028436019,
+                "lenient": 0.9203791469194312,
+                "log1p_rows_strict": 0.8618863241308119
+              }
+            },
+            "topk": {
+              "top3": 0.7252340518179838,
+              "top5": 0.78314826910516,
+              "top10": 0.7944698454169388
+            },
+            "calibration": {
+              "ece": 0.05696798044107017,
+              "mean_confidence": 0.690337432159491,
+              "mean_confidence_correct": 0.8674729148734753,
+              "mean_confidence_wrong": 0.3435944395963791
+            },
+            "coverage": {
+              "tau": 0.835425615310669,
+              "coverage_texts": 0.6418462878293054,
+              "coverage_log1p_rows": 0.7029405427318964,
+              "precision_at_tau": 0.9148575305291723,
+              "tau_source": "validation"
+            }
+          },
+          "ensemble": {
+            "strict": {
+              "accuracy": 0.7763988678423688,
+              "rows_accuracy": 0.8608990157093395,
+              "log1p_rows_accuracy": 0.8030411659134996,
+              "n": 4593,
+              "f1_weighted": 0.7564020795770626,
+              "f1_macro": 0.3604516405446782
+            },
+            "lenient": {
+              "accuracy": 0.8495536686261702,
+              "rows_accuracy": 0.9302075930993816,
+              "log1p_rows_accuracy": 0.8770670751705993,
+              "n": 4593
+            },
+            "slices": {
+              "seen_in_train:false": {
+                "n": 2243,
+                "strict": 0.6937137761925992,
+                "lenient": 0.6946054391440035,
+                "log1p_rows_strict": 0.7272875463338798
+              },
+              "seen_in_train:true": {
+                "n": 2350,
+                "strict": 0.8553191489361702,
+                "lenient": 0.9974468085106383,
+                "log1p_rows_strict": 0.8645844343798837
+              },
+              "site:Motorola_Points": {
+                "n": 1428,
+                "strict": 0.6897759103641457,
+                "lenient": 0.6925770308123249,
+                "log1p_rows_strict": 0.7167685213160413
+              },
+              "site:N4-Integ06": {
+                "n": 3165,
+                "strict": 0.8154818325434439,
+                "lenient": 0.9203791469194312,
+                "log1p_rows_strict": 0.8346244243934504
+              }
+            },
+            "topk": {
+              "top3": 0.8804702808621816,
+              "top5": 0.9207489658175484,
+              "top10": 0.9327237099934683
+            },
+            "calibration": {
+              "ece": 0.030670841835843163,
+              "mean_confidence": 0.8065583061815386,
+              "mean_confidence_correct": 0.8627916287528419,
+              "mean_confidence_wrong": 0.6113021929495348
+            },
+            "coverage": {
+              "tau": 0.835425615310669,
+              "coverage_texts": 0.7552797735684738,
+              "coverage_log1p_rows": 0.8005219442411842,
+              "precision_at_tau": 0.8947823580282502,
+              "tau_source": "validation"
+            }
+          }
+        },
+        "tau": {
+          "context": 0.7706097364425659,
+          "name_on_pairs": 0.835425615310669,
+          "ensemble": 0.835425615310669
+        }
+      }
+    }
+  },
+  "ensemble": {
+    "tau": 0.8181572556495667,
+    "validation": {
+      "strict": {
+        "accuracy": 0.6593927893738141,
+        "rows_accuracy": 0.7963107435724068,
+        "log1p_rows_accuracy": 0.7183724242798079,
+        "n": 1054,
+        "f1_weighted": 0.6475326142430885,
+        "f1_macro": 0.4309593956836965
+      },
+      "lenient": {
+        "accuracy": 0.7371916508538899,
+        "rows_accuracy": 0.9143565472165878,
+        "log1p_rows_accuracy": 0.8162099885668905,
+        "n": 1054
+      },
+      "slices": {
+        "seen_in_train:false": {
+          "n": 624,
+          "strict": 0.5673076923076923,
+          "lenient": 0.5705128205128205,
+          "log1p_rows_strict": 0.5824875660456524
+        },
+        "seen_in_train:true": {
+          "n": 430,
+          "strict": 0.7930232558139535,
+          "lenient": 0.9790697674418605,
+          "log1p_rows_strict": 0.8206728138451311
+        },
+        "site:N4-Integ05": {
+          "n": 1054,
+          "strict": 0.6593927893738141,
+          "lenient": 0.7371916508538899,
+          "log1p_rows_strict": 0.7183724242798079
+        }
+      },
+      "topk": {
+        "top3": 0.8368121442125237,
+        "top5": 0.8833017077798861,
+        "top10": 0.9165085388994307
+      },
+      "calibration": {
+        "ece": 0.051950810510714665,
+        "mean_confidence": 0.7041783502106281,
+        "mean_confidence_correct": 0.7774364235482627,
+        "mean_confidence_wrong": 0.5623556177046223
+      },
+      "coverage": {
+        "tau": 0.8181572556495667,
+        "coverage_texts": 0.5018975332068312,
+        "coverage_log1p_rows": 0.6292960833207442,
+        "precision_at_tau": 0.8506616257088847,
+        "tau_source": "validation"
+      }
+    },
+    "test": {
+      "strict": {
+        "accuracy": 0.653012048192771,
+        "rows_accuracy": 0.8872236328729795,
+        "log1p_rows_accuracy": 0.7274178590130401,
+        "n": 830,
+        "f1_weighted": 0.6353602987304362,
+        "f1_macro": 0.39103541091984445
+      },
+      "lenient": {
+        "accuracy": 0.7048192771084337,
+        "rows_accuracy": 0.9364433021613922,
+        "log1p_rows_accuracy": 0.775802353365929,
+        "n": 830
+      },
+      "slices": {
+        "seen_in_train:false": {
+          "n": 600,
+          "strict": 0.595,
+          "lenient": 0.5983333333333334,
+          "log1p_rows_strict": 0.6409467170218438
+        },
+        "seen_in_train:true": {
+          "n": 230,
+          "strict": 0.8043478260869565,
+          "lenient": 0.9826086956521739,
+          "log1p_rows_strict": 0.8691644562408516
+        },
+        "site:Motorola_Points": {
+          "n": 204,
+          "strict": 0.6568627450980392,
+          "lenient": 0.6715686274509803,
+          "log1p_rows_strict": 0.7232972937607043
+        },
+        "site:N4-Integ06": {
+          "n": 626,
+          "strict": 0.6517571884984026,
+          "lenient": 0.7156549520766773,
+          "log1p_rows_strict": 0.7289252121592753
+        }
+      },
+      "topk": {
+        "top3": 0.8253012048192772,
+        "top5": 0.8686746987951808,
+        "top10": 0.908433734939759
+      },
+      "calibration": {
+        "ece": 0.03853448927402493,
+        "mean_confidence": 0.6830101405461151,
+        "mean_confidence_correct": 0.773807573987934,
+        "mean_confidence_wrong": 0.5121344151104696
+      },
+      "coverage": {
+        "tau": 0.8181572556495667,
+        "coverage_texts": 0.5,
+        "coverage_log1p_rows": 0.6229733529321356,
+        "precision_at_tau": 0.8698795180722891,
+        "tau_source": "validation"
+      }
+    }
+  },
+  "soup": {
+    "selected_seeds": [
+      43,
+      42
+    ],
+    "tau": 0.8540662527084351,
+    "validation": {
+      "strict": {
+        "accuracy": 0.6584440227703985,
+        "rows_accuracy": 0.780274267089683,
+        "log1p_rows_accuracy": 0.7146615657276502,
+        "n": 1054,
+        "f1_weighted": 0.6466779358469481,
+        "f1_macro": 0.43541808731207127
+      },
+      "lenient": {
+        "accuracy": 0.7343453510436433,
+        "rows_accuracy": 0.8981640401518698,
+        "log1p_rows_accuracy": 0.8109274071644749,
+        "n": 1054
+      },
+      "slices": {
+        "seen_in_train:false": {
+          "n": 624,
+          "strict": 0.5641025641025641,
+          "lenient": 0.5673076923076923,
+          "log1p_rows_strict": 0.5719198037618034
+        },
+        "seen_in_train:true": {
+          "n": 430,
+          "strict": 0.7953488372093023,
+          "lenient": 0.9767441860465116,
+          "log1p_rows_strict": 0.8221241487270292
+        },
+        "site:N4-Integ05": {
+          "n": 1054,
+          "strict": 0.6584440227703985,
+          "lenient": 0.7343453510436433,
+          "log1p_rows_strict": 0.7146615657276502
+        }
+      },
+      "topk": {
+        "top3": 0.8263757115749526,
+        "top5": 0.8719165085388995,
+        "top10": 0.9127134724857685
+      },
+      "calibration": {
+        "ece": 0.08746530919687459,
+        "mean_confidence": 0.7295143341493618,
+        "mean_confidence_correct": 0.7960714627948378,
+        "mean_confidence_wrong": 0.6012069805939164
+      },
+      "coverage": {
+        "tau": 0.8540662527084351,
+        "coverage_texts": 0.4686907020872865,
+        "coverage_log1p_rows": 0.5892833221555458,
+        "precision_at_tau": 0.8502024291497976,
+        "tau_source": "validation"
+      }
+    },
+    "test": {
+      "strict": {
+        "accuracy": 0.6493975903614457,
+        "rows_accuracy": 0.8685978819594972,
+        "log1p_rows_accuracy": 0.7164996251326352,
+        "n": 830,
+        "f1_weighted": 0.6303803594857599,
+        "f1_macro": 0.3850459945831328
+      },
+      "lenient": {
+        "accuracy": 0.7,
+        "rows_accuracy": 0.9177091719824116,
+        "log1p_rows_accuracy": 0.7636953470073199,
+        "n": 830
+      },
+      "slices": {
+        "seen_in_train:false": {
+          "n": 600,
+          "strict": 0.5916666666666667,
+          "lenient": 0.595,
+          "log1p_rows_strict": 0.6229347990251468
+        },
+        "seen_in_train:true": {
+          "n": 230,
+          "strict": 0.8,
+          "lenient": 0.9739130434782609,
+          "log1p_rows_strict": 0.869874443777897
+        },
+        "site:Motorola_Points": {
+          "n": 204,
+          "strict": 0.6519607843137255,
+          "lenient": 0.6617647058823529,
+          "log1p_rows_strict": 0.7101725817566961
+        },
+        "site:N4-Integ06": {
+          "n": 626,
+          "strict": 0.6485623003194888,
+          "lenient": 0.7124600638977636,
+          "log1p_rows_strict": 0.7188141349522968
+        }
+      },
+      "topk": {
+        "top3": 0.8168674698795181,
+        "top5": 0.8578313253012049,
+        "top10": 0.8987951807228916
+      },
+      "calibration": {
+        "ece": 0.06446370719875918,
+        "mean_confidence": 0.7087216735649181,
+        "mean_confidence_correct": 0.7946169820919993,
+        "mean_confidence_wrong": 0.5496234904168192
+      },
+      "coverage": {
+        "tau": 0.8540662527084351,
+        "coverage_texts": 0.4771084337349398,
+        "coverage_log1p_rows": 0.5862075975152351,
+        "precision_at_tau": 0.8434343434343434,
+        "tau_source": "validation"
+      }
+    },
+    "context": {
+      "val": {
+        "context": {
+          "strict": {
+            "accuracy": 0.7695133149678605,
+            "rows_accuracy": 0.7676282329268505,
+            "log1p_rows_accuracy": 0.7698377176666387,
+            "n": 7623,
+            "f1_weighted": 0.739082917079269,
+            "f1_macro": 0.42216307555339294
+          },
+          "lenient": {
+            "accuracy": 0.9068608159517251,
+            "rows_accuracy": 0.899182986695346,
+            "log1p_rows_accuracy": 0.8975088015403865,
+            "n": 7623
+          },
+          "slices": {
+            "seen_in_train:false": {
+              "n": 1756,
+              "strict": 0.6070615034168565,
+              "lenient": 0.6082004555808656,
+              "log1p_rows_strict": 0.5815514301049263
+            },
+            "seen_in_train:true": {
+              "n": 5867,
+              "strict": 0.8181353332197034,
+              "lenient": 0.9962502130560763,
+              "log1p_rows_strict": 0.8287336058796081
+            },
+            "site:N4-Integ05": {
+              "n": 7623,
+              "strict": 0.7695133149678605,
+              "lenient": 0.9068608159517251,
+              "log1p_rows_strict": 0.7698377176666387
+            }
+          },
+          "topk": {
+            "top3": 0.9342778433687524,
+            "top5": 0.9501508592417683,
+            "top10": 0.9634002361275088
+          },
+          "calibration": {
+            "ece": 0.04123934465919233,
+            "mean_confidence": 0.7950013322201275,
+            "mean_confidence_correct": 0.8337672289119232,
+            "mean_confidence_wrong": 0.6655757488427375
+          },
+          "coverage": {
+            "tau": 0.777980387210846,
+            "coverage_texts": 0.7990292535747081,
+            "coverage_log1p_rows": 0.7890768530347262,
+            "precision_at_tau": 0.8501067148251519,
+            "tau_source": "validation"
+          }
+        },
+        "name_on_pairs": {
+          "strict": {
+            "accuracy": 0.7569198478289387,
+            "rows_accuracy": 0.7741504622803518,
+            "log1p_rows_accuracy": 0.7628844461734371,
+            "n": 7623,
+            "f1_weighted": 0.7197409149049377,
+            "f1_macro": 0.4155259740691898
+          },
+          "lenient": {
+            "accuracy": 0.893349075167257,
+            "rows_accuracy": 0.8969973460077365,
+            "log1p_rows_accuracy": 0.8863804545637586,
+            "n": 7623
+          },
+          "slices": {
+            "seen_in_train:false": {
+              "n": 1756,
+              "strict": 0.5427107061503417,
+              "lenient": 0.5438496583143508,
+              "log1p_rows_strict": 0.5282175309761661
+            },
+            "seen_in_train:true": {
+              "n": 5867,
+              "strict": 0.8210328958581898,
+              "lenient": 0.9979546616669508,
+              "log1p_rows_strict": 0.836288179306212
+            },
+            "site:N4-Integ05": {
+              "n": 7623,
+              "strict": 0.7569198478289387,
+              "lenient": 0.893349075167257,
+              "log1p_rows_strict": 0.7628844461734371
+            }
+          },
+          "topk": {
+            "top3": 0.9287682014954742,
+            "top5": 0.9496261314443133,
+            "top10": 0.9670733307096944
+          },
+          "calibration": {
+            "ece": 0.05888478205714362,
+            "mean_confidence": 0.8116559194359123,
+            "mean_confidence_correct": 0.8500129162645422,
+            "mean_confidence_wrong": 0.6922172406980848
+          },
+          "coverage": {
+            "tau": 0.8358883857727051,
+            "coverage_texts": 0.8048012593467139,
+            "coverage_log1p_rows": 0.7994836542077617,
+            "precision_at_tau": 0.8397718011409943,
+            "tau_source": "validation"
+          }
+        },
+        "ensemble": {
+          "strict": {
+            "accuracy": 0.7696444969172241,
+            "rows_accuracy": 0.779597217644712,
+            "log1p_rows_accuracy": 0.7733952883663122,
+            "n": 7623,
+            "f1_weighted": 0.7354981571201354,
+            "f1_macro": 0.42226046402929895
+          },
+          "lenient": {
+            "accuracy": 0.90633608815427,
+            "rows_accuracy": 0.9027389894013773,
+            "log1p_rows_accuracy": 0.8973203894166638,
+            "n": 7623
+          },
+          "slices": {
+            "seen_in_train:false": {
+              "n": 1756,
+              "strict": 0.5990888382687927,
+              "lenient": 0.6002277904328018,
+              "log1p_rows_strict": 0.5742994306957224
+            },
+            "seen_in_train:true": {
+              "n": 5867,
+              "strict": 0.820692006136015,
+              "lenient": 0.9979546616669508,
+              "log1p_rows_strict": 0.8356724065191097
+            },
+            "site:N4-Integ05": {
+              "n": 7623,
+              "strict": 0.7696444969172241,
+              "lenient": 0.90633608815427,
+              "log1p_rows_strict": 0.7733952883663122
+            }
+          },
+          "topk": {
+            "top3": 0.9316542043814771,
+            "top5": 0.9498884953430408,
+            "top10": 0.9658926931654205
+          },
+          "calibration": {
+            "ece": 0.06862294947977497,
+            "mean_confidence": 0.8236305070516867,
+            "mean_confidence_correct": 0.8525125801141652,
+            "mean_confidence_wrong": 0.7271321456293853
+          },
+          "coverage": {
+            "tau": 0.8358883857727051,
+            "coverage_texts": 0.8154269972451791,
+            "coverage_log1p_rows": 0.8075232742242513,
+            "precision_at_tau": 0.8352638352638353,
+            "tau_source": "validation"
+          }
+        }
+      },
+      "test": {
+        "context": {
+          "strict": {
+            "accuracy": 0.7990420204659264,
+            "rows_accuracy": 0.8778330485795068,
+            "log1p_rows_accuracy": 0.8217816900830544,
+            "n": 4593,
+            "f1_weighted": 0.7874734136015767,
+            "f1_macro": 0.3851229992348141
+          },
+          "lenient": {
+            "accuracy": 0.8563030698889614,
+            "rows_accuracy": 0.9313869275314112,
+            "log1p_rows_accuracy": 0.8822196532430762,
+            "n": 4593
+          },
+          "slices": {
+            "seen_in_train:false": {
+              "n": 2243,
+              "strict": 0.7079803834150691,
+              "lenient": 0.7084262148907713,
+              "log1p_rows_strict": 0.7384120944628243
+            },
+            "seen_in_train:true": {
+              "n": 2350,
+              "strict": 0.8859574468085106,
+              "lenient": 0.9974468085106383,
+              "log1p_rows_strict": 0.889512280827923
+            },
+            "site:Motorola_Points": {
+              "n": 1428,
+              "strict": 0.7058823529411765,
+              "lenient": 0.7065826330532213,
+              "log1p_rows_strict": 0.7271762412008227
+            },
+            "site:N4-Integ06": {
+              "n": 3165,
+              "strict": 0.8410742496050553,
+              "lenient": 0.9238546603475514,
+              "log1p_rows_strict": 0.8564154764889403
+            }
+          },
+          "topk": {
+            "top3": 0.8911386893098193,
+            "top5": 0.9157413455258001,
+            "top10": 0.9460047898976703
+          },
+          "calibration": {
+            "ece": 0.03900322960452417,
+            "mean_confidence": 0.7673328509134533,
+            "mean_confidence_correct": 0.8184808563776009,
+            "mean_confidence_wrong": 0.5639599581145129
+          },
+          "coverage": {
+            "tau": 0.777980387210846,
+            "coverage_texts": 0.731330285216634,
+            "coverage_log1p_rows": 0.7644363938693849,
+            "precision_at_tau": 0.8850848466805596,
+            "tau_source": "validation"
+          }
+        },
+        "name_on_pairs": {
+          "strict": {
+            "accuracy": 0.6640539952101023,
+            "rows_accuracy": 0.846081736947943,
+            "log1p_rows_accuracy": 0.7125768391836375,
+            "n": 4593,
+            "f1_weighted": 0.6952546422849656,
+            "f1_macro": 0.3563228644551318
+          },
+          "lenient": {
+            "accuracy": 0.7171783148269105,
+            "rows_accuracy": 0.8971559896581442,
+            "log1p_rows_accuracy": 0.7670977746332638,
+            "n": 4593
+          },
+          "slices": {
+            "seen_in_train:false": {
+              "n": 2243,
+              "strict": 0.422648238965671,
+              "lenient": 0.42353990191707536,
+              "log1p_rows_strict": 0.48148969914116535
+            },
+            "seen_in_train:true": {
+              "n": 2350,
+              "strict": 0.894468085106383,
+              "lenient": 0.9974468085106383,
+              "log1p_rows_strict": 0.9003151674336168
+            },
+            "site:Motorola_Points": {
+              "n": 1428,
+              "strict": 0.25980392156862747,
+              "lenient": 0.2619047619047619,
+              "log1p_rows_strict": 0.302050988415888
+            },
+            "site:N4-Integ06": {
+              "n": 3165,
+              "strict": 0.8464454976303317,
+              "lenient": 0.9225908372827805,
+              "log1p_rows_strict": 0.8628648489925012
+            }
+          },
+          "topk": {
+            "top3": 0.7611582843457435,
+            "top5": 0.772262138036142,
+            "top10": 0.782495101241019
+          },
+          "calibration": {
+            "ece": 0.05168490383945177,
+            "mean_confidence": 0.6747593524179024,
+            "mean_confidence_correct": 0.8565578135945758,
+            "mean_confidence_wrong": 0.3154040014205895
+          },
+          "coverage": {
+            "tau": 0.8358883857727051,
+            "coverage_texts": 0.6729806226866971,
+            "coverage_log1p_rows": 0.7319956853280809,
+            "precision_at_tau": 0.9113555483662246,
+            "tau_source": "validation"
+          }
+        },
+        "ensemble": {
+          "strict": {
+            "accuracy": 0.8020901371652515,
+            "rows_accuracy": 0.8795566912109345,
+            "log1p_rows_accuracy": 0.8264798472133705,
+            "n": 4593,
+            "f1_weighted": 0.7872158905167572,
+            "f1_macro": 0.3844506088626025
+          },
+          "lenient": {
+            "accuracy": 0.8545612889179186,
+            "rows_accuracy": 0.9305553455601082,
+            "log1p_rows_accuracy": 0.8805640368402452,
+            "n": 4593
+          },
+          "slices": {
+            "seen_in_train:false": {
+              "n": 2243,
+              "strict": 0.7035220686580472,
+              "lenient": 0.7044137316094516,
+              "log1p_rows_strict": 0.7341145823850626
+            },
+            "seen_in_train:true": {
+              "n": 2350,
+              "strict": 0.8961702127659574,
+              "lenient": 0.997872340425532,
+              "log1p_rows_strict": 0.9015186416873775
+            },
+            "site:Motorola_Points": {
+              "n": 1428,
+              "strict": 0.6995798319327731,
+              "lenient": 0.7002801120448179,
+              "log1p_rows_strict": 0.7208928376713801
+            },
+            "site:N4-Integ06": {
+              "n": 3165,
+              "strict": 0.8483412322274881,
+              "lenient": 0.9241706161137441,
+              "log1p_rows_strict": 0.8651338357406673
+            }
+          },
+          "topk": {
+            "top3": 0.8948399738732854,
+            "top5": 0.9113868930981929,
+            "top10": 0.9375136076638363
+          },
+          "calibration": {
+            "ece": 0.021107064286316195,
+            "mean_confidence": 0.8036664846555395,
+            "mean_confidence_correct": 0.8532987129141402,
+            "mean_confidence_wrong": 0.6025167278847089
+          },
+          "coverage": {
+            "tau": 0.8358883857727051,
+            "coverage_texts": 0.7872849989113869,
+            "coverage_log1p_rows": 0.8266824334084127,
+            "precision_at_tau": 0.9043141592920354,
+            "tau_source": "validation"
+          }
+        }
+      },
+      "tau": {
+        "context": 0.777980387210846,
+        "name_on_pairs": 0.8358883857727051,
+        "ensemble": 0.8358883857727051
+      }
+    }
+  },
+  "coverage_curve_test": [
+    {
+      "tau": 0.05,
+      "coverage": 0.9976,
+      "precision": 0.651
+    },
+    {
+      "tau": 0.1,
+      "coverage": 0.9819,
+      "precision": 0.6613
+    },
+    {
+      "tau": 0.15,
+      "coverage": 0.9663,
+      "precision": 0.6683
+    },
+    {
+      "tau": 0.2,
+      "coverage": 0.9506,
+      "precision": 0.6781
+    },
+    {
+      "tau": 0.25,
+      "coverage": 0.9229,
+      "precision": 0.6932
+    },
+    {
+      "tau": 0.3,
+      "coverage": 0.8976,
+      "precision": 0.7007
+    },
+    {
+      "tau": 0.35,
+      "coverage": 0.8807,
+      "precision": 0.7086
+    },
+    {
+      "tau": 0.4,
+      "coverage": 0.853,
+      "precision": 0.7189
+    },
+    {
+      "tau": 0.45,
+      "coverage": 0.8108,
+      "precision": 0.737
+    },
+    {
+      "tau": 0.5,
+      "coverage": 0.7747,
+      "precision": 0.7512
+    },
+    {
+      "tau": 0.55,
+      "coverage": 0.7458,
+      "precision": 0.7641
+    },
+    {
+      "tau": 0.6,
+      "coverage": 0.7193,
+      "precision": 0.7755
+    },
+    {
+      "tau": 0.65,
+      "coverage": 0.6843,
+      "precision": 0.7923
+    },
+    {
+      "tau": 0.7,
+      "coverage": 0.6554,
+      "precision": 0.8107
+    },
+    {
+      "tau": 0.75,
+      "coverage": 0.6169,
+      "precision": 0.8164
+    },
+    {
+      "tau": 0.8,
+      "coverage": 0.5723,
+      "precision": 0.8337
+    },
+    {
+      "tau": 0.85,
+      "coverage": 0.4892,
+      "precision": 0.8448
+    },
+    {
+      "tau": 0.9,
+      "coverage": 0.1627,
+      "precision": 0.8593
+    },
+    {
+      "tau": 0.95,
+      "coverage": 0.0048,
+      "precision": 0.75
+    }
+  ]
+}
