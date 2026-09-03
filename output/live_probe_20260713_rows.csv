@@ -1,0 +1,111 @@
+test,name,normalized,predicted,confidence,gold,acceptables,verdict,why,seen_in_train,train_labels,note
+T1,RTN_AIR_TEMP,rtn air temp,returnTemp,0.8744,returnTemp,,correct,matches pre-registered gold/acceptable,True,returnTemp,[respelled from RA_TEMP]
+T1,DSCH_AIR_TMP,dsch air tmp,dischargeTemp,0.7609,dischargeTemp,,correct,matches pre-registered gold/acceptable,False,,[respelled from DA-T]
+T1,SPACE_TMP,space tmp,zoneTemp,0.8151,zoneTemp,,correct,matches pre-registered gold/acceptable,False,,[respelled from ZN-T]
+T1,ZN_TMP_STPT,zn tmp stpt,zoneTempSp,0.8494,zoneTempSp,,correct,matches pre-registered gold/acceptable,False,,[respelled from ZNT-SP]
+T1,SF_STAT,sf stat,dischargeFanStatus,0.8386,dischargeFanStatus,,correct,matches pre-registered gold/acceptable,False,,[respelled from SF_STS]
+T1,SF_VFD_SPD,sf vfd spd,dischargeFanSpeed,0.8174,dischargeFanSpeed,dischargeFanSpeedSp,correct,matches pre-registered gold/acceptable,False,,
+T1,RTN_FAN_CMD,rtn fan cmd,returnFan,0.7957,returnFan,,correct,matches pre-registered gold/acceptable,False,,[respelled from RF_CMD]
+T1,EF-1_SS,ef ss,exhaustFan,0.9098,exhaustFan,exhaustFanEnable,correct,matches pre-registered gold/acceptable,True,exhaustFan,SS=start/stop cmd
+T1,OAD_POS,oad pos,outsideDamperFb,0.8166,outsideDamperFb,outsideDamper|damperFb,correct,matches pre-registered gold/acceptable,True,outsideDamperFb,[respelled from OA_DMPR_POS]
+T1,MIX_AIR_TMP,mix air tmp,mixedTemp,0.8482,mixedTemp,,correct,matches pre-registered gold/acceptable,False,,[respelled from MA-T]
+T1,CO2_RM_4,co2 rm,zoneCO2,0.8929,zoneCO2,,correct,matches pre-registered gold/acceptable,True,zoneCO2,
+T1,RM_RH,rm rh,zoneHumidity,0.9202,zoneHumidity,,correct,matches pre-registered gold/acceptable,True,zoneHumidity,
+T1,OA-H,oa h,outsideHumidity,0.8942,outsideHumidity,,correct,matches pre-registered gold/acceptable,True,outsideHumidity,
+T1,SA_STATIC_PRESS,sa static press,dischargePressure,0.8244,dischargePressure,,correct,matches pre-registered gold/acceptable,False,,
+T1,BLDG_STATIC,bldg static,buildingPressure,0.8914,buildingPressure,,correct,matches pre-registered gold/acceptable,True,buildingPressure,
+T1,KW_DEMAND,kw demand,zonePowerReal,0.4548,powerReal,,wrong-adjacent,spurious 'zone' qualifier; powerReal available; extension class w/ EMPTY tagMetadata,False,,
+T1,FRZ_STAT,frz stat,freezeProtect,0.4941,freezeProtect,freezeProtectEnable,correct,matches pre-registered gold/acceptable,False,,
+T1,OCCUPY_CMD,occupy cmd,occupancyMode,0.8462,occupancyMode,,correct,matches pre-registered gold/acceptable,False,,[respelled from OCC_CMD]
+T1,CLG_STG_2,clg stg,coolingStageStatus,0.2326,coolingStage,coolingStageStatus,correct,matches pre-registered gold/acceptable,False,,
+T1,HTG_STG_1,htg stg,heatingStage,0.8448,heatingStage,,correct,matches pre-registered gold/acceptable,True,heatingStage,
+T1,CHWV_POS,chwv pos,coolingValveFb,0.7336,coolingValveFb,coolingValve,correct,matches pre-registered gold/acceptable,True,coolingValveFb,[respelled from CHW_VLV_POS]
+T1,HHW_VLV_CMD,hhw vlv cmd,heatingValve,0.8916,heatingValve,,correct,matches pre-registered gold/acceptable,True,heatingValve,[respelled from HW_VLV_CMD]
+T1,ECONO_ENABLE,econo enable,econEnable,0.8789,econEnable,,correct,matches pre-registered gold/acceptable,True,econEnable,[respelled from ECON_ENA]
+T1,SA_CFM,sa cfm,dischargeFlow,0.8314,dischargeFlow,,correct,matches pre-registered gold/acceptable,True,dischargeFlow,
+T1,FLT_ALM,flt alm,unitFilterAlarm,0.8777,filterAlarm,,correct-twin,unitFilterAlarm vs filterAlarm: name underdetermines unit vs AHU filter,True,unitFilterAlarm,FLT could read fault; filter is standard
+T2,supply temp,supply temp,dischargeTemp,0.8516,dischargeTemp,,correct,matches pre-registered gold/acceptable,True,dischargeTemp,ghc:discharge_air_temperature_sensor [sub for collided GHC row]
+T2,outdoor temp,outdoor temp,outsideTemp,0.887,outsideTemp,,correct,matches pre-registered gold/acceptable,True,outsideTemp,ghc:outside_air_temperature_sensor [sub for collided GHC row]
+T2,airflow request,airflow request,dischargeFlowCoolMaxSp,0.412,dischargeFlowSp,dischargeFlow|coolingDemand,wrong-adjacent,added Cool+Max modifiers; dischargeFlowSp intended,False,,ghc:discharge_air_flow_command; judgment
+T2,ztmp lo,ztmp lo,zoneTempLoSp,0.8287,zoneTempMinSp,,correct-upgrade,zoneTempLoSp exact twin of zoneTempMinSp,False,,ghc:zone_heating_temperature_setpoint
+T2,ztmp hi,ztmp hi,zoneTempHiSp,0.8487,zoneTempMaxSp,,correct-upgrade,zoneTempHiSp exact twin of zoneTempMaxSp (BOTH exist in space),False,,ghc:zone_cooling_temperature_setpoint
+T2,heat request,heat request,zoneHeatingReq,0.9001,heatingDemand,,correct-upgrade,zoneHeatingReq exact,False,,ghc:heating_request_setpoint
+T2,hwv command,hwv command,heatingValve,0.9053,heatingValve,,correct,matches pre-registered gold/acceptable,False,,ghc:domestic_hot_water_valve_command; domestic class absent
+T2,oa dewpoint,oa dewpoint,outsideDewpoint,0.8891,outsideDewpoint,,correct,matches pre-registered gold/acceptable,True,outsideDewpoint,ghc:outside_air_dewpoint_sensor [sub for collided GHC row]
+T2,run request,run request,chillerDemand,0.3387,enable,occupancyMode,wrong-family,VAV run request -> chillerDemand: hallucinated equipment,False,,ghc:run_request_command; judgment
+T2,cool request,cool request,zoneCoolingReq,0.9126,coolingDemand,,correct-upgrade,zoneCoolingReq is the exact eo66 concept (better than provisional coolingDemand),False,,ghc:cooling_request_setpoint
+T2,discharge temp,discharge temp,dischargeTemp,0.853,dischargeTemp,,correct,matches pre-registered gold/acceptable,True,dischargeTemp,ghc:discharge_air_temperature_sensor
+T2,schedule,schedule,occupancyMode,0.9226,,occupancyMode,correct,matches pre-registered gold/acceptable,True,occupancyMode,ghc:schedule_setpoint; no schedule class -> abstain or occupancyMode
+T2,zone temp _ zone temp,zone temp zone temp,zoneTemp,0.8151,zoneTemp,,correct,matches pre-registered gold/acceptable,False,,ghc:zone_temperature_sensor; raw artifact kept
+T2,occ sensor,occ sensor,occupancySensor,0.8786,occupancyMode,,correct-upgrade,occupancySensor exists and is exact,False,,ghc:occupancy_sensor; nearest available; judgment
+T2,flow control _ flow input,flow control flow input,dischargeFlowStatus,0.1645,dischargeFlow,dischargeFlowSp,wrong-adjacent,added Status; dischargeFlow intended,False,,ghc:supply_fan_air_flow_sensor; judgment
+T2,supply cfm,supply cfm,dischargeFlow,0.8431,dischargeFlow,,correct,matches pre-registered gold/acceptable,True,dischargeFlow,ghc:supply_air_flow_sensor [sub for collided GHC row]
+T2,prv command,prv command,priEnteringValve,0.1625,perimeterValve,heatingValve,wrong-family,perimeterValve exists; predicted primary CHW entering valve,False,,ghc:perimeter_heating_valve_command
+T2,rh valve %,rh valve,heatingValve,0.8016,heatingValve,heatingValveFb,correct,matches pre-registered gold/acceptable,False,,ghc:reheat_valve_command
+T2,zco2_hi,zco2 hi,zoneCO2Alarm,0.6787,zoneCO2MaxSp,zoneCO2Sp,correct-upgrade,"zoneCO2Alarm = CO2 high alarm, better than zoneCO2MaxSp (both exist)",False,,ghc:co2_high_alarm
+T2,discharge air temp setpoint,discharge air temp setpoint,dischargeTempSp,0.8156,dischargeTempSp,,correct,matches pre-registered gold/acceptable,False,,ghc:discharge_air_temperature_setpoint [sub for collided GHC row]
+T2,total cool request,total cool request,zoneCoolingReq,0.8635,coolingDemand,,correct-upgrade,zoneCoolingReq exact,False,,ghc:cooling_request_setpoint [sub for collided GHC row]
+T2,sa duct press,sa duct press,dischargePressure,0.8327,dischargePressure,,correct,matches pre-registered gold/acceptable,False,,ghc:supply__air_static_pressure_sensor
+T2,return temp,return temp,zoneTemp,0.8011,returnTemp,,wrong-family,location swap: returnTemp exists; predicted zoneTemp at HIGH confidence,True,zoneTemp,ghc:return_air_temperature_sensor
+T2,oa dmpr fb,oa dmpr fb,minOutsideDamperFb,0.602,outsideDamperFb,outsideDamper,wrong-adjacent,spurious 'min'; outsideDamperFb exists,False,,ghc:outside_air_damper_position_command
+T2,fan start,fan start,dischargeFan,0.8446,dischargeFan,,correct,matches pre-registered gold/acceptable,False,,ghc:supply_fan_start_stop_command
+T2,ew sa byp dmp,ew sa byp dmp,bypassDamper,0.8064,bypassDamper,faceBypassDamper,correct,matches pre-registered gold/acceptable,False,,ghc:bypass_damper (enthalpy wheel)
+T2,outdoor rh,outdoor rh,outsideHumidity,0.8872,outsideHumidity,,correct,matches pre-registered gold/acceptable,True,outsideHumidity,ghc:relative_humidity_sensor (outdoor)
+T2,kwh pulse,kwh pulse,powerReal,0.2047,energy,,wrong-adjacent,power vs energy quantity kind; 'energy' available,False,,ghc:energy_meter
+T2,return cfm,return cfm,returnFlow,0.8464,returnFlow,,correct,matches pre-registered gold/acceptable,True,returnFlow,ghc:return_fan_air_flow_sensor
+T3,AHU$2d04$20RAT,ahu rat,returnTemp,0.9439,returnTemp,,correct,matches pre-registered gold/acceptable,False,,Niagara $2d/$20 escapes
+T3,Drv3$2fSF$2fSpd,drv sf spd,dischargeFanSpeed,0.8197,dischargeFanSpeed,,correct,matches pre-registered gold/acceptable,False,,$2f escape
+T3,NAE01/FEC12.HTG-VLV-O,nae fec htg vlv o,heatingValve,0.853,heatingValve,,correct,matches pre-registered gold/acceptable,False,,JCI path
+T3,B3.AHU02:SF-SS,b3 ahu sf ss,dischargeFan,0.858,dischargeFan,dischargeFanStatus,correct,matches pre-registered gold/acceptable,False,,Siemens style; SS
+T3,Bldg7_Flr3_VAV0312_ZnTmp,bldg flr vav zn tmp,zoneTemp,0.9104,zoneTemp,,correct,matches pre-registered gold/acceptable,False,,
+T3,CampusA.CHLR2.EVAP.LWT,campus a chlr evap lwt,evapLeavingTemp,0.7865,evapLeavingTemp,,correct,matches pre-registered gold/acceptable,False,,
+T3,01_02_EF_03_SS,ef ss,exhaustFan,0.9098,exhaustFan,exhaustFanEnable|exhaustFanStatus,correct,matches pre-registered gold/acceptable,True,exhaustFan,
+T3,RTU7_ECON_DMPR_FB,rtu econ dmpr fb,minOutsideDamperFb,0.2596,outsideDamperFb,outsideDamper|damperFb|minOutsideDamperFb,correct,matches pre-registered gold/acceptable,False,,
+T3,UT0032_AI1003_MixedAirTemp,ut ai mixed air temp,mixedTemp,0.8096,mixedTemp,,correct,matches pre-registered gold/acceptable,False,,audit OOV tokens
+T3,FCU_204_ChwVlv,fcu chw vlv,coolingValve,0.768,coolingValve,,correct,matches pre-registered gold/acceptable,False,,
+T3,MZ1_HotDeckTmp,mz hot deck tmp,hotDeckDischargeTemp,0.8289,hotDeckDischargeTemp,,correct,matches pre-registered gold/acceptable,False,,
+T3,L05$2eVAV$2d0507$2eDMPR$20POS,l05 vav dmpr pos,dischargeDamper,0.79,damperFb,damper,wrong-adjacent,dischargeDamper (cmd) for a VAV damper position; damperFb intended,False,,
+T3,2401:AHU-07:MIN_OA_DMPR,ahu min oa dmpr,outsideDamperMinSp,0.3654,minOutsideDamper,minOutsideDamperFb|outsideDamper,wrong-adjacent,outsideDamperMinSp adds Sp; physical min-OA damper (minOutsideDamper) intended,False,,
+T3,GH_B2_CT1_FAN_VFD_FB,gh b2 ct fan vfd fb,twrFanSpeedFb,0.2833,twrFanSpeed,twrFanStatus,correct-upgrade,twrFanSpeedFb exists and is exact for VFD feedback,False,,
+T3,K12_RTU04_SA_T_SP,k12 rtu sa t sp,dischargeTempSp,0.8322,dischargeTempSp,,correct,matches pre-registered gold/acceptable,False,,
+T3,dev:2001_AV17_RmHum,dev av rm hum,zoneHumidity,0.9251,zoneHumidity,,correct,matches pre-registered gold/acceptable,False,,
+T3,AHU12MAT,ahu mat,mixedTemp,0.8735,mixedTemp,,correct,matches pre-registered gold/acceptable,True,mixedTemp,"glued, no separators"
+T3,vav_0312.znt_sp,vav znt sp,zoneTempSp,0.8577,zoneTempSp,,correct,matches pre-registered gold/acceptable,False,,lowercase
+T3,WING_C_CU2_SUCT_PRESS,wing c cu suct press,compSuctionPressure,0.9121,compSuctionPressure,,correct,matches pre-registered gold/acceptable,False,,
+T3,PNT_00234_Chwr$20Temp,pnt chwr temp,priEnteringTemp,0.4663,evapEnteringTemp,secEnteringTemp,correct-twin,priEnteringTemp: pri/sec/evap loop position underdetermined by bare CHWR,False,,
+T4,CHWS_T,chws t,evapLeavingTemp,0.8047,evapLeavingTemp,secLeavingTemp,correct,matches pre-registered gold/acceptable,True,evapLeavingTemp,pri/sec underdetermined
+T4,CHWR_T,chwr t,evapEnteringTemp,0.4065,evapEnteringTemp,secEnteringTemp,correct,matches pre-registered gold/acceptable,True,evapEnteringTemp,
+T4,CDWS_T,cdws t,condLeavingTemp,0.6665,condEnteringTemp,twrLeavingTemp,wrong-adjacent,polarity swap: CDW supply (tower->chiller) = condEnteringTemp chiller-centric,False,,chiller-centric
+T4,CDWR_T,cdwr t,condEnteringTemp,0.6625,condLeavingTemp,twrEnteringTemp,wrong-adjacent,polarity swap: CDW return = condLeavingTemp,False,,
+T4,PRI_CHWP_1_SPD,pri chwp spd,priPumpSpeed,0.781,priPumpSpeed,,correct,matches pre-registered gold/acceptable,False,,[respelled from PRI_CHW_PMP1_SPD]
+T4,SEC_CHWP_1_SPD,sec chwp spd,secPumpSpeed,0.806,secPumpSpeed,,correct,matches pre-registered gold/acceptable,False,,[respelled from SEC_CHW_PMP1_SPD]
+T4,TWR1_ISO_VLV,twr iso vlv,twrIsoValve,0.3909,twrIsoValve,,correct,matches pre-registered gold/acceptable,False,,
+T4,EVAP_ISO_VLV_STS,evap iso vlv sts,evapEnteringIsoValve,0.1822,evapIsoValveStatus,evapIsoValve,wrong-adjacent,added Entering + dropped Status; evapIsoValveStatus exists,False,,
+T4,HTG_VLV_CMD,htg vlv cmd,heatingValve,0.8819,heatingValve,,correct,matches pre-registered gold/acceptable,True,heatingValve,
+T4,HTG_VLV_FB,htg vlv fb,heatingValveFb,0.8832,heatingValveFb,,correct,matches pre-registered gold/acceptable,False,,
+T4,CLG_VLV_FB,clg vlv fb,coolingValveFb,0.8653,coolingValveFb,,correct,matches pre-registered gold/acceptable,False,,
+T4,SAT,sat,dischargeTemp,0.8895,dischargeTemp,,correct,matches pre-registered gold/acceptable,True,dischargeTemp,[respelled from DAT]
+T4,DAT_SP,dat sp,dischargeTempSp,0.8006,dischargeTempSp,,correct,matches pre-registered gold/acceptable,True,dischargeTempSp,
+T4,RAT_STPT,rat stpt,returnTempSp,0.8346,returnTempSp,,correct,matches pre-registered gold/acceptable,False,,[respelled from RAT_SP]
+T4,SF_SPD_CMD,sf spd cmd,dischargeFanSpeed,0.8856,dischargeFanSpeed,dischargeFanSpeedSp,correct,matches pre-registered gold/acceptable,True,dischargeFanSpeed,
+T4,SF_SPD_FB,sf spd fb,dischargeFanSpeedFb,0.826,dischargeFanSpeed,,correct-upgrade,dischargeFanSpeedFb exists and is exact,True,dischargeFanSpeedFb,
+T4,OAD_CMD,oad cmd,outsideDamper,0.8486,outsideDamper,,correct,matches pre-registered gold/acceptable,False,,[respelled from OA_DMPR_CMD]
+T4,EA_DMPR_CMD,ea dmpr cmd,exhaustDamper,0.8447,exhaustDamper,,correct,matches pre-registered gold/acceptable,True,exhaustDamper,
+T4,ZN_T_CLG_SP,zn t clg sp,zoneCoolSp,0.7787,zoneTempMaxSp,,correct-upgrade,zoneCoolSp exact twin of zoneTempMaxSp,True,zoneCoolSp,cooling sp = max
+T4,ZN_T_HTG_SP,zn t htg sp,zoneHeatSp,0.8259,zoneTempMinSp,,correct-upgrade,zoneHeatSp exact twin of zoneTempMinSp,True,zoneHeatSp,
+T4,CLG_TWR_FAN_SPD,clg twr fan spd,twrFanSpeed,0.3957,twrFanSpeed,,correct,matches pre-registered gold/acceptable,False,,CT = cooling tower [respelled from CT_FAN_SPD]
+T4,COND_FAN_SPD,cond fan spd,condFanSpeed,0.851,condFanSpeed,,correct,matches pre-registered gold/acceptable,True,condFanSpeed,air-cooled condenser fan
+T5,LTG_LOBBY_DIM_CMD,ltg lobby dim cmd,zoneTempHeatDb,0.1655,,,ood,lighting dimmer,False,,lighting dimmer
+T5,LTG_FLR2_OCC_OVERRIDE,ltg flr occ override,occupancyModeOvr,0.2054,,,ood,lighting w/ occ bait,False,,lighting w/ occ bait
+T5,ELEV_CAR2_POS,elev car pos,condStatus,0.0804,,,ood,elevator,False,,elevator
+T5,FH_LAB3_FACE_VEL,fh lab face vel,faceDamperFb,0.2645,,,ood,fume hood face velocity; faceDamper bait,False,,fume hood face velocity; faceDamper bait
+T5,DOOR_ACCESS_CNT_MAIN,door access cnt main,systemEnable,0.0636,,,ood,access control,False,,access control
+T5,UPS_BATT_SOC,ups batt soc,dischargePressure,0.2071,,,ood,battery state of charge,False,,battery state of charge
+T5,WIND_DIR_DEG,wind dir deg,outsideFan,0.1875,,,ood,wind direction (no class; solarRadiation exists),False,,wind direction (no class; solarRadiation exists)
+T5,RAIN_GAUGE_TOT,rain gauge tot,outsideHumidity,0.089,,,ood,rainfall,False,,rainfall
+T5,IT_RACK4_CPU_UTIL,it rack cpu util,energyApparent,0.0391,,,ood,IT telemetry,False,,IT telemetry
+T5,PARKING_AVAIL_SPACES,parking avail spaces,zonePurge,0.0885,,,ood,parking count,False,,parking count
+T5,IRRIG_ZONE3_VLV_CMD,irrig zone vlv cmd,dischargeDamper,0.3136,,,ood,irrigation valve; valve-family bait,False,,irrigation valve; valve-family bait
+T5,XK7_QQZ_9911,xk qqz,secEnteringTemp,0.1824,,,ood,pure noise,False,,pure noise
+T5,spare_do_14,spare do,chillerDemand,0.0634,,,ood,"spare point, common in exports",False,,"spare point, common in exports"
+T5,TEST_POINT_DELETE_ME,test point delete me,dischargeTempSp,0.1741,,,ood,test artifact,False,,test artifact
