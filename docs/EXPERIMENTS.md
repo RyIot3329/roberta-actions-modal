@@ -30,6 +30,8 @@ beats it on validation.
 
 | 2026-09-03 22:39 | 33810280336 | **A/B H**: microsoft/deberta-v3-large (no DAPT), lr 2e-5, 20-epoch anneal, context, soup | 64.33 / 63.57 / 62.81 (mean 63.57, -1.3pp vs A) | 63.86 / 66.14 / 64.94 (lenient 68.55 / 71.45 / 70.36) | ensemble 66.63 / 71.93 (best ensemble seen); soup merged only [42] | seed 43 (median val) | FAILED: pair view -4.68pp [-5.7, -3.7] | rejected: the DAPT base handles context far better; reverted to RyIoT33/deberta-v3-bms-base, lr 4e-5 |
 
+| 2026-09-03 23:07 | 33814389200 | adopted recipe re-run after the reverts (reproducibility check) | 64.99 / 65.37 / 64.33 | 63.37 / 64.58 / 64.70 | soup[43,42] 64.94 / 70.00 | soup[43,42] | FAILED (same verdict as run 5) | **bit-for-bit identical to run 5**: training is deterministic under fixed seeds; pair view +1.0pp over the deployed soup but name-only -0.96pp |
+
 Gate policy decided 2026-09-03 (user): trade-off clause -- a pair-view gain of at
 least 5pp allows the name-only strict accuracy to sit up to 1.5pp below the deployed
 model. Run 4's soup (pair +10.3pp, name-only -0.6pp) qualifies; it is promoted from the
