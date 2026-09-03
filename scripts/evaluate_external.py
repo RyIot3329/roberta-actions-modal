@@ -455,13 +455,16 @@ def main():
         out_path, index=False)
     print(f"\nFull predictions saved to: {out_path}")
 
+    # Active-learning priority: rows at stake times how unsure the model is,
+    # so a labeling pass (commissioning or review) goes where it pays most
     queue = (lo.groupby("text")
              .agg(rows=("weight", "sum"), predicted=("predicted", "first"),
                   confidence=("confidence", "first"), source=("source", "first"),
                   example_name=("point_name", "first"),
                   example_description=("desc_text", "first"))
-             .sort_values("rows", ascending=False)
              .reset_index())
+    queue["priority"] = queue["rows"] * (1.0 - queue["confidence"])
+    queue = queue.sort_values(["priority", "rows"], ascending=[False, False])
     queue_path = f"output/review_queue_{name}.csv"
     queue.to_csv(queue_path, index=False)
     print(f"Review queue (one entry per unique name, by row count): {queue_path}")
