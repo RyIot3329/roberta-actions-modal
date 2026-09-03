@@ -156,15 +156,25 @@ def test_pairs_primary_and_seed_mean_axis():
     base_name = _preds(66, 34)                # lucky deployed seed: 66%
     cand_name = _preds(65, 35)                # candidate seed: 65%
     base_pairs = [dict(p, context="eq a") for p in _preds(65, 35, site="P")]
-    cand_pairs = [dict(p, context="eq a") for p in _preds(78, 22, site="P")]
+    # same records; the candidate gets 13 of the baseline's misses right
+    cand_pairs = [dict(p) for p in base_pairs]
+    fixed = 0
+    for p in cand_pairs:
+        if p["predicted_label"] != p["actual_label"] and fixed < 13:
+            p["predicted_label"] = p["actual_label"]
+            fixed += 1
     b = mc.build_metrics_record(mc.score_predictions(base_name, tau=0.5), fp, model="b")
     b["metrics"]["pairs_ensemble"] = mc.score_predictions(base_pairs, tau=0.5)
-    b["seed_summary"] = {"42": {"test_strict": 0.66}, "43": {"test_strict": 0.642}, "44": {"test_strict": 0.63}}
+    b["seed_summary"] = {"42": {"test_strict": 0.66, "test_lenient": 0.70},
+                         "43": {"test_strict": 0.642, "test_lenient": 0.69},
+                         "44": {"test_strict": 0.63, "test_lenient": 0.68}}
     c = mc.build_metrics_record(mc.score_predictions(cand_name, tau=0.5), fp, model="c")
     c["metrics"]["pairs_ensemble"] = mc.score_predictions(cand_pairs, tau=0.5)
-    c["seed_summary"] = {"42": {"test_strict": 0.653}, "43": {"test_strict": 0.655}, "44": {"test_strict": 0.642}}
+    c["seed_summary"] = {"42": {"test_strict": 0.653, "test_lenient": 0.72},
+                         "43": {"test_strict": 0.655, "test_lenient": 0.70},
+                         "44": {"test_strict": 0.642, "test_lenient": 0.69}}
     d = mc.promote_decision(c, b, cand_name, base_name, candidate_pairs=cand_pairs, baseline_pairs=base_pairs)
-    assert d["primary"] == "pairs_ensemble.accuracy"
+    assert d["primary"] == "pairs_ensemble.strict.accuracy"
     assert d["axes"][0]["ok"] and d["axes"][0]["delta"] > 0.1
     name_axis = next(a for a in d["axes"] if a["axis"].startswith("strict.accuracy"))
     assert "seed means" in name_axis["axis"] and name_axis["ok"]

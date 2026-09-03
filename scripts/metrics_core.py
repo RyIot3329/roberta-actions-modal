@@ -323,9 +323,9 @@ def promote_decision(candidate: dict, baseline: dict,
         }
 
     cm, bm = candidate.get("metrics", {}), baseline.get("metrics", {})
-    use_pairs = bool(_get(cm, "pairs_ensemble.accuracy") is not None
-                     and _get(bm, "pairs_ensemble.accuracy") is not None)
-    primary_axis = "pairs_ensemble.accuracy" if use_pairs else PRIMARY_METRIC
+    use_pairs = bool(_get(cm, "pairs_ensemble.strict.accuracy") is not None
+                     and _get(bm, "pairs_ensemble.strict.accuracy") is not None)
+    primary_axis = "pairs_ensemble.strict.accuracy" if use_pairs else PRIMARY_METRIC
     primary_c, primary_b = _get(cm, primary_axis), _get(bm, primary_axis)
     preds_c = candidate_pairs if use_pairs else candidate_preds
     preds_b = baseline_pairs if use_pairs else baseline_preds
@@ -347,23 +347,33 @@ def promote_decision(candidate: dict, baseline: dict,
     if not primary_ok:
         reasons.append("primary regressed")
 
-    # Name-only strict accuracy: against the baseline run's seed mean when known
-    if use_pairs:
-        summary = baseline.get("seed_summary") or {}
-        seed_tests = [v.get("test_strict") for v in summary.values() if v.get("test_strict") is not None]
-        b_name = sum(seed_tests) / len(seed_tests) if seed_tests else _get(bm, PRIMARY_METRIC)
-        c_summary = candidate.get("seed_summary") or {}
-        c_tests = [v.get("test_strict") for v in c_summary.values() if v.get("test_strict") is not None]
-        c_name = sum(c_tests) / len(c_tests) if c_tests else _get(cm, PRIMARY_METRIC)
-        label = PRIMARY_METRIC + (" (seed means)" if seed_tests and c_tests else "")
-        if b_name is not None and c_name is not None:
-            ok = c_name - b_name > -margin
-            axes.append({"axis": label, "baseline": b_name, "candidate": c_name,
-                         "delta": c_name - b_name, "threshold": -margin, "ok": bool(ok)})
-            if not ok:
-                reasons.append(f"{label} regressed by {b_name - c_name:.4f}")
+    # Per-name name-only strict and lenient accuracy: against the baseline
+    # run's SEED MEAN when it recorded one (a single deployed seed is a lucky
+    # draw; seeds differ by 2-4pp on 830 texts). When the pair view is the
+    # primary these are secondary axes; otherwise strict is already the primary.
+    def seed_mean(record, key, fallback_path):
+        summary = record.get("seed_summary") or {}
+        vals = [v.get(key) for v in summary.values() if v.get(key) is not None]
+        return (sum(vals) / len(vals), True) if vals else (_get(record.get("metrics", {}), fallback_path), False)
 
-    secondary = list(SECONDARY_AXES)
+    mean_axes = [("test_lenient", "lenient.accuracy")]
+    if use_pairs:
+        mean_axes.insert(0, ("test_strict", PRIMARY_METRIC))
+    for key, path in mean_axes:
+        b_val, b_is_mean = seed_mean(baseline, key, path)
+        c_val, c_is_mean = seed_mean(candidate, key, path)
+        if b_val is None or c_val is None:
+            continue
+        label = path + (" (seed means)" if b_is_mean and c_is_mean else "")
+        ok = c_val - b_val > -margin
+        axes.append({"axis": label, "baseline": b_val, "candidate": c_val,
+                     "delta": c_val - b_val, "threshold": -margin, "ok": bool(ok)})
+        if not ok:
+            reasons.append(f"{label} regressed by {b_val - c_val:.4f}")
+
+    # Row-aware per-name accuracy (dominated by a few high-row names even after
+    # log1p weighting) gets a wider margin; per-name slices a two-SE margin
+    secondary = [a for a in SECONDARY_AXES if a != "lenient.accuracy"]
     slice_names = sorted(_get(bm, "slices", {}) or {})
     for axis in secondary + [f"slices.{name}.strict" for name in slice_names]:
         b_val, c_val = _get(bm, axis), _get(cm, axis)
@@ -375,6 +385,8 @@ def promote_decision(candidate: dict, baseline: dict,
         if axis.startswith("slices."):
             n = _get(bm, axis.rsplit(".", 1)[0] + ".n")
             m = _binomial_margin(b_val, n, margin)
+        elif axis == "strict.log1p_rows_accuracy":
+            m = max(margin, 0.015)
         delta = c_val - b_val
         ok = delta > -m
         axes.append({"axis": axis, "baseline": b_val, "candidate": c_val,
