@@ -219,10 +219,14 @@ def score_predictions(preds, tau=None, tau_source: str = "validation") -> dict:
 # ---------------------------------------------------------------------------
 
 def _join(preds_a, preds_b, key: str):
-    a = {p[key]: p for p in preds_a}
-    b = {p[key]: p for p in preds_b}
+    # The same normalized name can occur in two held-out sites with different
+    # golds, so records are paired on (key, site) when a site is present
+    def k(p):
+        return (p[key], p.get("site", ""))
+    a = {k(p): p for p in preds_a}
+    b = {k(p): p for p in preds_b}
     common = sorted(set(a) & set(b))
-    return [a[k] for k in common], [b[k] for k in common], len(a), len(b)
+    return [a[c] for c in common], [b[c] for c in common], len(a), len(b)
 
 
 def paired_bootstrap(preds_baseline, preds_candidate, key: str = "text",

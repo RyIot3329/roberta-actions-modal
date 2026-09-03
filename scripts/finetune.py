@@ -11,9 +11,12 @@ Usage:
     modal run finetune.py --gpu A10G --epochs 9 --push-to-hub --hf-repo username/model-name
 """
 
+import json
 from datetime import datetime
 from pathlib import Path
 import os
+
+import numpy as np
 
 import modal
 
@@ -79,6 +82,8 @@ def _train_impl(
     hf_repo: str = None,
     hf_token: str = None,
     baseline_f1: float = None,
+    save_name: str = "final_model",
+    target_precision: float = 0.85,
 ) -> dict:
     """
     Fine-tune a transformer model on the provided data.
@@ -308,10 +313,12 @@ def _train_impl(
         logits = torch.from_numpy(output.predictions).float()
         probs = torch.softmax(logits / temperature, dim=1)
         confidences, pred_ids = probs.max(dim=1)
+        topk_ids = probs.topk(min(10, probs.shape[1]), dim=1).indices.tolist()
 
         predictions = []
-        for sample, pred_id, confidence in zip(samples, pred_ids.tolist(), confidences.tolist()):
-            predictions.append({
+        for sample, pred_id, confidence, topk in zip(
+                samples, pred_ids.tolist(), confidences.tolist(), topk_ids):
+            record = {
                 "text": sample["text"],
                 "actual_label": sample["label"],
                 "actual_id": sample["label_id"],
@@ -319,7 +326,14 @@ def _train_impl(
                 "predicted_id": pred_id,
                 "confidence": confidence,
                 "correct": pred_id == sample["label_id"],
-            })
+                "topk_labels": [id2label_int.get(i, f"unknown_{i}") for i in topk],
+            }
+            # Slice fields for the composite gate (site / rows / seen_in_train /
+            # lenient accept set) travel with each prediction
+            for key in ("site", "rows", "seen_in_train", "accept"):
+                if key in sample:
+                    record[key] = sample[key]
+            predictions.append(record)
         return predictions
 
     print("\nRunning validation inference...")
@@ -332,6 +346,27 @@ def _train_impl(
     model.config.calibration_temperature = temperature
 
     predictions_list = build_predictions(val_output, val_data, temperature)
+
+    # Acceptance threshold: smallest calibrated confidence at which validation
+    # precision reaches `target_precision` (same rule as metrics_core.
+    # fit_acceptance_threshold; kept inline because the container does not
+    # ship the local scripts). Stored in the config so the serving layer can
+    # map lower-confidence predictions to predicted_unknown.
+    def fit_acceptance_threshold(preds, target):
+        order = sorted(preds, key=lambda p: -p["confidence"])
+        hits = 0
+        best = 1.0
+        for i, p in enumerate(order, start=1):
+            hits += 1 if p["correct"] else 0
+            if hits / i >= target:
+                best = float(p["confidence"])
+        return best
+
+    acceptance_threshold = fit_acceptance_threshold(predictions_list, target_precision)
+    model.config.acceptance_threshold = acceptance_threshold
+    model.config.acceptance_target_precision = target_precision
+    print(f"Acceptance threshold for {target_precision:.0%} validation precision: "
+          f"{acceptance_threshold:.3f}")
     val_correct = sum(1 for p in predictions_list if p["correct"])
     val_total = len(predictions_list)
     val_accuracy = val_correct / val_total if val_total > 0 else 0
@@ -376,7 +411,18 @@ def _train_impl(
         else:
             gate = {"passed": True, "baseline_f1": baseline_f1, "new_f1": new_f1}
 
-    # Push to Hugging Face Hub if requested
+    # Always persist the final model (best checkpoint + calibrated config) to
+    # the volume: the local composite gate in main() decides whether
+    # push_saved_model() ships it, so nothing is lost when the gate runs later
+    final_model_path = volume_path / save_name
+    final_model_path.mkdir(parents=True, exist_ok=True)
+    trainer.save_model(str(final_model_path))
+    tokenizer.save_pretrained(str(final_model_path))
+    volume.commit()
+    print(f"Model saved to volume: {final_model_path}")
+
+    # Legacy in-container push (main() now gates locally and pushes via
+    # push_saved_model; this path only runs when explicitly requested)
     hf_url = None
     if push_to_hub and hf_repo:
         print("\n" + "=" * 60)
@@ -387,15 +433,6 @@ def _train_impl(
             print("WARNING: HF_TOKEN not provided. Skipping push to Hub.")
         else:
             try:
-                # Save model and tokenizer locally first
-                final_model_path = volume_path / "final_model"
-                final_model_path.mkdir(parents=True, exist_ok=True)
-                
-                trainer.save_model(str(final_model_path))
-                tokenizer.save_pretrained(str(final_model_path))
-                
-                print(f"Model saved locally to: {final_model_path}")
-                
                 # Push to Hub using login for authentication
                 from huggingface_hub import HfApi, login
                 
@@ -501,7 +538,17 @@ def _train_impl(
         "huggingface_url": hf_url,
         "quality_gate": gate,
         "calibration_temperature": temperature,
+        "acceptance_threshold": acceptance_threshold,
+        "target_precision": target_precision,
         "test_per_class": test_per_class,
+        "save_name": save_name,
+    }
+    # Raw logits (not written to results.json) let the local driver apply the
+    # stored temperature, build multi-seed ensembles, and fit the acceptance
+    # threshold without another GPU pass
+    logits_payload = {
+        "val_logits": val_output.predictions.astype(np.float16),
+        "test_logits": test_output.predictions.astype(np.float16),
     }
 
     # Save results to volume
@@ -527,6 +574,7 @@ def _train_impl(
         print(f"Model available at: {hf_url}")
     print("=" * 60)
 
+    results.update(logits_payload)
     return results
 
 
@@ -565,6 +613,31 @@ def train_h100(**kwargs) -> dict:
     return _train_impl(**kwargs)
 
 
+@app.function(timeout=45 * 60)
+def push_saved_model(save_name: str, hf_repo: str, hf_token: str, commit_message: str) -> str:
+    """Upload a model dir saved on the volume by _train_impl to the Hub.
+
+    Called by main() only after the local composite gate passed, so the
+    production repo is never overwritten by a regression."""
+    from huggingface_hub import HfApi, login
+
+    volume.reload()
+    model_dir = volume_path / save_name
+    if not model_dir.exists():
+        raise FileNotFoundError(f"{model_dir} not found on the volume")
+    login(token=hf_token)
+    api = HfApi()
+    try:
+        api.create_repo(repo_id=hf_repo, private=True, exist_ok=True, repo_type="model")
+    except Exception as e:  # noqa: BLE001
+        print(f"Repo creation note: {e}")
+    api.upload_folder(folder_path=str(model_dir), repo_id=hf_repo, repo_type="model",
+                      commit_message=commit_message)
+    url = f"https://huggingface.co/{hf_repo}"
+    print(f"Model pushed to {url}")
+    return url
+
+
 # Mapping from GPU name to training function
 GPU_FUNCTIONS = {
     "T4": train_t4,
@@ -575,6 +648,75 @@ GPU_FUNCTIONS = {
     "A100-80GB": train_a100,  # Modal will handle the specific variant
     "H100": train_h100,
 }
+
+
+
+
+# =============================================================================
+# Local driver: multi-seed training, composite gate, gated push
+# =============================================================================
+
+def _load_jsonl(filepath: str) -> list:
+    with open(filepath, "r", encoding="utf-8") as f:
+        return [json.loads(line) for line in f if line.strip()]
+
+
+def _git_sha():
+    import subprocess
+    try:
+        return subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], text=True).strip()
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _ensemble_predictions(seed_results, samples, split_key, id2label_int):
+    """Average the temperature-scaled probabilities of every seed for one
+    split and turn them into prediction records (same schema as
+    build_predictions)."""
+    probs = None
+    for res in seed_results.values():
+        logits = np.asarray(res[f"{split_key}_logits"], dtype=np.float32)
+        t = float(res["calibration_temperature"] or 1.0)
+        z = logits / t
+        z = z - z.max(axis=1, keepdims=True)
+        p = np.exp(z)
+        p /= p.sum(axis=1, keepdims=True)
+        probs = p if probs is None else probs + p
+    probs /= len(seed_results)
+    order = np.argsort(-probs, axis=1)[:, :10]
+    preds = []
+    for sample, ranked in zip(samples, order):
+        pred_id = int(ranked[0])
+        record = {
+            "text": sample["text"],
+            "actual_label": sample["label"],
+            "actual_id": sample["label_id"],
+            "predicted_label": id2label_int.get(pred_id, f"unknown_{pred_id}"),
+            "predicted_id": pred_id,
+            "confidence": float(probs[len(preds), pred_id]),
+            "correct": pred_id == sample["label_id"],
+            "topk_labels": [id2label_int.get(int(i), f"unknown_{i}") for i in ranked],
+        }
+        for key in ("site", "rows", "seen_in_train", "accept"):
+            if key in sample:
+                record[key] = sample[key]
+        preds.append(record)
+    return preds
+
+
+def _seed_agreement(seed_results):
+    seeds = sorted(seed_results)
+    if len(seeds) < 2:
+        return None
+    preds = {s: [p["predicted_id"] for p in seed_results[s]["test_inference"]["predictions"]]
+             for s in seeds}
+    n = len(preds[seeds[0]])
+    pair = []
+    for i in range(len(seeds)):
+        for j in range(i + 1, len(seeds)):
+            pair.append(sum(a == b for a, b in zip(preds[seeds[i]], preds[seeds[j]])) / n)
+    unanimous = sum(len({preds[s][k] for s in seeds}) == 1 for k in range(n)) / n
+    return {"pairwise_mean": float(np.mean(pair)), "unanimous": float(unanimous)}
 
 
 @app.local_entrypoint()
@@ -594,14 +736,28 @@ def main(
     label_smoothing: float = 0.1,
     metric_for_best_model: str = "f1_weighted",
     seed: int = 42,
+    seeds: str = "",
     push_to_hub: bool = False,
     hf_repo: str = None,
+    output_dir: str = "output",
+    baseline_path: str = "output/best_metrics.json",
+    target_precision: float = 0.85,
 ):
     """
     Run fine-tuning from the command line.
 
     Defaults mirror config/training.yml (the single source of truth); the
     GitHub workflow passes every value explicitly from that file.
+
+    Multi-seed: `--seeds 42,43,44` trains every seed in parallel on Modal,
+    scores each with the shared metrics_core scorer (strict/lenient accuracy,
+    log1p(rows) weighting, per-site and seen/unseen slices, coverage at the
+    validation-fitted acceptance threshold), reports the logit ensemble, and
+    selects the seed with the median VALIDATION strict accuracy as the
+    candidate. The composite non-inferiority gate compares the candidate
+    against output/best_metrics.json (fingerprinted; run
+    scripts/rescore_baseline.py when it is stale). Only a passing candidate is
+    pushed (push_saved_model) and only then is the baseline rewritten.
 
     Args:
         model: Model to fine-tune (e.g., microsoft/deberta-v3-base, FacebookAI/roberta-base)
@@ -618,138 +774,214 @@ def main(
         warmup_ratio: Ratio of total steps for warmup
         label_smoothing: Label smoothing factor (also softens confidences)
         metric_for_best_model: Validation metric for checkpoint selection
-        seed: Random seed (data order, dropout, init) for reproducible runs
-        push_to_hub: Whether to push model to Hugging Face Hub (quality-gated)
+        seed: Random seed (used when --seeds is empty)
+        seeds: Comma-separated seeds for a multi-seed run (overrides --seed)
+        push_to_hub: Push the gated candidate to the Hub
         hf_repo: Hugging Face repo ID (username/model-name)
+        output_dir: Where results files are written
+        baseline_path: Quality-gate baseline (schema v2, see metrics_core)
+        target_precision: Validation precision the acceptance threshold targets
     """
-    import json
+    import sys as _sys
+    _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import metrics_core as mc
 
     print("=" * 60)
     print("HVAC Point Classification - Fine-tuning Pipeline")
     print("=" * 60)
-    
-    # Resolve model shorthand names
+
+    model_name = AVAILABLE_MODELS.get(model, model)
     if model in AVAILABLE_MODELS:
-        model_name = AVAILABLE_MODELS[model]
         print(f"Using model shorthand: {model} -> {model_name}")
-    else:
-        model_name = model
-    
-    # Resolve GPU type
     gpu_upper = gpu.upper()
     if gpu_upper not in GPU_FUNCTIONS:
         print(f"WARNING: Unknown GPU '{gpu}', falling back to T4")
         gpu_upper = "T4"
-    
-    print(f"Model: {model_name}")
-    print(f"GPU: {gpu_upper}")
+    seed_list = [int(x) for x in seeds.split(",") if x.strip()] or [seed]
+    print(f"Model: {model_name}\nGPU: {gpu_upper}\nSeeds: {seed_list}")
     print("=" * 60)
 
-    print("\nLoading training data...")
-    
-    # Get HF token from environment variable
     hf_token = os.environ.get("HF_TOKEN")
     if push_to_hub and not hf_token:
         print("WARNING: --push-to-hub specified but HF_TOKEN environment variable not set!")
-    
-    # Load data from local files (paths relative to repo root)
-    def load_jsonl(filepath: str) -> list:
-        data = []
-        with open(filepath, "r") as f:
-            for line in f:
-                data.append(json.loads(line.strip()))
-        return data
 
-    train_data = load_jsonl("data/train.jsonl")
-    val_data = load_jsonl("data/validation.jsonl")
-    test_data = load_jsonl("data/test.jsonl")
-
-    # Load label mapping (contains label2id, id2label, num_labels)
+    train_data = _load_jsonl("data/train.jsonl")
+    val_data = _load_jsonl("data/validation.jsonl")
+    test_data = _load_jsonl("data/test.jsonl")
     with open("data/label_mapping.json", "r") as f:
         label_mapping = json.load(f)
-    
-    # Extract the nested structures
     label2id = label_mapping["label2id"]
     id2label = label_mapping["id2label"]
+    id2label_int = {int(k): v for k, v in id2label.items()}
     num_labels = label_mapping["num_labels"]
-
     print(f"Loaded {len(train_data)} train, {len(val_data)} val, {len(test_data)} test samples")
     print(f"Number of labels: {num_labels}")
 
-    # Quality-gate baseline: best test f1 of any previously pushed model
-    best_metrics_path = "output/best_metrics.json"
-    baseline_f1 = None
-    if push_to_hub and os.path.exists(best_metrics_path):
-        with open(best_metrics_path, "r") as f:
-            baseline_f1 = json.load(f).get("test_f1_weighted")
-        if baseline_f1 is not None:
-            print(f"Quality gate baseline (from {best_metrics_path}): "
-                  f"test f1_weighted {baseline_f1:.4f}")
-    print(f"\nTraining config:")
-    print(f"  Model: {model_name}")
-    print(f"  GPU: {gpu_upper}")
-    print(f"  Epochs: {epochs}")
-    print(f"  Batch size: {batch_size} (effective: {batch_size * gradient_accumulation})")
-    print(f"  Learning rate: {learning_rate}")
-    print(f"  Max seq length: {max_seq_length}")
-    
-    if push_to_hub:
-        print(f"\nWill push to Hugging Face: {hf_repo}")
+    # ----- Scoreboard + baseline -----
+    fingerprints = mc.fingerprints(test_data, list(label2id))
+    baseline = None
+    baseline_preds = None
+    baseline_note = "no baseline file"
+    if os.path.exists(baseline_path):
+        baseline = mc.legacy_baseline(baseline_path)
+        if baseline.get("schema_version", 1) < 2 or not baseline.get("fingerprints"):
+            baseline_note = "baseline is schema v1 (no fingerprints): STALE -- run scripts/rescore_baseline.py"
+            baseline = None
+        elif not mc.fingerprints_match(fingerprints, baseline["fingerprints"]):
+            baseline_note = ("baseline fingerprints do not match the current test set / label space: "
+                             "STALE -- run scripts/rescore_baseline.py")
+        else:
+            baseline_note = (f"baseline {baseline.get('model')} strict "
+                             f"{baseline['metrics']['strict']['accuracy']:.4f} on the same scoreboard")
+            pred_path = baseline.get("predictions_path")
+            if pred_path and os.path.exists(pred_path):
+                baseline_preds = mc.load_predictions_jsonl(pred_path)
+    print(f"Quality gate: {baseline_note}")
 
-    print("\nStarting Modal training...")
-
-    # Select the appropriate training function based on GPU type
+    # ----- Train every seed in parallel -----
     train_fn = GPU_FUNCTIONS[gpu_upper]
-    print(f"Using training function for GPU: {gpu_upper}")
-
-    # Run training on Modal
-    results = train_fn.remote(
-        train_data=train_data,
-        val_data=val_data,
-        test_data=test_data,
-        num_labels=num_labels,
-        label2id=label2id,
-        id2label=id2label,
-        model_name=model_name,
-        epochs=epochs,
-        batch_size=batch_size,
-        learning_rate=learning_rate,
-        max_seq_length=max_seq_length,
-        optimizer=optimizer,
-        scheduler=scheduler,
-        gradient_accumulation=gradient_accumulation,
-        mixed_precision=mixed_precision,
-        weight_decay=weight_decay,
-        warmup_ratio=warmup_ratio,
-        label_smoothing=label_smoothing,
-        metric_for_best_model=metric_for_best_model,
-        seed=seed,
-        push_to_hub=push_to_hub,
-        hf_repo=hf_repo,
-        hf_token=hf_token,
-        baseline_f1=baseline_f1,
+    common = dict(
+        train_data=train_data, val_data=val_data, test_data=test_data,
+        num_labels=num_labels, label2id=label2id, id2label=id2label,
+        model_name=model_name, epochs=epochs, batch_size=batch_size,
+        learning_rate=learning_rate, max_seq_length=max_seq_length,
+        optimizer=optimizer, scheduler=scheduler,
+        gradient_accumulation=gradient_accumulation, mixed_precision=mixed_precision,
+        weight_decay=weight_decay, warmup_ratio=warmup_ratio,
+        label_smoothing=label_smoothing, metric_for_best_model=metric_for_best_model,
+        push_to_hub=False, hf_repo=hf_repo, hf_token=hf_token, baseline_f1=None,
+        target_precision=target_precision,
     )
+    print(f"\nStarting Modal training on {gpu_upper} for seeds {seed_list}...")
+    calls = {s: train_fn.spawn(seed=s, save_name=f"final_model_seed{s}", **common)
+             for s in seed_list}
+    seed_results = {s: call.get() for s, call in calls.items()}
 
-    # A successful gated push establishes the new baseline. Test-set size and
-    # class count are recorded so composition shifts (new sites / new classes)
-    # are detectable when comparing across runs.
-    if results.get("huggingface_url"):
-        with open(best_metrics_path, "w") as f:
-            json.dump({
-                "test_f1_weighted": results["test_metrics"].get("f1_weighted"),
-                "test_accuracy": results["test_metrics"].get("accuracy"),
-                "num_test_records": results["config"].get("test_samples"),
-                "num_classes": results["config"].get("num_labels"),
-                "model": results["model"],
-                "timestamp": results["timestamp"],
-            }, f, indent=2)
-        print(f"Updated quality-gate baseline: {best_metrics_path}")
+    # ----- Score every seed locally -----
+    per_seed = {}
+    for s, res in seed_results.items():
+        val_preds = res["validation_inference"]["predictions"]
+        test_preds = res["test_inference"]["predictions"]
+        tau = mc.fit_acceptance_threshold(val_preds, target_precision)
+        per_seed[s] = {
+            "tau": tau,
+            "val": mc.score_predictions(val_preds, tau=tau),
+            "test": mc.score_predictions(test_preds, tau=tau),
+            "test_preds": test_preds,
+        }
+    ensemble = None
+    if len(seed_results) > 1:
+        ens_val = _ensemble_predictions(seed_results, val_data, "val", id2label_int)
+        ens_test = _ensemble_predictions(seed_results, test_data, "test", id2label_int)
+        tau_e = mc.fit_acceptance_threshold(ens_val, target_precision)
+        ensemble = {"tau": tau_e, "val": mc.score_predictions(ens_val, tau=tau_e),
+                    "test": mc.score_predictions(ens_test, tau=tau_e), "test_preds": ens_test}
+    agreement = _seed_agreement(seed_results)
 
-    # Save results locally
+    # Candidate = seed with the median validation strict accuracy (never
+    # selected on the test set)
+    ranked = sorted(seed_list, key=lambda s: per_seed[s]["val"]["strict"]["accuracy"])
+    selected = ranked[len(ranked) // 2]
+    results = seed_results[selected]
+    cand_test = per_seed[selected]["test"]
+    cand_preds = per_seed[selected]["test_preds"]
+    print(f"\nSelected seed {selected} (median validation strict accuracy "
+          f"{per_seed[selected]['val']['strict']['accuracy']:.4f})")
+
+    candidate_record = mc.build_metrics_record(
+        cand_test, fingerprints, model=model_name, hf_repo=hf_repo, git_sha=_git_sha(),
+        timestamp=results["timestamp"], seeds=seed_list, selected_seed=selected,
+        extra={
+            "calibration_temperature": results.get("calibration_temperature"),
+            "acceptance_threshold": per_seed[selected]["tau"],
+            "target_precision": target_precision,
+            "validation_metrics": {k: v for k, v in per_seed[selected]["val"].items()
+                                   if k != "coverage_curve"},
+            "seed_summary": {str(s): {"val_strict": per_seed[s]["val"]["strict"]["accuracy"],
+                                      "test_strict": per_seed[s]["test"]["strict"]["accuracy"],
+                                      "test_f1_weighted": per_seed[s]["test"]["strict"]["f1_weighted"],
+                                      "test_lenient": per_seed[s]["test"]["lenient"]["accuracy"],
+                                      "tau": per_seed[s]["tau"]} for s in seed_list},
+            "seed_agreement": agreement,
+            "ensemble": None if ensemble is None else {
+                "test_strict": ensemble["test"]["strict"]["accuracy"],
+                "test_lenient": ensemble["test"]["lenient"]["accuracy"],
+                "val_strict": ensemble["val"]["strict"]["accuracy"],
+                "test_log1p_rows": ensemble["test"]["strict"]["log1p_rows_accuracy"]},
+        },
+    )
+    if baseline is not None:
+        decision = mc.promote_decision(candidate_record, baseline, cand_preds, baseline_preds)
+    else:
+        decision = {"passed": False, "reason": baseline_note, "axes": []}
+    print("\n" + mc.format_axes_table(decision))
+
+    # Linear floor (written by scripts/baseline_linear.py in CI)
+    floor = None
+    floor_path = os.path.join(output_dir, "baseline_linear_metrics.json")
+    if os.path.exists(floor_path):
+        with open(floor_path) as f:
+            floor_rec = json.load(f)
+        if mc.fingerprints_match(floor_rec.get("fingerprints"), fingerprints):
+            floor = floor_rec["metrics"]["strict"]["accuracy"]
+
+    # ----- Gated push + baseline rewrite -----
+    hf_url = None
+    if decision["passed"] and push_to_hub and hf_repo and hf_token:
+        msg = (f"{model_name.split('/')[-1]}: seed {selected} of {seed_list}, {epochs}ep, "
+               f"bs{batch_size}x{gradient_accumulation}, lr{learning_rate}, "
+               f"test strict {cand_test['strict']['accuracy']:.4f}")
+        hf_url = push_saved_model.remote(results["save_name"], hf_repo, hf_token, msg)
+        os.makedirs(os.path.dirname(baseline_path) or ".", exist_ok=True)
+        pred_path = os.path.join(os.path.dirname(baseline_path) or ".", "best_predictions.jsonl")
+        candidate_record["predictions_path"] = pred_path
+        candidate_record["huggingface_url"] = hf_url
+        with open(baseline_path, "w") as f:
+            json.dump(candidate_record, f, indent=2)
+        mc.write_predictions_jsonl(cand_preds, pred_path)
+        print(f"Updated quality-gate baseline: {baseline_path}")
+    elif decision["passed"] and push_to_hub:
+        print("Gate passed but no HF token/repo: nothing pushed, baseline unchanged")
+    results["huggingface_url"] = hf_url
+    results["quality_gate"] = {"passed": decision["passed"], "reason": decision["reason"],
+                               "primary": mc.PRIMARY_METRIC}
+
+    # ----- Results files -----
+    os.makedirs(output_dir, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     model_short_name = model_name.split("/")[-1]
-    output_file = f"output/{timestamp}_{model_short_name}.txt"
-    
+    stem = f"{timestamp}_{model_short_name}"
+    metrics_file = os.path.join(output_dir, f"{stem}_metrics.json")
+    with open(metrics_file, "w") as f:
+        json.dump({"candidate": candidate_record, "gate": decision,
+                   "baseline_note": baseline_note, "linear_floor_strict": floor,
+                   "per_seed": {str(s): {"tau": per_seed[s]["tau"],
+                                         "validation": {k: v for k, v in per_seed[s]["val"].items()
+                                                        if k != "coverage_curve"},
+                                         "test": {k: v for k, v in per_seed[s]["test"].items()
+                                                  if k != "coverage_curve"}} for s in seed_list},
+                   "ensemble": None if ensemble is None else {
+                       "tau": ensemble["tau"],
+                       "validation": {k: v for k, v in ensemble["val"].items() if k != "coverage_curve"},
+                       "test": {k: v for k, v in ensemble["test"].items() if k != "coverage_curve"}},
+                   "coverage_curve_test": cand_test.get("coverage_curve")},
+                  f, indent=2, default=str)
+    mc.write_predictions_jsonl(cand_preds, os.path.join(output_dir, f"{stem}_predictions.jsonl"))
+
+    def fmt_block(name, m):
+        s_, l_ = m["strict"], m["lenient"]
+        cov = m.get("coverage", {})
+        line = (f"  {name}: strict {s_['accuracy']:.4f} (f1w {s_['f1_weighted']:.4f}, "
+                f"f1m {s_['f1_macro']:.4f}) lenient {l_['accuracy']:.4f} "
+                f"log1p-rows {s_['log1p_rows_accuracy']:.4f} rows {s_['rows_accuracy']:.4f}")
+        if cov:
+            line += (f" | coverage@tau={cov['tau']:.3f}: {cov['coverage_texts']:.1%} texts "
+                     f"at precision {cov['precision_at_tau']:.1%}")
+        if m.get("topk"):
+            line += f" | top3 {m['topk']['top3']:.4f} top5 {m['topk']['top5']:.4f}"
+        return line + "\n"
+
+    output_file = os.path.join(output_dir, f"{stem}.txt")
     with open(output_file, "w") as f:
         f.write("=" * 60 + "\n")
         f.write(f"{model_short_name} Fine-tuning Results\n")
@@ -757,19 +989,21 @@ def main(
         f.write(f"Timestamp: {results['timestamp']}\n")
         f.write(f"Model: {results['model']}\n")
         f.write(f"GPU: {results['gpu']}\n")
-        f.write(f"Parameters: {results['model_params']['total']:,} total, {results['model_params']['trainable']:,} trainable\n")
-        if results.get('huggingface_url'):
-            f.write(f"Hugging Face: {results['huggingface_url']}\n")
+        f.write(f"Parameters: {results['model_params']['total']:,} total, "
+                f"{results['model_params']['trainable']:,} trainable\n")
+        if hf_url:
+            f.write(f"Hugging Face: {hf_url}\n")
+        f.write(f"Seeds: {seed_list} (selected {selected} by median validation strict accuracy)\n")
+        f.write(f"Scoreboard: {fingerprints['n_test']} test records, {fingerprints['n_classes']} classes, "
+                f"test sha {fingerprints['test_sha256'][:12]}, labels sha "
+                f"{fingerprints['label_space_sha256'][:12]}\n")
         f.write("\nConfiguration:\n")
         for k, v in results['config'].items():
             f.write(f"  {k}: {v}\n")
-        f.write("\nTraining Metrics:\n")
+        f.write("\nTraining Metrics (selected seed):\n")
         for k, v in results['train_metrics'].items():
             if v is not None:
-                if isinstance(v, float):
-                    f.write(f"  {k}: {v:.4f}\n")
-                else:
-                    f.write(f"  {k}: {v}\n")
+                f.write(f"  {k}: {v:.4f}\n" if isinstance(v, float) else f"  {k}: {v}\n")
         f.write("\nEvaluation Metrics (validation set, used for model selection):\n")
         for k, v in results['eval_metrics'].items():
             if v is not None:
@@ -778,13 +1012,31 @@ def main(
         for k, v in results['test_metrics'].items():
             if v is not None:
                 f.write(f"  {k}: {v:.4f}\n")
-        if results.get('quality_gate'):
-            g = results['quality_gate']
-            f.write(f"\nQuality Gate: {'PASSED' if g['passed'] else 'FAILED -- Hub push skipped'} "
-                    f"(test f1 {g['new_f1']:.4f} vs previous best {g['baseline_f1']:.4f})\n")
-        if results.get('calibration_temperature'):
-            f.write(f"\nCalibration temperature (fitted on validation, stored in model config): "
-                    f"{results['calibration_temperature']:.3f}\n")
+
+        f.write("\nComposite metrics (metrics_core; strict = exact label, lenient = accept set):\n")
+        for s in seed_list:
+            f.write(fmt_block(f"seed {s} validation", per_seed[s]["val"]))
+            f.write(fmt_block(f"seed {s} test      ", per_seed[s]["test"]))
+        if ensemble is not None:
+            f.write(fmt_block("ensemble validation", ensemble["val"]))
+            f.write(fmt_block("ensemble test      ", ensemble["test"]))
+        if agreement:
+            f.write(f"  seed agreement on test: pairwise {agreement['pairwise_mean']:.3f}, "
+                    f"unanimous {agreement['unanimous']:.3f}\n")
+        f.write("\nTest slices (selected seed; strict / lenient / n):\n")
+        for name, sl in cand_test["slices"].items():
+            f.write(f"  {name:<26} {sl['strict']:.4f} / {sl['lenient']:.4f} / {sl['n']}\n")
+        if floor is not None:
+            f.write(f"\nLinear floor (TF-IDF+SGD) strict: {floor:.4f} -> transformer margin "
+                    f"{cand_test['strict']['accuracy'] - floor:+.4f}"
+                    f"{'  (WARNING: < 0.05)' if cand_test['strict']['accuracy'] - floor < 0.05 else ''}\n")
+        f.write("\n" + mc.format_axes_table(decision) + "\n")
+        f.write(f"\nQuality Gate: {'PASSED' if decision['passed'] else 'FAILED -- Hub push skipped'} "
+                f"({decision['reason']})\n")
+        f.write(f"\nCalibration temperature (fitted on validation, stored in model config): "
+                f"{results['calibration_temperature']:.3f}\n")
+        f.write(f"Acceptance threshold ({target_precision:.0%} validation precision, stored in model "
+                f"config): {per_seed[selected]['tau']:.3f}\n")
 
         per_class = results.get('test_per_class') or {}
         scored = [(name, m) for name, m in per_class.items()
@@ -796,13 +1048,13 @@ def main(
                 f.write(f"  {name}: {m['precision']:.2f} / {m['recall']:.2f} / "
                         f"{m['f1-score']:.2f} / {int(m['support'])}\n")
 
-        # Add inference results for both sets
         for title, key in [("Validation", 'validation_inference'), ("Test", 'test_inference')]:
             f.write("\n" + "=" * 60 + "\n")
-            f.write(f"{title} Inference Results\n")
+            f.write(f"{title} Inference Results (selected seed)\n")
             f.write("=" * 60 + "\n")
             inf = results.get(key, {})
-            f.write(f"Accuracy: {inf.get('correct', 0)}/{inf.get('total', 0)} ({inf.get('accuracy', 0):.2%})\n\n")
+            f.write(f"Accuracy: {inf.get('correct', 0)}/{inf.get('total', 0)} "
+                    f"({inf.get('accuracy', 0):.2%})\n\n")
             f.write("Predictions:\n")
             f.write("-" * 60 + "\n")
             for pred in inf.get('predictions', []):
@@ -813,20 +1065,23 @@ def main(
 
         f.write("=" * 60 + "\n")
         f.write("Raw JSON:\n")
-        f.write(json.dumps(results, indent=2, default=str))
+        serializable = {k: v for k, v in results.items() if k not in ("val_logits", "test_logits")}
+        f.write(json.dumps(serializable, indent=2, default=str))
 
     print(f"\nResults saved to: {output_file}")
-    
-    # Print summary
+    print(f"Metrics saved to: {metrics_file}")
+
     print("\n" + "=" * 60)
     print("FINAL RESULTS SUMMARY")
     print("=" * 60)
     print(f"Model: {model_name}")
     print(f"GPU: {gpu_upper}")
-    print(f"Validation F1 (weighted): {results['eval_metrics']['f1_weighted']:.4f}")
-    print(f"Test F1 (weighted): {results['test_metrics']['f1_weighted']:.4f}")
-    print(f"Test F1 (macro): {results['test_metrics']['f1_macro']:.4f}")
-    print(f"Test Accuracy: {results['test_metrics']['accuracy']:.4f}")
+    for s in seed_list:
+        print(f"Seed {s}: val strict {per_seed[s]['val']['strict']['accuracy']:.4f} | "
+              f"test strict {per_seed[s]['test']['strict']['accuracy']:.4f} "
+              f"lenient {per_seed[s]['test']['lenient']['accuracy']:.4f}")
+    if ensemble is not None:
+        print(f"Ensemble: test strict {ensemble['test']['strict']['accuracy']:.4f} "
+              f"lenient {ensemble['test']['lenient']['accuracy']:.4f}")
+    print(f"Gate: {'PASSED' if decision['passed'] else 'FAILED'} ({decision['reason']})")
     print("=" * 60)
-    
-    return results
