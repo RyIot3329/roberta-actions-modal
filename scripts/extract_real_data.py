@@ -40,15 +40,92 @@ from pathlib import Path
 
 import pandas as pd
 
-# (text column, label column, is_slot_path, description column or None)
-# per format, tried in order. Descriptions are free-text point metadata
-# (e.g. BACnet's description property) that carries the semantics when the
-# name is a bare object reference like "AV 00".
+# Per-layout column roles, tried in order. Descriptions are free-text point
+# metadata (e.g. BACnet's description property) that carries the semantics
+# when the name is a bare object reference like "AV 00". Context columns
+# (raw BAS path, live value string with units, BACnet device/object id) are
+# what the product also has at tagging time; they become the model's optional
+# context (scripts/clean_data.py build_context).
 FORMATS = [
-    ('pointPath from BAS', 'EO66 Point', True, None),
-    ('proxyExt.pointId/BASpointName', 'pointTag/EO66', True, None),
-    ('Bacnet Name', 'eo66Def', False, 'BACnet Description'),
+    {'text': 'pointPath from BAS', 'label': 'EO66 Point', 'is_path': True,
+     'out': 'out', 'to_string': 'To String'},
+    {'text': 'proxyExt.pointId/BASpointName', 'label': 'pointTag/EO66', 'is_path': True,
+     'out': 'out', 'to_string': 'To String'},
+    {'text': 'Bacnet Name', 'label': 'eo66Def', 'is_path': False,
+     'description': 'BACnet Description', 'device': 'BACnet Device Name',
+     'object_id': 'BACnet Object ID'},
 ]
+
+# POST-mapping, human-assigned columns: never model input (they encode the
+# answer). extract_frame asserts it never reads them.
+FORBIDDEN_COLUMNS = frozenset({
+    'EO66 Equip', 'EO66 EquipName', 'parent.name/EquipName',
+    'Slot Path', 'Niagara New Slot Path',
+})
+CONTEXT_COLUMNS = ['equip_path', 'device_name', 'object_type', 'units', 'value_kind', 'description']
+_PATH_PREFIX_SEGMENTS = {'slot:', 'drivers', 'niagaranetwork', 'bacnetnetwork', 'lonnetwork',
+                         'modbusnetwork', 'points', 'point'}
+_UNIT_RX = re.compile(r'^\s*[-+]?[\d.,]+\s*(.*?)\s*$')
+
+
+def equip_from_slot_path(path, depth: int = 2) -> str:
+    """Equipment context from a raw BAS slot path: the last `depth` segments
+    before the leaf, minus scheme/driver/container segments.
+    slot:/Drivers/NiagaraNetwork/NH0037ZZ/Norris_Cotton/points/AHU/HVAC_01A/BldgPrs
+      -> 'AHU HVAC_01A'
+    Short paths (leaf only) give ''."""
+    if not isinstance(path, str):
+        return ''
+    segs = [s for s in path.strip().split('/') if s]
+    segs = segs[:-1]  # drop the leaf: it is the point name
+    segs = [s for s in segs if s.lower() not in _PATH_PREFIX_SEGMENTS - {'points', 'point'}]
+    lowered = [s.lower() for s in segs]
+    if 'points' in lowered or 'point' in lowered:
+        i = lowered.index('points') if 'points' in lowered else lowered.index('point')
+        # the device/controller sits right before the points container, the
+        # equipment folders follow it
+        cand = segs[max(0, i - 1):i] + segs[i + 1:]
+    else:
+        cand = segs
+    return ' '.join(cand[-depth:]) if cand else ''
+
+
+def units_from_to_string(value) -> str:
+    """Engineering units from Niagara's display string ('106.68 °F {ok} @ def'
+    -> '°F'). Non-numeric points (booleans/enums) return their state text
+    ('OFF', 'Enable'), which is the enum-range hint device-fox also exposes."""
+    if not isinstance(value, str):
+        return ''
+    s = re.sub(r'\{.*?\}', '', value)
+    s = re.sub(r'@.*$', '', s).strip()
+    if not s:
+        return ''
+    m = _UNIT_RX.match(s)
+    if m:
+        return m.group(1).strip()
+    return s.split()[0] if s.split() else ''
+
+
+def value_kind_from_out(value) -> str:
+    """'true {ok}' -> binary, '68.00 {ok}' -> analog, anything else -> enum."""
+    if not isinstance(value, str) or not value.strip():
+        return ''
+    head = value.split('{')[0].strip().lower()
+    if head in ('true', 'false'):
+        return 'binary'
+    try:
+        float(head)
+        return 'analog'
+    except ValueError:
+        return 'enum'
+
+
+def object_type_from_bacnet_id(value) -> str:
+    """'AV0' -> 'AV', 'BI3' -> 'BI'."""
+    if not isinstance(value, str):
+        return ''
+    m = re.match(r'^\s*([A-Za-z]+)', value)
+    return m.group(1).upper() if m else ''
 
 
 # Species / refrigerant tokens whose digits are semantic (zoneN2Alarm,
@@ -169,26 +246,55 @@ def build_canonicalizer(eo66_path: str):
     return canon, defs
 
 
-def extract_file(path: Path) -> pd.DataFrame:
-    """Extract (name, label_raw, description) from one export, or None if no format matches."""
-    df = pd.read_excel(path)
-    for text_col, label_col, is_path, desc_col in FORMATS:
-        if text_col in df.columns and label_col in df.columns:
-            out = pd.DataFrame({'name': df[text_col], 'label_raw': df[label_col]})
-            if desc_col and desc_col in df.columns:
-                out['description'] = df[desc_col].fillna('').astype(str).str.strip()
-            else:
-                out['description'] = ''
-            out = out.dropna(subset=['name', 'label_raw'])
-            out['name'] = out['name'].astype(str).str.strip()
-            if is_path:
-                out['name'] = out['name'].str.rstrip('/').str.split('/').str[-1]
-            out['label_raw'] = out['label_raw'].astype(str).str.strip()
-            out = out[(out['name'].str.len() > 0)
-                      & (out['label_raw'].str.len() > 0)
-                      & (~out['label_raw'].str.lower().isin(['nan', 'none']))]
-            return out
+def extract_frame(df: pd.DataFrame) -> pd.DataFrame:
+    """Extract name, label_raw and the context columns from one export frame,
+    or None if no format matches. Never reads FORBIDDEN_COLUMNS."""
+    for fmt in FORMATS:
+        if fmt['text'] not in df.columns or fmt['label'] not in df.columns:
+            continue
+        used = {v for k, v in fmt.items() if k not in ('is_path',)}
+        assert not (used & FORBIDDEN_COLUMNS), f"format reads post-mapping columns: {used & FORBIDDEN_COLUMNS}"
+
+        def col(role):
+            name = fmt.get(role)
+            if name and name in df.columns:
+                return df[name]
+            return pd.Series([''] * len(df), index=df.index)
+
+        out = pd.DataFrame({'name': df[fmt['text']], 'label_raw': df[fmt['label']]})
+        out = out.dropna(subset=['name', 'label_raw'])
+        raw_text = out['name'].astype(str).str.strip()
+        if fmt['is_path']:
+            out['name'] = raw_text.str.rstrip('/').str.split('/').str[-1]
+            out['equip_path'] = raw_text.map(equip_from_slot_path)
+        else:
+            out['name'] = raw_text
+            out['equip_path'] = ''
+        out['device_name'] = col('device').reindex(out.index).fillna('').astype(str).str.strip()
+        out['object_type'] = col('object_id').reindex(out.index).map(object_type_from_bacnet_id)
+        if fmt.get('to_string'):
+            out['units'] = col('to_string').reindex(out.index).map(units_from_to_string)
+            out['value_kind'] = col('out').reindex(out.index).map(value_kind_from_out)
+        else:
+            out['units'] = ''
+            # BACnet object type implies the value kind
+            out['value_kind'] = out['object_type'].map(
+                lambda t: {'AI': 'analog', 'AO': 'analog', 'AV': 'analog',
+                           'BI': 'binary', 'BO': 'binary', 'BV': 'binary'}.get(t, 'enum' if t else ''))
+        out['description'] = col('description').reindex(out.index).fillna('').astype(str).str.strip()
+        out['label_raw'] = out['label_raw'].astype(str).str.strip()
+        out = out[(out['name'].str.len() > 0)
+                  & (out['label_raw'].str.len() > 0)
+                  & (~out['label_raw'].str.lower().isin(['nan', 'none']))]
+        for c in CONTEXT_COLUMNS:
+            out[c] = out[c].fillna('').astype(str)
+        return out[['name'] + CONTEXT_COLUMNS + ['label_raw']]
     return None
+
+
+def extract_file(path: Path) -> pd.DataFrame:
+    """Read one export and extract its labeled points (see extract_frame)."""
+    return extract_frame(pd.read_excel(path))
 
 
 def main():
@@ -237,14 +343,40 @@ def main():
         for label, count in outside.head(10).items():
             print(f'  {count:6d}  {label}')
 
-    # Aggregate so the file is commit-friendly and keeps frequency as weight
-    all_df['description'] = all_df['description'].fillna('')
-    agg = (all_df.groupby(['site', 'name', 'description', 'label_raw', 'label'], sort=True)
-           .size().reset_index(name='rows'))
+    # Aggregate so the file is commit-friendly and keeps frequency as weight.
+    # The key includes the context columns: the same name under different
+    # equipment/units is a different training example
+    for c in CONTEXT_COLUMNS:
+        all_df[c] = all_df[c].fillna('').astype(str)
+    # Store CANONICAL context (normalized tokens, unit codes): equipment
+    # instances collapse ("AC_1 INPUTS" and "AC_2 INPUTS" -> "ac inputs"), which
+    # keeps the file small, and build_context() is idempotent on these values
+    from clean_data import canon_context_fields
+    canon_cache = {}
+
+    def canon_row(t):
+        if t not in canon_cache:
+            canon_cache[t] = canon_context_fields(equip=t[0], device=t[1], units=t[2],
+                                                  value_kind=t[3], object_type=t[4])
+        return canon_cache[t]
+    tuples = list(zip(all_df['equip_path'], all_df['device_name'], all_df['units'],
+                      all_df['value_kind'], all_df['object_type']))
+    canon_vals = [canon_row(t) for t in tuples]
+    for c in ('equip_path', 'device_name', 'units', 'value_kind', 'object_type'):
+        all_df[c] = [v[c] for v in canon_vals]
+    key = ['site', 'name'] + CONTEXT_COLUMNS + ['label_raw', 'label']
+    agg = all_df.groupby(key, sort=True).size().reset_index(name='rows')
     n_desc = (agg['description'].str.len() > 0).sum()
+    n_ctx = (agg[['equip_path', 'units', 'device_name', 'object_type']].apply(
+        lambda r: any(v for v in r), axis=1)).sum()
     agg.to_csv(args.output, index=False)
     print(f'\nSaved: {args.output} ({len(agg)} aggregated rows from {len(all_df)}, '
-          f'{n_desc} with descriptions)')
+          f'{n_desc} with descriptions, {n_ctx} with equipment/units/device context)')
+    for site, g in agg.groupby('site'):
+        eq_vocab = sorted({t for v in g['equip_path'] for t in str(v).split()})
+        print(f'  {site}: {len(g)} rows, {g["name"].nunique()} names, '
+              f'{g["equip_path"].nunique()} equip paths, '
+              f'{g["units"].nunique()} unit strings; equip tokens: {len(eq_vocab)}')
 
 
 if __name__ == '__main__':

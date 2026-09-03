@@ -55,7 +55,7 @@ compressor en,"compEnable (4; rows 0, sites 0) | compEnergy (0.5; rows 0, sites 
 condenser,"cond (2; rows 0, sites 0) | condFanSpeed (1.41421; rows 2, sites 1)",cond
 cwr t,"condEnteringTemp (3.73205; rows 4, sites 2) | condLeavingTemp (2.73205; rows 4, sites 2) | secEnteringTemp (1.41421; rows 2, sites 1) | twrEnteringTemp (1; rows 1, sites 1) | twrLeavingTemp (1; rows 1, sites 1)",condEnteringTemp
 cond water return temp,"twrEnteringTemp (1.73205; rows 3, sites 1) | condEnteringTemp (1; rows 0, sites 0)",twrEnteringTemp
-cws t,"condLeavingTemp (4.14626; rows 5, sites 2) | secLeavingTemp (1.41421; rows 2, sites 1) | twrLeavingTemp (1; rows 1, sites 1) | twrEnteringTemp (1; rows 1, sites 1) | condEnteringTemp (1; rows 1, sites 1) | evapLeavingTemp (1; rows 0, sites 0)",condEnteringTemp (override)
+cws t,"condLeavingTemp (4.14626; rows 5, sites 2) | secLeavingTemp (1.41421; rows 2, sites 1) | condEnteringTemp (1; rows 1, sites 1) | twrEnteringTemp (1; rows 1, sites 1) | twrLeavingTemp (1; rows 1, sites 1) | evapLeavingTemp (1; rows 0, sites 0)",condEnteringTemp (override)
 cws tmp,"condLeavingTemp (4; rows 9, sites 1) | condEnteringTemp (3.65028; rows 7, sites 2) | twrLeavingTemp (1.73205; rows 3, sites 1) | priEnteringTemp (1; rows 1, sites 1)",condLeavingTemp
 dehumid enable,"dehumidEnable (3; rows 0, sites 0) | dehumidifier (2; rows 0, sites 0)",dehumidEnable (override)
 dehum enable,"dehumidEnable (4; rows 1, sites 1) | dehumidifier (2; rows 0, sites 0)",dehumidEnable (override)
@@ -99,7 +99,7 @@ freeze protect enable,"freezeProtectEnable (1; rows 0, sites 0) | freezeProtect 
 frost prot enable,"freezeProtectEnable (1; rows 0, sites 0) | freezeProtect (1; rows 0, sites 0)",freezeProtectEnable (override)
 frz prot enable,"freezeProtectEnable (2; rows 0, sites 0) | freezeProtect (1; rows 0, sites 0)",freezeProtectEnable (override)
 frz protect enable,"freezeProtectEnable (1; rows 0, sites 0) | freezeProtect (1; rows 0, sites 0)",freezeProtectEnable (override)
-htg spt,"zoneHeatSp (10; rows 1028, sites 1) | occupiedHeatSp (10; rows 471, sites 1) | heatingEnableSp (1; rows 0, sites 0)",DROPPED (tie)
+htg spt,"occupiedHeatSp (10; rows 471, sites 1) | zoneHeatSp (10; rows 1028, sites 1) | heatingEnableSp (1; rows 0, sites 0)",DROPPED (tie)
 heating setpoint,"priLeavingTempSp (1; rows 1, sites 1) | heatingEnableSp (1; rows 0, sites 0)",priLeavingTempSp
 heating setpt,"zoneHeatSp (2.64575; rows 7, sites 1) | heatingEnableSp (1; rows 0, sites 0)",zoneHeatSp
 heat setpt,"zoneHeatSp (1; rows 1, sites 1) | heatingEnableSp (1; rows 0, sites 0)",zoneHeatSp
@@ -227,7 +227,7 @@ hwr t,"secEnteringTemp (2.73205; rows 4, sites 2) | priLeavingTemp (1; rows 1, s
 hw return temp,"heatingCoilEnteringTemp (2; rows 0, sites 0) | secEnteringTemp (1; rows 1, sites 1)",heatingCoilEnteringTemp
 hot water return temp,"priEnteringTemp (1; rows 1, sites 1) | heatingCoilEnteringTemp (1; rows 0, sites 0)",priEnteringTemp
 boiler return temp,"enteringTemp (2.44949; rows 6, sites 1) | priEnteringTemp (1.73205; rows 3, sites 1) | heatingCoilEnteringTemp (1; rows 0, sites 0)",enteringTemp
-chws flow,"evapLeavingFlow (2; rows 0, sites 0) | priLeavingFlow (1; rows 1, sites 1) | secLeavingFlow (1; rows 1, sites 1) | secEnteringFlow (1; rows 1, sites 1)",evapLeavingFlow
+chws flow,"evapLeavingFlow (2; rows 0, sites 0) | priLeavingFlow (1; rows 1, sites 1) | secEnteringFlow (1; rows 1, sites 1) | secLeavingFlow (1; rows 1, sites 1)",evapLeavingFlow
 chwp cmd,"priPump (3.4641; rows 6, sites 2) | evapPumpEnable (2; rows 0, sites 0) | evapPump (1.73205; rows 3, sites 1) | secPump (1; rows 1, sites 1)",priPump
 chw pmp cmd,"secPump (8.88347; rows 27, sites 3) | evapPump (2; rows 4, sites 1) | evapPumpEnable (2; rows 0, sites 0) | coolingCoilPump (1; rows 1, sites 1)",secPump
 chwp enable,"secPump (1.41421; rows 2, sites 1) | evapPumpEnable (1; rows 0, sites 0)",secPump
@@ -301,12 +301,12 @@ clgrequest,"zoneCoolingDemand (1; rows 0, sites 0) | zoneCoolingReq (1; rows 0, 
 cooling req,"zoneCoolingReq (5; rows 0, sites 0) | zoneCoolingDemand (4; rows 0, sites 0)",zoneCoolingReq (override)
 zn clg req,"zoneCoolingReq (4; rows 0, sites 0) | zoneCoolingDemand (4; rows 0, sites 0)",DROPPED (override)
 zone cooling request,"zoneCoolingReq (4; rows 0, sites 0) | zoneCoolingDemand (4; rows 0, sites 0)",DROPPED (override)
-vlv,"priValveOneThird (1.41421; rows 2, sites 1) | priValve (1.41421; rows 2, sites 1) | heatingValve (1; rows 1, sites 1)",DROPPED (tie)
+vlv,"priValve (1.41421; rows 2, sites 1) | priValveOneThird (1.41421; rows 2, sites 1) | heatingValve (1; rows 1, sites 1)",DROPPED (tie)
 v,"priValveOneThird (1; rows 1, sites 1) | priValveTwoThird (1; rows 1, sites 1)",DROPPED (tie)
 ac set pt,"dischargeTempSp (4.12311; rows 17, sites 1) | zoneTempSp (1; rows 1, sites 1)",dischargeTempSp
 act cool sp,"zoneCoolSp (7.34847; rows 54, sites 1) | zoneTempSp (1.41421; rows 2, sites 1) | occupiedCoolSp (1; rows 1, sites 1)",zoneCoolSp
 act heat sp,"zoneHeatSp (6.16441; rows 38, sites 1) | occupiedHeatSp (1; rows 1, sites 1)",zoneHeatSp
-air flow,"dischargeFlow (31; rows 1637, sites 4) | dischargeDamperFb (7.68115; rows 59, sites 1) | dischargeFanStatus (1; rows 1, sites 1) | dischargeDamper (1; rows 1, sites 1)",dischargeFlow
+air flow,"dischargeFlow (31; rows 1637, sites 4) | dischargeDamperFb (7.68115; rows 59, sites 1) | dischargeDamper (1; rows 1, sites 1) | dischargeFanStatus (1; rows 1, sites 1)",dischargeFlow
 avg space temp,"zoneTempAvg (5.87298; rows 19, sites 2) | zoneTemp (3.41421; rows 6, sites 2)",zoneTempAvg
 bldg st prs,"buildingPressure (11.6651; rows 44, sites 4) | buildingPressureSp (9.38083; rows 88, sites 1)",buildingPressure
 capacity,"coolingDemand (3.16228; rows 10, sites 1) | chillerLoad (1.41421; rows 2, sites 1)",coolingDemand
@@ -326,7 +326,7 @@ chwp vfd spd,"secPumpSpeed (2.44949; rows 6, sites 1) | secPumpSpeedFb (1.41421;
 chwp chw pmp cmd,"secPump (2.41421; rows 3, sites 2) | evapPump (2.41421; rows 3, sites 2)",secPump
 chwp chw pmp sts,"secPumpStatus (4.41421; rows 7, sites 3) | evapPumpStatus (2.41421; rows 3, sites 2) | condPumpStatus (1; rows 1, sites 1)",secPumpStatus
 chws tmp sp,"secLeavingTempSp (4.4641; rows 7, sites 3) | evapLeavingTempSp (2.44949; rows 6, sites 1)",secLeavingTempSp
-chw diff prs,"secPressureDelta (1; rows 1, sites 1) | evapPressureDelta (1; rows 1, sites 1)",DROPPED (tie)
+chw diff prs,"evapPressureDelta (1; rows 1, sites 1) | secPressureDelta (1; rows 1, sites 1)",DROPPED (tie)
 chw vlv sig,"coolingValve (5.97773; rows 19, sites 2) | coolingValveFb (4.88182; rows 12, sites 2)",coolingValve
 circ ss,"circPumpSpeed (2.44949; rows 6, sites 1) | circPump (1.41421; rows 2, sites 1)",circPumpSpeed
 clg flow max,"dischargeFlowCoolMaxSp (30; rows 1484, sites 3) | dischargeFlowMaxSp (10; rows 268, sites 1) | coldDeckDischargeFlowMaxSp (3.74166; rows 14, sites 1)",dischargeFlowCoolMaxSp
@@ -340,7 +340,7 @@ ctl flow max,"dischargeFlowMaxSp (4.69042; rows 22, sites 1) | dischargeFlowCool
 ctl flow min,"dischargeFlowMinSp (4.69042; rows 22, sites 1) | dischargeFlowCoolMinSp (1; rows 1, sites 1)",dischargeFlowMinSp
 cwp cw pmp sts,"condPumpStatus (5.05996; rows 10, sites 3) | evapPumpStatus (1; rows 1, sites 1)",condPumpStatus
 cwp sts,"condPumpStatus (6.3778; rows 14, sites 3) | evapPumpStatus (1.41421; rows 2, sites 1) | evapPump (1; rows 1, sites 1)",condPumpStatus
-ch chw iso vlv cmd,"evapIsoValve (1.73205; rows 3, sites 1) | evapEnteringIsoValve (1.73205; rows 3, sites 1)",DROPPED (tie)
+ch chw iso vlv cmd,"evapEnteringIsoValve (1.73205; rows 3, sites 1) | evapIsoValve (1.73205; rows 3, sites 1)",DROPPED (tie)
 chiller cw lev tt,"condLeavingTemp (1.73205; rows 3, sites 1) | evapLeavingTemp (1; rows 1, sites 1)",condLeavingTemp
 chlr ena,"chiller (3.73205; rows 5, sites 3) | chillerEnable (2.23607; rows 5, sites 1) | systemEnable (1; rows 1, sites 1)",chiller
 chw dp,"secPressureDelta (6.79655; rows 12, sites 4) | priPressureDelta (2; rows 2, sites 2)",secPressureDelta
@@ -358,10 +358,10 @@ crsovr dpr pos,"bypassDamper (4.69042; rows 22, sites 1) | dischargeIsoDamper (1
 cw p01 ena,"condPump (1; rows 1, sites 1) | priPump (1; rows 1, sites 1)",DROPPED (tie)
 cw p01 spd,"condPumpSpeed (1; rows 1, sites 1) | priPumpSpeed (1; rows 1, sites 1)",DROPPED (tie)
 cw p1 sts,"condPumpStatus (2; rows 2, sites 2) | priPumpStatus (1; rows 1, sites 1)",condPumpStatus
-cw pump s s,"priPump (1.41421; rows 2, sites 1) | condPump (1.41421; rows 2, sites 1)",DROPPED (tie)
-cw pump vfd,"priPumpSpeed (1.41421; rows 2, sites 1) | condPumpSpeed (1.41421; rows 2, sites 1)",DROPPED (tie)
-cw r tmp,"priEnteringTemp (1; rows 1, sites 1) | condEnteringTemp (1; rows 1, sites 1)",DROPPED (tie)
-cw s tmp,"twrLeavingTemp (1.41421; rows 2, sites 1) | priLeavingTemp (1; rows 1, sites 1) | condLeavingTemp (1; rows 1, sites 1)",twrLeavingTemp
+cw pump s s,"condPump (1.41421; rows 2, sites 1) | priPump (1.41421; rows 2, sites 1)",DROPPED (tie)
+cw pump vfd,"condPumpSpeed (1.41421; rows 2, sites 1) | priPumpSpeed (1.41421; rows 2, sites 1)",DROPPED (tie)
+cw r tmp,"condEnteringTemp (1; rows 1, sites 1) | priEnteringTemp (1; rows 1, sites 1)",DROPPED (tie)
+cw s tmp,"twrLeavingTemp (1.41421; rows 2, sites 1) | condLeavingTemp (1; rows 1, sites 1) | priLeavingTemp (1; rows 1, sites 1)",twrLeavingTemp
 d,"damper (14.2426; rows 176, sites 2) | dischargeDamper (10; rows 414, sites 1) | outsideDamper (1; rows 1, sites 1)",damper
 dat,"dischargeTemp (19.5383; rows 261, sites 3) | ahuDischargeTemp (1.73205; rows 3, sites 1)",dischargeTemp
 da f hl,"dischargeFlowCoolMaxSp (11.4556; rows 90, sites 2) | dischargeFlowMaxSp (10; rows 160, sites 1) | dischargeFlowHeatMaxSp (1; rows 1, sites 1)",dischargeFlowCoolMaxSp
@@ -454,15 +454,15 @@ output volt,"condPumpVoltage (2; rows 4, sites 1) | priPumpVoltage (2; rows 4, s
 p1 ct sts,"circPumpStatus (1; rows 1, sites 1) | secPumpStatus (1; rows 1, sites 1)",DROPPED (tie)
 p1 spd,"circPumpSpeed (1; rows 1, sites 1) | secPumpSpeed (1; rows 1, sites 1)",DROPPED (tie)
 p2 spd,"circPumpSpeed (1; rows 1, sites 1) | secPumpSpeed (1; rows 1, sites 1)",DROPPED (tie)
-p8 cmd,"secPump (1; rows 1, sites 1) | condPump (1; rows 1, sites 1)",DROPPED (tie)
-p8 sts,"secPumpStatus (1; rows 1, sites 1) | condPumpStatus (1; rows 1, sites 1)",DROPPED (tie)
+p8 cmd,"condPump (1; rows 1, sites 1) | secPump (1; rows 1, sites 1)",DROPPED (tie)
+p8 sts,"condPumpStatus (1; rows 1, sites 1) | secPumpStatus (1; rows 1, sites 1)",DROPPED (tie)
 pht,"heatingCoilDischargeTemp (4.12311; rows 17, sites 1) | preHeatingCoilDischargeTemp (2; rows 4, sites 1) | preHeatingTemp (1; rows 1, sites 1)",heatingCoilDischargeTemp
-power,"powerReal (2; rows 4, sites 1) | condPumpPowerReal (2; rows 4, sites 1) | priPumpPowerReal (2; rows 4, sites 1) | secPumpPowerReal (2; rows 4, sites 1) | twrFanPowerReal (1.73205; rows 3, sites 1)",DROPPED (tie)
+power,"condPumpPowerReal (2; rows 4, sites 1) | powerReal (2; rows 4, sites 1) | priPumpPowerReal (2; rows 4, sites 1) | secPumpPowerReal (2; rows 4, sites 1) | twrFanPowerReal (1.73205; rows 3, sites 1)",DROPPED (tie)
 pchw p01 ena,"evapPump (1; rows 1, sites 1) | secPump (1; rows 1, sites 1)",DROPPED (tie)
 pchw p1 sts,"evapPumpStatus (1; rows 1, sites 1) | secPumpStatus (1; rows 1, sites 1)",DROPPED (tie)
 pmp cmd,"secPump (1.73205; rows 3, sites 1) | condPump (1.41421; rows 2, sites 1) | evapPump (1.41421; rows 2, sites 1) | heatingCoilPump (1; rows 1, sites 1)",secPump
 pmp spd,"secPumpSpeed (4.18154; rows 9, sites 2) | pumpSpeed (0.5; rows 0, sites 0)",secPumpSpeed
-pmp sts,"secPumpStatus (1.73205; rows 3, sites 1) | evapPumpStatus (1.41421; rows 2, sites 1) | condPumpStatus (1.41421; rows 2, sites 1) | heatingCoilPumpStatus (1; rows 1, sites 1)",secPumpStatus
+pmp sts,"secPumpStatus (1.73205; rows 3, sites 1) | condPumpStatus (1.41421; rows 2, sites 1) | evapPumpStatus (1.41421; rows 2, sites 1) | heatingCoilPumpStatus (1; rows 1, sites 1)",secPumpStatus
 primary he return temp,"priEnteringTemp (1; rows 1, sites 1) | priLeavingTemp (1; rows 1, sites 1)",DROPPED (tie)
 pump status bi,"boosterPumpStatus (2.82843; rows 8, sites 1) | evapPumpStatus (1; rows 1, sites 1)",boosterPumpStatus
 pump status,"pumpStatus (3.74166; rows 14, sites 1) | pump (1.41421; rows 2, sites 1) | secPumpStatus (1.41421; rows 2, sites 1)",pumpStatus
@@ -475,7 +475,7 @@ ra dmpr pos,"outsideDamper (3.4641; rows 12, sites 1) | returnDamperFb (1; rows 
 rm rel hum,"zoneHumidity (7.47371; rows 19, sites 4) | returnHumidity (2; rows 4, sites 1)",zoneHumidity
 run stop act,"condPumpStatus (2; rows 4, sites 1) | twrFanStatus (1.73205; rows 3, sites 1)",condPumpStatus
 run stop cmd,"condPump (2; rows 4, sites 1) | dischargeFan (1.73205; rows 3, sites 1)",condPump
-run sts,"chillerStatus (2.82843; rows 8, sites 1) | condPumpStatus (2.23607; rows 5, sites 1) | secPumpStatus (2; rows 4, sites 1) | exhaustFanStatus (1; rows 1, sites 1) | evapPumpStatus (1; rows 1, sites 1)",chillerStatus
+run sts,"chillerStatus (2.82843; rows 8, sites 1) | condPumpStatus (2.23607; rows 5, sites 1) | secPumpStatus (2; rows 4, sites 1) | evapPumpStatus (1; rows 1, sites 1) | exhaustFanStatus (1; rows 1, sites 1)",chillerStatus
 sa st prs,"dischargePressure (29.2516; rows 256, sites 4) | dischargeFanLeavingPressure (1; rows 1, sites 1)",dischargePressure
 sa tmp,"dischargeTemp (40; rows 5227, sites 4) | zoneHumidity (3.31662; rows 11, sites 1) | coldDeckDischargeTemp (1.41421; rows 2, sites 1)",dischargeTemp
 sa tmp sp,"dischargeTempSp (32.1455; rows 330, sites 4) | dischageTempSp (3; rows 9, sites 1)",dischargeTempSp
@@ -495,7 +495,7 @@ ut ahu rf sts,"returnFanStatus (3.74166; rows 14, sites 1) | returnFan (1; rows 
 ut blr blr ena,"boiler (1.73205; rows 3, sites 1) | systemEnable (1; rows 1, sites 1)",boiler
 unit enable,"systemEnable (2.41421; rows 3, sites 2) | occupancyMode (1; rows 1, sites 1)",systemEnable
 uoc clg sp,"unoccupiedCoolSp (35.2915; rows 784, sites 4) | dischargeFlowUnoccCoolSp (10; rows 317, sites 1)",unoccupiedCoolSp
-vlv comd,"heatingValve (20; rows 955, sites 2) | coolingValve (16.1644; rows 151, sites 2) | waterValve (10; rows 707, sites 1) | reHeatingValve (10; rows 351, sites 1) | perimeterHeatingValve (9.32738; rows 87, sites 1) | radiantHeatingValve (2; rows 4, sites 1)",heatingValve
+vlv comd,"heatingValve (20; rows 955, sites 2) | coolingValve (16.1644; rows 151, sites 2) | reHeatingValve (10; rows 351, sites 1) | waterValve (10; rows 707, sites 1) | perimeterHeatingValve (9.32738; rows 87, sites 1) | radiantHeatingValve (2; rows 4, sites 1)",heatingValve
 valve cmd,"heatingValve (7.16441; rows 39, sites 2) | perimeterHeatingValve (3.60555; rows 13, sites 1)",heatingValve
 vfd ss,"dischargeFan (6.32456; rows 40, sites 1) | secPump (1; rows 1, sites 1)",dischargeFan
 vfd spd,"dischargeFanSpeed (6.245; rows 39, sites 1) | twrFanSpeedFb (2; rows 4, sites 1) | secPumpSpeed (1; rows 1, sites 1)",dischargeFanSpeed
@@ -510,13 +510,13 @@ nvo drv curnt,"secPumpCurrent (1.41421; rows 2, sites 1) | twrFanCurrent (1; row
 nvo drv pwr,"secPumpPowerReal (1.41421; rows 2, sites 1) | twrFanPowerReal (1; rows 1, sites 1)",secPumpPowerReal
 nvo drv speed,"secPumpSpeed (1.41421; rows 2, sites 1) | twrFanSpeed (1; rows 1, sites 1) | dischargeFanSpeedFb (1; rows 1, sites 1)",secPumpSpeed
 nvo output hz,"secPumpFrequency (1.41421; rows 2, sites 1) | twrFanFrequency (1; rows 1, sites 1)",secPumpFrequency
-out,"zoneTemp (22.2361; rows 287, sites 3) | dischargeDamper (20; rows 280, sites 2) | dischargeDamperFb (16.7823; rows 246, sites 2) | dischargeFanStatus (13.8119; rows 74, sites 4) | heatingValve (13.2727; rows 94, sites 3) | dischargeFan (11.4132; rows 64, sites 4) | occupiedCoolSp (11.025; rows 64, sites 2) | unoccupiedCoolSp (11.025; rows 64, sites 2) | zoneTempSp (11; rows 130, sites 2) | dischargeTemp (10.8995; rows 75, sites 3) | occupiedHeatSp (10.7823; rows 62, sites 2) | unoccupiedHeatSp (10.7823; rows 62, sites 2) | dischargeFlow (10; rows 130, sites 1) | dischargeFlowSp (10; rows 129, sites 1) | dischargeTempSp (10; rows 129, sites 1) | zoneCoolSp (10; rows 129, sites 1) | zoneHeatSp (10; rows 129, sites 1) | occupiedMode (9.11043; rows 83, sites 1) | occupancyMode (7.78233; rows 47, sites 2) | returnDamper (5.47371; rows 17, sites 2) | coolingValve (5; rows 11, sites 3) | outsideDamper (5; rows 17, sites 2) | returnTemp (4.74166; rows 15, sites 2) | minOutsideDamper (3.4641; rows 12, sites 1) | dischargePressureSp (3.23607; rows 6, sites 2) | coldDeckDischargeTemp (2.82843; rows 8, sites 1) | hotDeckDischargeTemp (2.82843; rows 8, sites 1) | outsideTemp (2.44949; rows 6, sites 1) | reliefDamper (2.44949; rows 6, sites 1) | reHeatingValve (2; rows 4, sites 1) | secPumpSpeed (2; rows 4, sites 1) | buildingPressureSp (2; rows 4, sites 1) | chillerStatus (1.41421; rows 2, sites 1) | condEnteringTemp (1.41421; rows 2, sites 1) | condLeavingTemp (1.41421; rows 2, sites 1) | dischargeFlowMaxSp (1.41421; rows 2, sites 1) | evapEnteringTempSp (1.41421; rows 2, sites 1) | evapLeavingPressure (1.41421; rows 2, sites 1) | evapLeavingTemp (1.41421; rows 2, sites 1) | faceBypassDamper (1.41421; rows 2, sites 1) | returnFanStatus (1.41421; rows 2, sites 1) | outsideDamperFb (1.41421; rows 2, sites 1) | returnDamperFb (1.41421; rows 2, sites 1) | mixedTemp (1; rows 1, sites 1) | damper (1; rows 1, sites 1) | evapPressureDelta (1; rows 1, sites 1) | returnPressure (1; rows 1, sites 1) | secEnteringTemp (1; rows 1, sites 1) | secLeavingTemp (1; rows 1, sites 1) | twrFanSpeed (1; rows 1, sites 1) | twrIsoValve (1; rows 1, sites 1) | dischargeFanSpeed (1; rows 1, sites 1) | dischargePressureMaxSp (1; rows 1, sites 1) | energyRecoveryMode (1; rows 1, sites 1) | exhaustEnthalpy (1; rows 1, sites 1) | exhaustFanSpeed (1; rows 1, sites 1) | exhaustFanStatus (1; rows 1, sites 1) | exhaustHumidity (1; rows 1, sites 1) | outsideEnthalpy (1; rows 1, sites 1) | preHeatingCoilDischargeTempSp (1; rows 1, sites 1) | minOutsideDamperFb (1; rows 1, sites 1) | minOutsideFlow (1; rows 1, sites 1) | mixedTempSp (1; rows 1, sites 1) | outsideFlow (1; rows 1, sites 1) | returnHumiditySp (1; rows 1, sites 1)",zoneTemp
+out,"zoneTemp (22.2361; rows 287, sites 3) | dischargeDamper (20; rows 280, sites 2) | dischargeDamperFb (16.7823; rows 246, sites 2) | dischargeFanStatus (13.8119; rows 74, sites 4) | heatingValve (13.2727; rows 94, sites 3) | dischargeFan (11.4132; rows 64, sites 4) | occupiedCoolSp (11.025; rows 64, sites 2) | unoccupiedCoolSp (11.025; rows 64, sites 2) | zoneTempSp (11; rows 130, sites 2) | dischargeTemp (10.8995; rows 75, sites 3) | occupiedHeatSp (10.7823; rows 62, sites 2) | unoccupiedHeatSp (10.7823; rows 62, sites 2) | dischargeFlow (10; rows 130, sites 1) | dischargeFlowSp (10; rows 129, sites 1) | dischargeTempSp (10; rows 129, sites 1) | zoneCoolSp (10; rows 129, sites 1) | zoneHeatSp (10; rows 129, sites 1) | occupiedMode (9.11043; rows 83, sites 1) | occupancyMode (7.78233; rows 47, sites 2) | returnDamper (5.47371; rows 17, sites 2) | coolingValve (5; rows 11, sites 3) | outsideDamper (5; rows 17, sites 2) | returnTemp (4.74166; rows 15, sites 2) | minOutsideDamper (3.4641; rows 12, sites 1) | dischargePressureSp (3.23607; rows 6, sites 2) | coldDeckDischargeTemp (2.82843; rows 8, sites 1) | hotDeckDischargeTemp (2.82843; rows 8, sites 1) | outsideTemp (2.44949; rows 6, sites 1) | reliefDamper (2.44949; rows 6, sites 1) | buildingPressureSp (2; rows 4, sites 1) | reHeatingValve (2; rows 4, sites 1) | secPumpSpeed (2; rows 4, sites 1) | chillerStatus (1.41421; rows 2, sites 1) | condEnteringTemp (1.41421; rows 2, sites 1) | condLeavingTemp (1.41421; rows 2, sites 1) | dischargeFlowMaxSp (1.41421; rows 2, sites 1) | evapEnteringTempSp (1.41421; rows 2, sites 1) | evapLeavingPressure (1.41421; rows 2, sites 1) | evapLeavingTemp (1.41421; rows 2, sites 1) | faceBypassDamper (1.41421; rows 2, sites 1) | outsideDamperFb (1.41421; rows 2, sites 1) | returnDamperFb (1.41421; rows 2, sites 1) | returnFanStatus (1.41421; rows 2, sites 1) | damper (1; rows 1, sites 1) | dischargeFanSpeed (1; rows 1, sites 1) | dischargePressureMaxSp (1; rows 1, sites 1) | energyRecoveryMode (1; rows 1, sites 1) | evapPressureDelta (1; rows 1, sites 1) | exhaustEnthalpy (1; rows 1, sites 1) | exhaustFanSpeed (1; rows 1, sites 1) | exhaustFanStatus (1; rows 1, sites 1) | exhaustHumidity (1; rows 1, sites 1) | minOutsideDamperFb (1; rows 1, sites 1) | minOutsideFlow (1; rows 1, sites 1) | mixedTemp (1; rows 1, sites 1) | mixedTempSp (1; rows 1, sites 1) | outsideEnthalpy (1; rows 1, sites 1) | outsideFlow (1; rows 1, sites 1) | preHeatingCoilDischargeTempSp (1; rows 1, sites 1) | returnHumiditySp (1; rows 1, sites 1) | returnPressure (1; rows 1, sites 1) | secEnteringTemp (1; rows 1, sites 1) | secLeavingTemp (1; rows 1, sites 1) | twrFanSpeed (1; rows 1, sites 1) | twrIsoValve (1; rows 1, sites 1)",zoneTemp
 act sp,"priLeavingTempSp (1; rows 1, sites 1) | secLeavingTempSp (1; rows 1, sites 1)",priLeavingTempSp
 air temp sp,"returnTempSp (1.41421; rows 2, sites 1) | dischargeTempSp (1.41421; rows 2, sites 1)",returnTempSp
 blr blr ena,"boiler (1.41421; rows 2, sites 1) | systemEnable (1; rows 1, sites 1)",boiler
 blr blr lvg tmp,"priLeavingTemp (1.73205; rows 3, sites 1) | waterLeavingTemp (1.41421; rows 2, sites 1)",priLeavingTemp
 blr hwr tmp,"priEnteringTemp (3.41421; rows 6, sites 2) | enteringTemp (1.73205; rows 3, sites 1) | priLeavingIsoValve (1; rows 1, sites 1) | priLeavingTemp (1; rows 1, sites 1) | secEnteringTemp (1; rows 1, sites 1)",priEnteringTemp
-blr hws tmp,"priLeavingTemp (4.23607; rows 9, sites 2) | leavingTemp (3.14626; rows 5, sites 2) | secLeavingTemp (2.44949; rows 6, sites 1) | priLeavingIsoValveFb (1; rows 1, sites 1) | boiler (1; rows 1, sites 1)",priLeavingTemp
+blr hws tmp,"priLeavingTemp (4.23607; rows 9, sites 2) | leavingTemp (3.14626; rows 5, sites 2) | secLeavingTemp (2.44949; rows 6, sites 1) | boiler (1; rows 1, sites 1) | priLeavingIsoValveFb (1; rows 1, sites 1)",priLeavingTemp
 blr iso vlv cmd,"priEnteringIsoValve (1.41421; rows 2, sites 1) | priLeavingIsoValve (1; rows 1, sites 1)",priEnteringIsoValve
 bldg st prs avg,"buildingPressureAvg (2; rows 4, sites 1) | buildingPressure (1.41421; rows 2, sites 1)",buildingPressureAvg
 blr hws iso ena,"priLeavingIsoValve (1; rows 1, sites 1) | priLeavingIsoValveFb (1; rows 1, sites 1) | priLeavingTemp (1; rows 1, sites 1)",priLeavingIsoValve
@@ -556,14 +556,14 @@ co2 sensor reading,"returnCO2 (2.82843; rows 8, sites 1) | zoneCO2 (2.64575; row
 co2 s,"zoneCO2Sp (2.23607; rows 5, sites 1) | returnCO2Sp (2; rows 4, sites 1)",zoneCO2Sp
 ct fan,"dischargeFan (1.73205; rows 3, sites 1) | twrFan (1.73205; rows 3, sites 1)",DROPPED (tie)
 ct isov c,"twrEnteringIsoValve (1.73205; rows 3, sites 1) | twrLeavingIsoValve (1.73205; rows 3, sites 1) | twrIsoValve (1.41421; rows 2, sites 1)",DROPPED (tie)
-ct iso vlv,"twrLeavingIsoValve (1.41421; rows 2, sites 1) | twrEnteringIsoValve (1.41421; rows 2, sites 1) | twrIsoValve (1; rows 1, sites 1)",DROPPED (tie)
+ct iso vlv,"twrEnteringIsoValve (1.41421; rows 2, sites 1) | twrLeavingIsoValve (1.41421; rows 2, sites 1) | twrIsoValve (1; rows 1, sites 1)",DROPPED (tie)
 ct spd,"twrFanSpeed (4.87832; rows 8, sites 3) | twrFanSpeedFb (1.41421; rows 2, sites 1)",twrFanSpeed
 ct ena,"systemEnable (1.41421; rows 2, sites 1) | twrEnable (0.5; rows 0, sites 0)",systemEnable
 ctl temp,"zoneTemp (12.4495; rows 1097, sites 2) | zoneTempSp (6.32456; rows 40, sites 1)",zoneTemp
-cts temp,"twrLeavingTemp (1; rows 1, sites 1) | condLeavingTemp (1; rows 1, sites 1)",DROPPED (tie)
+cts temp,"condLeavingTemp (1; rows 1, sites 1) | twrLeavingTemp (1; rows 1, sites 1)",DROPPED (tie)
 cvwhcs c,"priMixingValve (1; rows 1, sites 1) | secLeavingIsoValve (1; rows 1, sites 1)",DROPPED (tie)
 cw sp,"condLeavingTempSp (1; rows 1, sites 1) | twrLeavingTempSp (1; rows 1, sites 1)",DROPPED (tie)
-cwpb s,"condPumpStatus (1.41421; rows 2, sites 1) | secPumpStatus (1; rows 1, sites 1) | condPump (1; rows 1, sites 1)",condPumpStatus
+cwpb s,"condPumpStatus (1.41421; rows 2, sites 1) | condPump (1; rows 1, sites 1) | secPumpStatus (1; rows 1, sites 1)",condPumpStatus
 cwr tmp,"condEnteringTemp (3; rows 9, sites 1) | condLeavingTemp (2.41421; rows 3, sites 2) | twrEnteringTemp (1.41421; rows 2, sites 1)",condEnteringTemp
 cwr v,"condLeavingIsoValve (1.41421; rows 2, sites 1) | coolingValve (1; rows 1, sites 1) | priLeavingIsoValve (1; rows 1, sites 1)",condLeavingIsoValve
 cws tmp sp,"twrLeavingTempSp (1.73205; rows 3, sites 1) | condEnteringTempSp (1; rows 1, sites 1) | condLeavingTempSp (1; rows 1, sites 1)",twrLeavingTempSp
@@ -571,14 +571,14 @@ cws sp,"secLeavingTempSp (1; rows 1, sites 1) | twrLeavingTempSp (1; rows 1, sit
 cws temp sp,"condEnteringTempSp (1.73205; rows 3, sites 1) | condLeavingTempSp (1; rows 1, sites 1)",condEnteringTempSp
 cw sup tmp,"condLeavingTemp (1.41421; rows 2, sites 1) | twrLeavingTemp (1; rows 1, sites 1)",condLeavingTemp
 ch wtr vlv pos,"coolingValve (1; rows 1, sites 1) | coolingValveFb (1; rows 1, sites 1)",DROPPED (tie)
-clg spt,"zoneCoolSp (10; rows 1028, sites 1) | occupiedCoolSp (10; rows 471, sites 1)",DROPPED (tie)
+clg spt,"occupiedCoolSp (10; rows 471, sites 1) | zoneCoolSp (10; rows 1028, sites 1)",DROPPED (tie)
 clg tmp,"coolingCoilLeavingTemp (5.74456; rows 33, sites 1) | coolingCoilDischargeTemp (4.47214; rows 20, sites 1)",coolingCoilLeavingTemp
 clg vlv pos,"coolingValveFb (2.23607; rows 5, sites 1) | coolingValve (1; rows 1, sites 1)",coolingValveFb
 clg sig,"coolingValve (10; rows 141, sites 1) | coolingValveFb (5.65685; rows 32, sites 1)",coolingValve
 cooling,"coolingStage (3.16228; rows 10, sites 1) | coolingValve (2; rows 4, sites 1)",coolingStage
 cur hw sup tmp sp,"priLeavingTempSp (1; rows 1, sites 1) | secLeavingTempSp (1; rows 1, sites 1)",priLeavingTempSp
 current damper position,"damperFb (8.66025; rows 75, sites 1) | dischargeDamper (7.34847; rows 54, sites 1) | dischargeDamperFb (5.65685; rows 32, sites 1)",damperFb
-da f ll htg,"dischargeFlowHeatSp (10; rows 158, sites 1) | dischargeFlowHeatMinSp (10; rows 400, sites 1)",DROPPED (tie)
+da f ll htg,"dischargeFlowHeatMinSp (10; rows 400, sites 1) | dischargeFlowHeatSp (10; rows 158, sites 1)",DROPPED (tie)
 dmpr pos,"dischargeDamperFb (30; rows 2001, sites 3) | outsideDamperFb (5.47723; rows 30, sites 1)",dischargeDamperFb
 dp,"secLeavingPressure (1; rows 1, sites 1) | secPressureDelta (1; rows 1, sites 1)",DROPPED (tie)
 dps,"dischargeEnthalpySp (1.41421; rows 2, sites 1) | secPressureDeltaSp (1; rows 1, sites 1)",dischargeEnthalpySp
@@ -593,7 +593,7 @@ ef s,"exhaustFanStatus (5.47214; rows 21, sites 2) | exhaustFan (1.41421; rows 2
 ef cmd,"exhaustFan (14.6569; rows 97, sites 3) | returnFan (1.41421; rows 2, sites 1)",exhaustFan
 ef cur sw,"exhaustFan (1.73205; rows 3, sites 1) | exhaustFanStatus (1.41421; rows 2, sites 1)",exhaustFan
 ef spd,"exhaustFanSpeed (5.04868; rows 14, sites 2) | exhaustFanSpeedFb (2.41421; rows 3, sites 2) | exhaustFan (1.73205; rows 3, sites 1)",exhaustFanSpeed
-erp,"wheelExhaustPressure (2; rows 4, sites 1) | recPump (2; rows 4, sites 1)",DROPPED (tie)
+erp,"recPump (2; rows 4, sites 1) | wheelExhaustPressure (2; rows 4, sites 1)",DROPPED (tie)
 est dmpr pos cd,"coldDeckDamper (7.2111; rows 52, sites 1) | dischargeDamperFb (5.38516; rows 29, sites 1)",coldDeckDamper
 est dmpr pos hd,"hotDeckDamper (7.2111; rows 52, sites 1) | hotDeckDamperFb (5.38516; rows 29, sites 1)",hotDeckDamper
 fan flow,"dischargeFlow (5.47723; rows 30, sites 1) | exhaustFlow (2.44949; rows 6, sites 1)",dischargeFlow
@@ -615,7 +615,7 @@ hrwr t,"wheelExhaustTemp (1; rows 1, sites 1) | wheelReturnTemp (1; rows 1, site
 htg o,"heatingValve (19.7039; rows 476, sites 3) | heatingStageMod (6.32456; rows 40, sites 1)",heatingValve
 hus,"dischargeHumidity (2.64575; rows 7, sites 1) | returnHumiditySp (1; rows 1, sites 1)",dischargeHumidity
 hw byp vlv cmd,"secBypassValve (2; rows 2, sites 2) | bypassValve (1; rows 1, sites 1)",secBypassValve
-hw pmp ena,"secPump (1.41421; rows 2, sites 1) | priPump (1.41421; rows 2, sites 1)",DROPPED (tie)
+hw pmp ena,"priPump (1.41421; rows 2, sites 1) | secPump (1.41421; rows 2, sites 1)",DROPPED (tie)
 hw pmp spd,"secPumpSpeed (6.68556; rows 15, sites 3) | priPumpSpeed (1.41421; rows 2, sites 1)",secPumpSpeed
 hws tmp sp,"secLeavingTempSp (4.41421; rows 7, sites 3) | leavingTempSp (1.41421; rows 2, sites 1) | priLeavingTempSp (1; rows 1, sites 1)",secLeavingTempSp
 hwv comd,"heatingValve (5; rows 25, sites 1) | radiantHeatingValve (3.74166; rows 14, sites 1)",heatingValve
@@ -681,7 +681,7 @@ valve comd,"radiantHeatingValve (3.31662; rows 11, sites 1) | heatingValve (1.41
 valve pos,"radiantHeatingValveFb (3.31662; rows 11, sites 1) | heatingValveFb (1.41421; rows 2, sites 1)",radiantHeatingValveFb
 vfd running,"dischargeFanStatus (2.44949; rows 6, sites 1) | returnFanStatus (2; rows 4, sites 1)",dischargeFanStatus
 vfd cmd,"dischargeFanSpeed (3; rows 5, sites 2) | returnFanSpeed (2; rows 4, sites 1)",dischargeFanSpeed
-vlv pos,"heatingValveFb (20; rows 881, sites 2) | coolingValveFb (17.9394; rows 124, sites 3) | waterValveFb (10; rows 707, sites 1) | reHeatingValveFb (10; rows 351, sites 1) | dischargeDamperFb (10; rows 198, sites 1) | perimeterHeatingValveFb (9.32738; rows 87, sites 1) | radiantHeatingValveFb (2; rows 4, sites 1)",heatingValveFb
+vlv pos,"heatingValveFb (20; rows 881, sites 2) | coolingValveFb (17.9394; rows 124, sites 3) | dischargeDamperFb (10; rows 198, sites 1) | reHeatingValveFb (10; rows 351, sites 1) | waterValveFb (10; rows 707, sites 1) | perimeterHeatingValveFb (9.32738; rows 87, sites 1) | radiantHeatingValveFb (2; rows 4, sites 1)",heatingValveFb
 valve,"waterValve (10; rows 202, sites 1) | twrEnteringIsoValve (1.41421; rows 2, sites 1)",waterValve
 vcm on rly fan,"dischargeFan (2; rows 4, sites 1) | occupancyMode (1.41421; rows 2, sites 1)",dischargeFan
 af w cmd,"returnFan (1; rows 1, sites 1) | dischargeFan (1; rows 1, sites 1)",returnFan
@@ -696,13 +696,13 @@ chl chw iso vlv cmd,"priEnteringIsoValve (2; rows 4, sites 1) | evapIsoValve (1.
 chl chw iso vlv pos,"condIsoValveFb (1.41421; rows 2, sites 1) | evapIsoValveFb (1.41421; rows 2, sites 1)",DROPPED (tie)
 chl cmd,"chiller (2.73205; rows 4, sites 2) | chillerStatus (1.41421; rows 2, sites 1)",chiller
 chl ena cmd,"chiller (1.41421; rows 2, sites 1) | chillerStatus (1; rows 1, sites 1)",chiller
-chwp spd,"secPumpSpeed (1.73205; rows 3, sites 1) | evapPumpFrequency (1.41421; rows 2, sites 1) | condPumpSpeed (1; rows 1, sites 1) | priPumpSpeedFb (1; rows 1, sites 1) | priPumpSpeed (1; rows 1, sites 1)",secPumpSpeed
+chwp spd,"secPumpSpeed (1.73205; rows 3, sites 1) | evapPumpFrequency (1.41421; rows 2, sites 1) | condPumpSpeed (1; rows 1, sites 1) | priPumpSpeed (1; rows 1, sites 1) | priPumpSpeedFb (1; rows 1, sites 1)",secPumpSpeed
 chwr temp,"secEnteringTemp (2.82843; rows 4, sites 2) | priEnteringTemp (1; rows 1, sites 1)",secEnteringTemp
 chw flow,"secLeavingFlow (1.41421; rows 2, sites 1) | evapFlowStatus (1.41421; rows 2, sites 1) | evapLeavingFlow (1; rows 1, sites 1)",secLeavingFlow
 cnd flow switch stat,"condLeavingFlow (1.41421; rows 2, sites 1) | condFlowStatus (1; rows 1, sites 1)",condLeavingFlow
-ct byp vlv pos,"twrBypassValveFb (1.73205; rows 3, sites 1) | twrBypassValve (1.73205; rows 3, sites 1)",DROPPED (tie)
+ct byp vlv pos,"twrBypassValve (1.73205; rows 3, sites 1) | twrBypassValveFb (1.73205; rows 3, sites 1)",DROPPED (tie)
 ct enbl,"twrFan (1.41421; rows 2, sites 1) | twrEnable (0.5; rows 0, sites 0)",twrFan
-cwp cw pmp spd,"condPumpSpeed (1.41421; rows 2, sites 1) | evapPumpFrequency (1; rows 1, sites 1) | condPumpFrequency (1; rows 1, sites 1)",condPumpSpeed
+cwp cw pmp spd,"condPumpSpeed (1.41421; rows 2, sites 1) | condPumpFrequency (1; rows 1, sites 1) | evapPumpFrequency (1; rows 1, sites 1)",condPumpSpeed
 cd flw sw,"condFlowStatus (2.64575; rows 7, sites 1) | condEnteringFlow (2.23607; rows 5, sites 1)",condFlowStatus
 chw dp sp,"secPressureDeltaSp (1.41421; rows 2, sites 1) | priPressureDeltaSp (1; rows 1, sites 1)",secPressureDeltaSp
 chw s temp,"evapLeavingTemp (1.41421; rows 2, sites 1) | secLeavingTemp (1; rows 1, sites 1)",evapLeavingTemp
@@ -720,7 +720,7 @@ eff rm tmp htg sp,"zoneHeatSp (13; rows 298, sites 2) | occupiedHeatSp (3.16228;
 ev flw sw,"evapLeavingFlow (2.64575; rows 7, sites 1) | evapEnteringFlow (2.23607; rows 5, sites 1) | evapFlowStatus (1.73205; rows 3, sites 1)",evapLeavingFlow
 fa bpy dpr,"faceBypassDamper (4.69042; rows 22, sites 1) | faceDamper (1.41421; rows 2, sites 1)",faceBypassDamper
 flw rat,"dischargeFlow (1; rows 1, sites 1) | secLeavingFlow (1; rows 1, sites 1)",DROPPED (tie)
-hw diff prs,"secPressureDelta (1; rows 1, sites 1) | secLeavingPressure (1; rows 1, sites 1)",DROPPED (tie)
+hw diff prs,"secLeavingPressure (1; rows 1, sites 1) | secPressureDelta (1; rows 1, sites 1)",DROPPED (tie)
 hwp blr pmp cmd,"secPump (2.64575; rows 7, sites 1) | priPump (2; rows 4, sites 1)",secPump
 hwp blr pmp sts,"secPumpStatus (2.64575; rows 7, sites 1) | priPumpStatus (2; rows 4, sites 1)",secPumpStatus
 hx stm vlv cmd,"priValveOneThird (3.14626; rows 5, sites 2) | priValveTwoThird (3.14626; rows 5, sites 2)",DROPPED (tie)
@@ -802,7 +802,7 @@ max flow sp,"dischargeFlowMaxSp (7.07107; rows 50, sites 1) | outsideFlowMaxSp (
 max sa st prs sp,"dischargeFlowMaxSp (3; rows 9, sites 1) | dischargePressureMaxSp (1.41421; rows 2, sites 1)",dischargeFlowMaxSp
 min osa flow spt,"minOutsideFlow (3; rows 9, sites 1) | minOutsideFlowSp (1; rows 1, sites 1)",minOutsideFlow
 min sa st prs sp,"dischargeFlowMinSp (3; rows 9, sites 1) | dischargePressureMinSp (1.41421; rows 2, sites 1)",dischargeFlowMinSp
-oad c,"outsideIsoDamper (1; rows 1, sites 1) | outsideDamper (1; rows 1, sites 1)",DROPPED (tie)
+oad c,"outsideDamper (1; rows 1, sites 1) | outsideIsoDamper (1; rows 1, sites 1)",DROPPED (tie)
 occ sp,"zoneTempSp (10; rows 207, sites 1) | OccSp (8.18535; rows 67, sites 1)",zoneTempSp
 output speed,"condPumpSpeed (1.73205; rows 3, sites 1) | secPumpSpeed (1.73205; rows 3, sites 1)",DROPPED (tie)
 pht tmp,"preHeatingCoilLeavingTemp (5.19615; rows 27, sites 1) | preHeatingCoilDischargeTemp (1.73205; rows 3, sites 1)",preHeatingCoilLeavingTemp

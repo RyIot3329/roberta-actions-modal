@@ -296,6 +296,7 @@ def resolve_training_pool(evidence, overrides, row_cap=None, overlap_fn=None):
                    len(ev['sites']) if use_tiebreaks else 0,
                    overlap_fn(text, label) if overlap_fn is not None else 0.0)
             keyed.append((key, label, ev))
+        keyed.sort(key=lambda x: x[1])                 # deterministic order among ties
         keyed.sort(key=lambda x: x[0], reverse=True)
         targets = ' | '.join(describe(text, label, ev, key[0]) for key, label, ev in keyed)
 

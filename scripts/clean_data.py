@@ -171,3 +171,149 @@ def clean_data(input_file='data/train_all.csv', output_file='data/cleaned_data.c
 
 if __name__ == "__main__":
     clean_data()
+
+
+# =============================================================================
+# Context builder (shared with the ai-inference service, like normalize_text)
+# =============================================================================
+#
+# A point's equipment path, units, value kind, BACnet object type, device name
+# and description are joined into ONE namespaced string that is appended to
+# the normalized name as "<name> | <context>". Field names live inside the
+# string and the order is fixed, so per-field dropout during training and
+# partial context at inference are unambiguous. Empty context == name-only.
+#
+# CONTEXT_VERSION must be bumped in lockstep with the vendored copy in the
+# ai-inference service whenever this builder changes.
+
+CONTEXT_VERSION = "1"
+CONTEXT_FIELDS = ("eq", "desc", "unit", "kind", "obj", "dev")
+CONTEXT_SEP = " | "
+
+_UNIT_CANON = {
+    'f': 'degf', 'degf': 'degf', 'degreesf': 'degf', 'fahrenheit': 'degf',
+    'c': 'degc', 'degc': 'degc', 'degreesc': 'degc', 'celsius': 'degc',
+    'k': 'degk', 'degk': 'degk',
+    '%': 'percent', 'pct': 'percent', 'percent': 'percent', '%rh': 'percentrh', 'rh': 'percentrh',
+    'in/wc': 'inwc', 'inwc': 'inwc', 'inh2o': 'inwc', 'inw': 'inwc', 'inwg': 'inwc', 'inh₂o': 'inwc',
+    'cfm': 'cfm', 'l/s': 'lps', 'lps': 'lps', 'm3/h': 'm3h', 'm³/h': 'm3h', 'cfh': 'cfh',
+    'gpm': 'gpm', 'l/min': 'lpm', 'lpm': 'lpm',
+    'ppm': 'ppm', 'ppb': 'ppb', 'ug/m3': 'ugm3', 'µg/m³': 'ugm3',
+    'psi': 'psi', 'psig': 'psi', 'kpa': 'kpa', 'pa': 'pa', 'bar': 'bar', 'mbar': 'mbar',
+    'kw': 'kw', 'w': 'watts', 'watts': 'watts', 'kwh': 'kwh', 'wh': 'wh', 'mwh': 'mwh',
+    'kva': 'kva', 'kvar': 'kvar', 'btu/h': 'btuh', 'btuh': 'btuh', 'mbh': 'mbh', 'ton': 'ton',
+    'tons': 'ton', 'tonh': 'tonh',
+    'hz': 'hz', 'a': 'amps', 'amps': 'amps', 'amp': 'amps', 'v': 'volts', 'volts': 'volts',
+    'rpm': 'rpm', 'mph': 'mph', 'm/s': 'mps', 'mps': 'mps', 'fpm': 'fpm',
+    's': 'sec', 'sec': 'sec', 'min': 'minutes', 'minutes': 'minutes', 'h': 'hours', 'hr': 'hours',
+    'hours': 'hours', 'days': 'days',
+    'lux': 'lux', 'db': 'db',
+}
+_VALUE_KINDS = {
+    'analog': 'analog', 'num': 'analog', 'number': 'analog', 'numeric': 'analog',
+    'float': 'analog', 'float32': 'analog', 'float64': 'analog', 'int': 'analog',
+    'int32': 'analog', 'int64': 'analog', 'uint32': 'analog', 'uint64': 'analog',
+    'binary': 'binary', 'bool': 'binary', 'boolean': 'binary', 'true': 'binary',
+    'false': 'binary', 'digital': 'binary',
+    'enum': 'enum', 'string': 'enum', 'multistate': 'enum',
+}
+_OBJECT_TYPES = {
+    'ai': 'ai', 'ao': 'ao', 'av': 'av', 'bi': 'bi', 'bo': 'bo', 'bv': 'bv',
+    'mi': 'mi', 'mo': 'mo', 'msi': 'mi', 'mso': 'mo', 'msv': 'msv', 'mv': 'msv',
+    'analoginput': 'ai', 'analogoutput': 'ao', 'analogvalue': 'av',
+    'binaryinput': 'bi', 'binaryoutput': 'bo', 'binaryvalue': 'bv',
+    'multistateinput': 'mi', 'multistateoutput': 'mo', 'multistatevalue': 'msv',
+}
+_PATH_NOISE = {'points', 'point', 'slot', 'drivers', 'jace', 'network', 'niagara', 'bacnet',
+               'lon', 'supervisor', 'station'}
+
+
+def canon_unit(raw) -> str:
+    """Engineering unit -> closed token ('°F' -> 'degf', '%' -> 'percent').
+    normalize_text would turn '°F' into 'f' and '%' into nothing, hence the
+    lookup. Unknown units keep their alphanumerics."""
+    if raw is None:
+        return ''
+    s = str(raw).strip().lower().replace('°', 'deg').replace(' ', '')
+    if not s:
+        return ''
+    if s in _UNIT_CANON:
+        return _UNIT_CANON[s]
+    return re.sub(r'[^a-z0-9]', '', s)
+
+
+def _canon_value_kind(raw) -> str:
+    s = re.sub(r'[^a-z0-9]', '', str(raw or '').strip().lower())
+    if not s:
+        return ''
+    if s in _VALUE_KINDS:
+        return _VALUE_KINDS[s]
+    try:
+        float(s)
+        return 'analog'
+    except ValueError:
+        return 'enum'
+
+
+def _canon_object_type(raw) -> str:
+    s = re.sub(r'[^a-z]', '', str(raw or '').strip().lower())
+    if not s:
+        return ''
+    # 'AV12' -> 'av'; 'multi-state-value' -> 'multistatevalue' -> 'msv'
+    return _OBJECT_TYPES.get(s, _OBJECT_TYPES.get(s[:3], _OBJECT_TYPES.get(s[:2], s)))
+
+
+def _canon_path(raw) -> str:
+    """Equipment/path segments -> normalized tokens (indices stripped, $xx
+    decoded) minus container noise ('points')."""
+    if raw is None:
+        return ''
+    tokens = [t for t in normalize_text(str(raw)).split()
+              if t not in _PATH_NOISE
+              # JACE / controller ids such as J013, B002 survive normalize_text
+              # (single letter + digits is the electrical-phase pattern); in a
+              # path they are site noise, so drop letter+2-or-more-digit tokens
+              and not re.fullmatch(r'[a-z]\d{2,}', t)]
+    return ' '.join(tokens)
+
+
+def build_context(equip='', description='', units='', value_kind='', object_type='',
+                  device='', keep=None) -> str:
+    """Join the available context fields into the canonical context string.
+
+    keep: optional iterable of field names (from CONTEXT_FIELDS) to retain;
+    used for per-field dropout in training. All-empty -> '' (name-only).
+    """
+    values = {
+        'eq': _canon_path(equip),
+        'desc': normalize_text(str(description)) if description else '',
+        'unit': canon_unit(units),
+        'kind': _canon_value_kind(value_kind),
+        'obj': _canon_object_type(object_type),
+        'dev': _canon_path(device),
+    }
+    allowed = set(CONTEXT_FIELDS) if keep is None else set(keep)
+    parts = [f"{field} {values[field]}" for field in CONTEXT_FIELDS
+             if field in allowed and values[field]]
+    return CONTEXT_SEP.join(parts)
+
+
+def canon_context_fields(equip='', device='', units='', value_kind='', object_type='') -> dict:
+    """Canonical (normalized) context field values, as stored in
+    data/real_points.csv. build_context() is idempotent on these, so raw and
+    canonical inputs produce the same context string."""
+    return {
+        'equip_path': _canon_path(equip),
+        'device_name': _canon_path(device),
+        'units': canon_unit(units),
+        'value_kind': _canon_value_kind(value_kind),
+        'object_type': _canon_object_type(object_type),
+    }
+
+
+def build_model_input(name_text: str, context) -> str:
+    """The exact string the classifier sees: normalized name, optionally
+    followed by ' | ' and the context string."""
+    if not context:
+        return name_text
+    return f"{name_text}{CONTEXT_SEP}{context}"
