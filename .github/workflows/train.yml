@@ -208,6 +208,15 @@ jobs:
           METRIC_FOR_BEST_MODEL=$(get_config "" "metric_for_best_model" "f1_weighted")
           SEED=$(get_config "" "seed" "42")
           SEEDS=$(get_config "${{ github.event.inputs.seeds }}" "seeds" "")
+          CONTEXT=$(get_config "" "context" "true")
+          CONTEXT_DROPOUT=$(get_config "" "context_dropout" "0.5")
+          FIELD_DROPOUT=$(get_config "" "field_dropout" "0.2")
+          EARLY_STOPPING_PATIENCE=$(get_config "" "early_stopping_patience" "3")
+          LLRD_DECAY=$(get_config "" "llrd_decay" "1.0")
+          HEAD_LR_MULTIPLIER=$(get_config "" "head_lr_multiplier" "1.0")
+          RDROP_ALPHA=$(get_config "" "rdrop_alpha" "0.0")
+          LOGIT_ADJUSTMENT_TAU=$(get_config "" "logit_adjustment_tau" "0.0")
+          EMA_DECAY=$(get_config "" "ema_decay" "0.0")
           if [ "$SEEDS" = "null" ]; then SEEDS=""; fi
           PUSH_TO_HUB=$(get_config "${{ github.event.inputs.push_to_hub }}" "push_to_hub" "true")
           HF_REPO=$(get_config "${{ github.event.inputs.hf_repo }}" "hf_repo" "RyIoT33/haystack-autotagging")
@@ -215,6 +224,15 @@ jobs:
           # Export to GITHUB_OUTPUT
           echo "model=$MODEL" >> $GITHUB_OUTPUT
           echo "seeds=$SEEDS" >> $GITHUB_OUTPUT
+          echo "context=$CONTEXT" >> $GITHUB_OUTPUT
+          echo "context_dropout=$CONTEXT_DROPOUT" >> $GITHUB_OUTPUT
+          echo "field_dropout=$FIELD_DROPOUT" >> $GITHUB_OUTPUT
+          echo "early_stopping_patience=$EARLY_STOPPING_PATIENCE" >> $GITHUB_OUTPUT
+          echo "llrd_decay=$LLRD_DECAY" >> $GITHUB_OUTPUT
+          echo "head_lr_multiplier=$HEAD_LR_MULTIPLIER" >> $GITHUB_OUTPUT
+          echo "rdrop_alpha=$RDROP_ALPHA" >> $GITHUB_OUTPUT
+          echo "logit_adjustment_tau=$LOGIT_ADJUSTMENT_TAU" >> $GITHUB_OUTPUT
+          echo "ema_decay=$EMA_DECAY" >> $GITHUB_OUTPUT
           echo "gpu=$GPU" >> $GITHUB_OUTPUT
           echo "epochs=$EPOCHS" >> $GITHUB_OUTPUT
           echo "batch_size=$BATCH_SIZE" >> $GITHUB_OUTPUT
@@ -352,6 +370,19 @@ jobs:
           if [ -n "${{ steps.config.outputs.seeds }}" ]; then
             CMD="$CMD --seeds '${{ steps.config.outputs.seeds }}'"
           fi
+          if [ "${{ steps.config.outputs.context }}" == "true" ]; then
+            CMD="$CMD --context"
+          else
+            CMD="$CMD --no-context"
+          fi
+          CMD="$CMD --context-dropout ${{ steps.config.outputs.context_dropout }}"
+          CMD="$CMD --field-dropout ${{ steps.config.outputs.field_dropout }}"
+          CMD="$CMD --early-stopping-patience ${{ steps.config.outputs.early_stopping_patience }}"
+          CMD="$CMD --llrd-decay ${{ steps.config.outputs.llrd_decay }}"
+          CMD="$CMD --head-lr-multiplier ${{ steps.config.outputs.head_lr_multiplier }}"
+          CMD="$CMD --rdrop-alpha ${{ steps.config.outputs.rdrop_alpha }}"
+          CMD="$CMD --logit-adjustment-tau ${{ steps.config.outputs.logit_adjustment_tau }}"
+          CMD="$CMD --ema-decay ${{ steps.config.outputs.ema_decay }}"
 
           # Add HF Hub flags if pushing
           if [ "${{ steps.config.outputs.push_to_hub }}" == "true" ]; then

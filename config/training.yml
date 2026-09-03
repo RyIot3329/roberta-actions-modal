@@ -14,7 +14,8 @@ model: "RyIoT33/deberta-v3-bms-base"
 epochs: 30
 batch_size: 128
 learning_rate: "4e-5"
-max_seq_length: 32
+# 64 leaves room for the optional context string ("<name> | eq ... | unit ...")
+max_seq_length: 64
 optimizer: "adamw_torch"
 scheduler: "cosine"
 gradient_accumulation: 1
@@ -39,6 +40,28 @@ hf_repo: "RyIoT33/haystack-autotagging"
 # Note: bf16 requires Ampere or newer (A100/L4/A10/H100); the script falls back to fp16 on T4.
 # An L4 also handles this workload fine at lower cost if A100 capacity is tight.
 gpu: "A100"
+
+# Context-aware training: (name, context) records from data/train_ctx.jsonl join
+# the name-only records; context_dropout is the share of context records shown
+# name-only per epoch (keeps the deployed name-only API learning), field_dropout
+# drops individual context fields so partial context is in-distribution.
+context: true
+context_dropout: 0.5
+field_dropout: 0.2
+
+# Training-recipe knobs (workstream 3). Defaults reproduce the historical
+# recipe; each change is adopted only after a 3-seed A/B on validation.
+#   early_stopping_patience 0 = train the full cosine horizon (best epoch kept)
+#   llrd_decay < 1 = layer-wise LR decay; head_lr_multiplier scales the head
+#   rdrop_alpha > 0 = R-Drop consistency (2 forward passes/step)
+#   logit_adjustment_tau > 0 = subtract tau*log(class prior) in the train loss
+#   ema_decay > 0 = evaluate/checkpoint the EMA of the weights
+early_stopping_patience: 3
+llrd_decay: 1.0
+head_lr_multiplier: 1.0
+rdrop_alpha: 0.0
+logit_adjustment_tau: 0.0
+ema_decay: 0.0
 
 # Preprocessing knobs, read by scripts/convert_to_jsonl.py (the workflow's
 # flat-key lookups ignore this section). Changing them retrains via the

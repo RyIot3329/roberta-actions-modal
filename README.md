@@ -95,6 +95,31 @@ Key data-quality guarantees:
   (fingerprint mismatch after new sites or a label-space change) never
   compares silently: CI re-scores the deployed model with
   `scripts/rescore_baseline.py` first. Never delete the baseline file by hand.
+- **Context-aware model with name-only fallback**: the classifier input is
+  `"<normalized name> | <context>"`, where the context string
+  (`scripts/clean_data.py` `build_context`, `CONTEXT_VERSION`) carries the
+  point's equipment path (last two raw BAS path segments before the leaf,
+  site codes and JACE ids dropped), engineering units or state text, value
+  kind (analog/binary/enum), BACnet object type, device name and
+  description, as namespaced fields in a fixed order (`eq ahu inputs | unit
+  degf | kind analog`). An empty context is exactly the legacy name-only
+  input. `scripts/extract_real_data.py` pulls these from the raw export
+  columns only (`pointPath from BAS` / `proxyExt.pointId/BASpointName`,
+  `out`, `To String`, BACnet device name / object id / description); the
+  post-mapping columns (`EO66 Equip`, `EO66 EquipName`,
+  `parent.name/EquipName`, `Slot Path`, `Niagara New Slot Path`) are asserted
+  never read. `convert_to_jsonl.py` resolves one label per (name, context)
+  pair (`data/train_ctx.jsonl`; pairs whose label differs from the name-only
+  majority are listed in `data/context_flips.csv`) and writes per-pair
+  held-out splits (`validation_ctx.jsonl`, `test_ctx.jsonl`) next to the
+  unchanged per-name splits. Training mixes both views with context dropout
+  (`context_dropout`: share of context records shown name-only per epoch)
+  and per-field dropout (`field_dropout`), so partial or missing context at
+  inference stays in-distribution. Results report the name-only view (the
+  gate primary), the context view on pairs, the name-only view on the same
+  pairs, and their max-confidence ensemble. The device-fox / BACnet device
+  profiles expose the same fields at tagging time (`attributes.ord`,
+  `properties.units`, `valueType`, BACnet `attributes.type`).
 - **Multi-seed runs**: `seeds: [42, 43, 44]` in the config (or the `seeds`
   workflow input) trains the seeds in parallel; the seed with the median
   validation strict accuracy is the candidate, and the logit ensemble is
@@ -254,6 +279,20 @@ What each step does, and what to check:
    uses); commit it if you want the raw export versioned alongside.
 
 To make a new site a **holdout instead of training data**, pass it explicitly:
+New-site intake checklist (so the context columns are captured):
+1. Export from Niagara with the raw BAS path (`pointPath from BAS` or
+   `proxyExt.pointId/BASpointName`), `out` and `To String`; from BACnet
+   discovery export `BACnet Device Name`, `BACnet Object ID`,
+   `BACnet Description`, `Bacnet Name`. Keep the EO66 label column named as
+   in `scripts/extract_real_data.py` `FORMATS` (a new layout is one entry).
+2. Drop the file in `data/real_data/` and run `python scripts/extract_real_data.py`;
+   check the per-site line (names, equip paths, unit strings, equip tokens).
+3. `python scripts/convert_to_jsonl.py` (the site joins training by default;
+   see below to hold it out) and `python scripts/audit_conflicts.py` to
+   review new cross-site conflicts.
+4. Commit `data/real_points.csv` (a CI trigger): the 3-seed run scores the
+   change against the fingerprinted baseline.
+
 `python scripts/convert_to_jsonl.py --test-sites N4-Integ06,Motorola_Points,NewSite`
 (changing the test sites changes the scoreboard: the fingerprint in
 `output/best_metrics.json` stops matching, `scripts/rescore_baseline.py --check`

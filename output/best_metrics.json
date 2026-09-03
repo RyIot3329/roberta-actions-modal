@@ -2,13 +2,13 @@
   "schema_version": 2,
   "model": "IOTechSystems/haystack-autotagging",
   "hf_repo": "IOTechSystems/haystack-autotagging",
-  "git_sha": "408646f",
-  "timestamp": "2026-09-03T10:32:25.889817",
+  "git_sha": "78077ba",
+  "timestamp": "2026-09-03T11:04:27.478471",
   "seeds": null,
   "selected_seed": null,
   "fingerprints": {
     "test_sha256": "25728716aeb0f7dc0ae537317e47dc066c3f9c8e2feded375c7792dc5316599c",
-    "label_space_sha256": "cd5e34622a3a4d4d819b4734df3fd9ddcbf8b10b261026debc98473471c7a65f",
+    "label_space_sha256": "c9c2c0fb08534be6150cd74ee288fac07cbb6bbed33ec3bd5405593bff7804dd",
     "n_test": 830,
     "n_classes": 947
   },
@@ -30,16 +30,16 @@
     },
     "slices": {
       "seen_in_train:false": {
-        "n": 601,
-        "strict": 0.5856905158069884,
-        "lenient": 0.5873544093178037,
-        "log1p_rows_strict": 0.6347525186154928
+        "n": 600,
+        "strict": 0.585,
+        "lenient": 0.5866666666666667,
+        "log1p_rows_strict": 0.6344820801385598
       },
       "seen_in_train:true": {
-        "n": 229,
-        "strict": 0.7991266375545851,
-        "lenient": 0.9781659388646288,
-        "log1p_rows_strict": 0.8690916532355294
+        "n": 230,
+        "strict": 0.8,
+        "lenient": 0.9782608695652174,
+        "log1p_rows_strict": 0.869250540847271
       },
       "site:Motorola_Points": {
         "n": 204,
@@ -98,16 +98,16 @@
     },
     "slices": {
       "seen_in_train:false": {
-        "n": 626,
-        "strict": 0.5351437699680511,
-        "lenient": 0.5383386581469649,
-        "log1p_rows_strict": 0.5700669670041273
+        "n": 624,
+        "strict": 0.5336538461538461,
+        "lenient": 0.5368589743589743,
+        "log1p_rows_strict": 0.5684093193566155
       },
       "seen_in_train:true": {
-        "n": 428,
-        "strict": 0.7920560747663551,
-        "lenient": 0.9742990654205608,
-        "log1p_rows_strict": 0.8166294718411593
+        "n": 430,
+        "strict": 0.7930232558139535,
+        "lenient": 0.9744186046511628,
+        "log1p_rows_strict": 0.8171617359288172
       },
       "site:N4-Integ05": {
         "n": 1054,

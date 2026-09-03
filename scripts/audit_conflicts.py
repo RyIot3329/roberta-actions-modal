@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from convert_to_jsonl import (VAL_SITES, TEST_SITES, build_evidence,  # noqa: E402
                               build_label_canonicalizer, label_score, load_overrides,
                               load_preprocessing_config, load_sources, make_overlap_fn,
-                              resolve_training_pool, site_unique_texts)
+                              merge_contexts, resolve_training_pool, site_unique_texts)
 
 
 def main():
@@ -50,6 +50,7 @@ def main():
     real, train_sites = src['real'], src['train_sites']
     real_train = real[real['site'].isin(train_sites)].copy()
     evidence, _ = build_evidence(src['synth'], real_train, src['generated'])
+    evidence = merge_contexts(evidence)  # name-only view (contexts summed)
     overrides = load_overrides(os.path.join(args.data_dir, 'label_overrides.csv'), canon)
 
     legacy, _ = resolve_training_pool(evidence, overrides)
@@ -65,11 +66,11 @@ def main():
             heldout_gold.setdefault(text, {})[site] = label
 
     rows_out = []
-    for text, label_ev in evidence.items():
+    for (text, _ctx), label_ev in evidence.items():
         if len(label_ev) < 2:
             continue
-        old_res = legacy.get(text, 'DROPPED (tie)')
-        new_res = new.get(text, 'DROPPED (tie)')
+        old_res = legacy.get((text, ''), 'DROPPED (tie)')
+        new_res = new.get((text, ''), 'DROPPED (tie)')
         if text in overrides:
             old_res = new_res = f"{overrides[text] or 'DROPPED'} (override)"
         rows_total = int(sum(sum(ev['sites'].values()) for ev in label_ev.values()))

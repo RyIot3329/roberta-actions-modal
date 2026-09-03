@@ -24,8 +24,14 @@ def test_equip_from_slot_path_shapes():
     assert equip_from_slot_path(
         "slot:/Drivers/BacnetNetwork/Mstp103/VAV1N_1_J013B002/points/Ins/InletA"
     ) == "VAV1N_1_J013B002 Ins"
+    # site codes (state + digits, with any suffix) are dropped wherever they sit
     assert equip_from_slot_path("slot:/Drivers/NiagaraNetwork/R01/NH0037ZZ_Norris$20Cotton/Chl"
-                                ) == "R01 NH0037ZZ_Norris$20Cotton"
+                                ) == "R01"
+    assert equip_from_slot_path(
+        "slot:/Drivers/NiagaraNetwork/IL0311ZZ/IL0311ZZ_JACE04/points/AHU_01/CC") == "AHU_01"
+    assert equip_from_slot_path(
+        "slot:/Drivers/NiagaraNetwork/IL0236FC/JCK_ACS_1/points/ControlLogic/Sp"
+    ) == "JCK_ACS_1 ControlLogic"
     assert equip_from_slot_path("SupplyTemperature") == ""       # leaf only
     assert equip_from_slot_path("slot:/Drivers/NiagaraNetwork/points/Name") == ""
     assert equip_from_slot_path(None) == ""

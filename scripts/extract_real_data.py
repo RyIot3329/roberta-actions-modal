@@ -66,6 +66,10 @@ CONTEXT_COLUMNS = ['equip_path', 'device_name', 'object_type', 'units', 'value_k
 _PATH_PREFIX_SEGMENTS = {'slot:', 'drivers', 'niagaranetwork', 'bacnetnetwork', 'lonnetwork',
                          'modbusnetwork', 'points', 'point'}
 _UNIT_RX = re.compile(r'^\s*[-+]?[\d.,]+\s*(.*?)\s*$')
+# Site/JACE identifiers such as IL0311ZZ, NH0037ZZ_Norris$20Cotton, NY0281ZZ_J01,
+# MI0xxxDF_TCP: a state code + 3-4 digits (+ suffix). Site-specific noise that
+# a model must not learn as equipment context.
+_SITE_CODE_RX = re.compile(r'^[A-Z]{2}\d{3,4}[A-Z0-9]*(?:[_$-].*)?$')
 
 
 def equip_from_slot_path(path, depth: int = 2) -> str:
@@ -78,7 +82,8 @@ def equip_from_slot_path(path, depth: int = 2) -> str:
         return ''
     segs = [s for s in path.strip().split('/') if s]
     segs = segs[:-1]  # drop the leaf: it is the point name
-    segs = [s for s in segs if s.lower() not in _PATH_PREFIX_SEGMENTS - {'points', 'point'}]
+    segs = [s for s in segs if s.lower() not in _PATH_PREFIX_SEGMENTS - {'points', 'point'}
+            and not _SITE_CODE_RX.match(s)]
     lowered = [s.lower() for s in segs]
     if 'points' in lowered or 'point' in lowered:
         i = lowered.index('points') if 'points' in lowered else lowered.index('point')

@@ -84,6 +84,18 @@ def _train_impl(
     baseline_f1: float = None,
     save_name: str = "final_model",
     target_precision: float = 0.85,
+    train_ctx_data: list = None,
+    val_ctx_data: list = None,
+    test_ctx_data: list = None,
+    context_dropout: float = 0.5,
+    field_dropout: float = 0.2,
+    context_version: str = None,
+    early_stopping_patience: int = 3,
+    llrd_decay: float = 1.0,
+    head_lr_multiplier: float = 1.0,
+    rdrop_alpha: float = 0.0,
+    logit_adjustment_tau: float = 0.0,
+    ema_decay: float = 0.0,
 ) -> dict:
     """
     Fine-tune a transformer model on the provided data.
@@ -99,6 +111,7 @@ def _train_impl(
         TrainingArguments,
         Trainer,
         EarlyStoppingCallback,
+        TrainerCallback,
         DataCollatorWithPadding,
         set_seed,
     )
@@ -154,20 +167,6 @@ def _train_impl(
         print(f"HF Token: {'provided' if hf_token else 'NOT PROVIDED'}")
     print("=" * 60)
 
-    # Convert to HuggingFace datasets
-    train_dataset = Dataset.from_dict({
-        "text": [d["text"] for d in train_data],
-        "label": [d["label_id"] for d in train_data],
-    })
-    val_dataset = Dataset.from_dict({
-        "text": [d["text"] for d in val_data],
-        "label": [d["label_id"] for d in val_data],
-    })
-    test_dataset = Dataset.from_dict({
-        "text": [d["text"] for d in test_data],
-        "label": [d["label_id"] for d in test_data],
-    })
-
     # Load tokenizer and model
     print(f"\nLoading model: {model_name}")
     
@@ -198,28 +197,65 @@ def _train_impl(
     model.config.id2label = id2label_int
     model.config.label2id = label2id
 
-    # Tokenize datasets (no padding here; the collator pads per batch)
-    def tokenize_function(examples):
-        return tokenizer(
-            examples["text"],
-            truncation=True,
-            max_length=max_seq_length,
-        )
+    # ----- Datasets: name-only records + optional (name, context) records -----
+    # The classifier input is "<name> | <context>" (scripts/clean_data.py
+    # build_model_input); an empty context is exactly the legacy name-only
+    # input. Training applies CONTEXT DROPOUT per example per epoch so the
+    # name-only view (the deployed API today) keeps learning, plus per-field
+    # dropout so partial context at inference (no units, no description) is
+    # in-distribution. Evaluation datasets never drop anything.
+    import random
 
-    print("\nTokenizing datasets...")
-    train_dataset = train_dataset.map(tokenize_function, batched=True)
-    val_dataset = val_dataset.map(tokenize_function, batched=True)
-    test_dataset = test_dataset.map(tokenize_function, batched=True)
+    CONTEXT_SEP = " | "
 
-    # Warn if any sample loses tokens to truncation
-    n_truncated = sum(
-        1 for ds in (train_dataset, val_dataset, test_dataset)
-        for ids in ds["input_ids"] if len(ids) >= max_seq_length
-    )
-    if n_truncated > 0:
-        print(f"WARNING: {n_truncated} samples hit max_seq_length={max_seq_length} and may be truncated")
+    class ContextDataset(torch.utils.data.Dataset):
+        def __init__(self, records, p_name_only=0.0, p_field=0.0):
+            self.records = records
+            self.p_name_only = p_name_only
+            self.p_field = p_field
 
-    data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
+        def __len__(self):
+            return len(self.records)
+
+        def __getitem__(self, i):
+            r = self.records[i]
+            ctx = r.get("context") or ""
+            if ctx and self.p_name_only > 0:
+                if random.random() < self.p_name_only:
+                    ctx = ""
+                elif self.p_field > 0:
+                    fields = [f for f in ctx.split(CONTEXT_SEP) if random.random() >= self.p_field]
+                    ctx = CONTEXT_SEP.join(fields)
+            text = r["text"] if not ctx else f"{r['text']}{CONTEXT_SEP}{ctx}"
+            return {"text": text, "label": r["label_id"]}
+
+    def data_collator(batch):
+        enc = tokenizer([b["text"] for b in batch], padding=True, truncation=True,
+                        max_length=max_seq_length, return_tensors="pt")
+        enc["labels"] = torch.tensor([b["label"] for b in batch], dtype=torch.long)
+        return enc
+
+    use_context = bool(train_ctx_data)
+    train_records = list(train_data) + (list(train_ctx_data) if use_context else [])
+    train_dataset = ContextDataset(train_records, p_name_only=context_dropout if use_context else 0.0,
+                                   p_field=field_dropout if use_context else 0.0)
+    val_dataset = ContextDataset(val_data)
+    test_dataset = ContextDataset(test_data)
+    val_ctx_dataset = ContextDataset(val_ctx_data) if use_context and val_ctx_data else None
+    test_ctx_dataset = ContextDataset(test_ctx_data) if use_context and test_ctx_data else None
+    print(f"Training records: {len(train_data)} name-only"
+          + (f" + {len(train_ctx_data)} with context (context dropout {context_dropout}, "
+             f"field dropout {field_dropout})" if use_context else ""))
+
+    # Warn if the longest inputs would be truncated
+    probe_texts = sorted({d["text"] for d in train_records}, key=len)[-50:]
+    if use_context:
+        probe_texts += sorted((f"{d['text']}{CONTEXT_SEP}{d['context']}" for d in train_ctx_data
+                               if d.get("context")), key=len)[-50:]
+    longest = max((len(tokenizer(t)["input_ids"]) for t in probe_texts), default=0)
+    if longest >= max_seq_length:
+        print(f"WARNING: longest input has {longest} tokens >= max_seq_length={max_seq_length}; "
+              f"raise max_seq_length")
 
     # Define metrics
     def compute_metrics(eval_pred):
@@ -271,16 +307,133 @@ def _train_impl(
         warmup_ratio=warmup_ratio,
         save_total_limit=2,  # Keep only best 2 checkpoints
         dataloader_num_workers=2,
+        remove_unused_columns=False,
     )
 
-    trainer = Trainer(
+    # ----- Recipe knobs (all default-off; each is A/B-tested with 3 seeds) -----
+    # Layer-wise LR decay: deeper (earlier) layers get lr * decay^(distance
+    # from the top); the fresh classifier head gets lr * head_lr_multiplier.
+    optimizers = (None, None)
+    if llrd_decay != 1.0 or head_lr_multiplier != 1.0:
+        base = getattr(model, model.base_model_prefix)
+        layers = list(base.encoder.layer)
+        n_layers = len(layers)
+        no_decay = ("bias", "LayerNorm.weight", "layer_norm.weight", "LayerNorm.bias")
+        groups = []
+        seen = set()
+
+        def add_group(named, lr):
+            decay_params = [p for n, p in named if not any(k in n for k in no_decay)]
+            nodecay_params = [p for n, p in named if any(k in n for k in no_decay)]
+            for p in decay_params + nodecay_params:
+                seen.add(id(p))
+            if decay_params:
+                groups.append({"params": decay_params, "lr": lr, "weight_decay": weight_decay})
+            if nodecay_params:
+                groups.append({"params": nodecay_params, "lr": lr, "weight_decay": 0.0})
+
+        add_group(list(base.embeddings.named_parameters()), learning_rate * llrd_decay ** n_layers)
+        for i, layer in enumerate(layers):
+            add_group(list(layer.named_parameters()), learning_rate * llrd_decay ** (n_layers - 1 - i))
+        head = [(n, p) for n, p in model.named_parameters()
+                if id(p) not in seen and not n.startswith(model.base_model_prefix + ".encoder.layer")]
+        encoder_rest = [(n, p) for n, p in head if n.startswith(model.base_model_prefix + ".")]
+        head_only = [(n, p) for n, p in head if not n.startswith(model.base_model_prefix + ".")]
+        add_group(encoder_rest, learning_rate)
+        add_group(head_only, learning_rate * head_lr_multiplier)
+        optimizers = (torch.optim.AdamW(groups, lr=learning_rate, weight_decay=weight_decay), None)
+        print(f"LLRD: decay {llrd_decay} over {n_layers} layers, head x{head_lr_multiplier} "
+              f"({len(groups)} param groups)")
+
+    # Logit adjustment: subtract tau*log(prior) at train time so rare classes
+    # are not drowned by the head classes (Menon et al. 2021)
+    log_prior = None
+    if logit_adjustment_tau > 0:
+        counts = np.bincount([d["label_id"] for d in train_records], minlength=num_labels).astype(np.float64)
+        prior = (counts + 1.0) / (counts + 1.0).sum()
+        log_prior = torch.tensor(np.log(prior), dtype=torch.float32)
+
+    class RecipeTrainer(Trainer):
+        """Trainer with optional R-Drop consistency and logit adjustment."""
+
+        def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
+            if rdrop_alpha <= 0 and log_prior is None:
+                return super().compute_loss(model, inputs, return_outputs=return_outputs,
+                                            num_items_in_batch=num_items_in_batch)
+            labels = inputs.pop("labels")
+            outputs = model(**inputs)
+            logits = outputs.logits
+            adj = logits + logit_adjustment_tau * log_prior.to(logits.device) \
+                if (log_prior is not None and model.training) else logits
+            loss = torch.nn.functional.cross_entropy(adj, labels, label_smoothing=label_smoothing)
+            if rdrop_alpha > 0 and model.training:
+                logits2 = model(**inputs).logits
+                adj2 = logits2 + logit_adjustment_tau * log_prior.to(logits.device) \
+                    if log_prior is not None else logits2
+                loss2 = torch.nn.functional.cross_entropy(adj2, labels, label_smoothing=label_smoothing)
+                p, q = torch.log_softmax(adj, -1), torch.log_softmax(adj2, -1)
+                kl = (torch.nn.functional.kl_div(p, q, log_target=True, reduction="batchmean")
+                      + torch.nn.functional.kl_div(q, p, log_target=True, reduction="batchmean")) / 2
+                loss = (loss + loss2) / 2 + rdrop_alpha * kl
+            inputs["labels"] = labels
+            return (loss, outputs) if return_outputs else loss
+
+    class EMACallback(TrainerCallback):
+        """Exponential moving average of weights; the EMA weights are swapped in
+        before each epoch-level evaluation/checkpoint (on_epoch_end fires before
+        the epoch evaluation in the Trainer loop) and swapped back for training."""
+
+        def __init__(self, decay):
+            self.decay = decay
+            self.shadow = None
+            self.backup = None
+
+        def on_train_begin(self, args, state, control, model=None, **kwargs):
+            self.shadow = {n: p.detach().clone() for n, p in model.named_parameters() if p.requires_grad}
+
+        def on_step_end(self, args, state, control, model=None, **kwargs):
+            with torch.no_grad():
+                for n, p in model.named_parameters():
+                    if n in self.shadow:
+                        self.shadow[n].mul_(self.decay).add_(p.detach(), alpha=1 - self.decay)
+
+        def on_epoch_end(self, args, state, control, model=None, **kwargs):
+            self.backup = {n: p.detach().clone() for n, p in model.named_parameters() if n in self.shadow}
+            with torch.no_grad():
+                for n, p in model.named_parameters():
+                    if n in self.shadow:
+                        p.copy_(self.shadow[n])
+
+        def on_epoch_begin(self, args, state, control, model=None, **kwargs):
+            if self.backup is not None:
+                with torch.no_grad():
+                    for n, p in model.named_parameters():
+                        if n in self.backup:
+                            p.copy_(self.backup[n])
+                self.backup = None
+
+    callbacks = []
+    if early_stopping_patience and early_stopping_patience > 0:
+        callbacks.append(EarlyStoppingCallback(early_stopping_patience=early_stopping_patience))
+    else:
+        print("Early stopping disabled: the cosine schedule anneals fully; best epoch by validation")
+    if ema_decay > 0:
+        callbacks.append(EMACallback(ema_decay))
+        print(f"EMA of weights enabled (decay {ema_decay})")
+    if rdrop_alpha > 0:
+        print(f"R-Drop enabled (alpha {rdrop_alpha}): two forward passes per step")
+    if log_prior is not None:
+        print(f"Logit adjustment enabled (tau {logit_adjustment_tau})")
+
+    trainer = RecipeTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=val_dataset,
         data_collator=data_collator,
         compute_metrics=compute_metrics,
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
+        callbacks=callbacks,
+        optimizers=optimizers,
     )
 
     # Train
@@ -330,7 +483,7 @@ def _train_impl(
             }
             # Slice fields for the composite gate (site / rows / seen_in_train /
             # lenient accept set) travel with each prediction
-            for key in ("site", "rows", "seen_in_train", "accept"):
+            for key in ("site", "rows", "seen_in_train", "accept", "context", "pair_seen_in_train"):
                 if key in sample:
                     record[key] = sample[key]
             predictions.append(record)
@@ -380,6 +533,34 @@ def _train_impl(
     test_correct = sum(1 for p in test_predictions if p["correct"])
     test_total = len(test_predictions)
     test_accuracy = test_correct / test_total if test_total > 0 else 0
+
+    # Context views (evaluated once, no dropout): the same model scored on
+    # "<name> | <context>" pairs of the held-out sites
+    val_ctx_predictions = test_ctx_predictions = None
+    val_ctx_name_predictions = test_ctx_name_predictions = None
+    val_ctx_output = test_ctx_output = None
+
+    def blank_context(records):
+        return [dict(r, context="") for r in records]
+
+    if val_ctx_dataset is not None:
+        print("\nRunning validation (context) inference...")
+        val_ctx_output = trainer.predict(val_ctx_dataset)
+        val_ctx_predictions = build_predictions(val_ctx_output, val_ctx_data, temperature)
+        # Name-only view on the same pairs: identical texts with the context
+        # blanked, so the two views (and their ensemble) align record by record
+        val_ctx_name_predictions = build_predictions(
+            trainer.predict(ContextDataset(blank_context(val_ctx_data))), val_ctx_data, temperature)
+    if test_ctx_dataset is not None:
+        print("Running test (context) inference...")
+        test_ctx_output = trainer.predict(test_ctx_dataset)
+        test_ctx_predictions = build_predictions(test_ctx_output, test_ctx_data, temperature)
+        test_ctx_name_predictions = build_predictions(
+            trainer.predict(ContextDataset(blank_context(test_ctx_data))), test_ctx_data, temperature)
+    if use_context:
+        model.config.context_version = context_version or "1"
+        model.config.context_trained = True
+        model.config.context_dropout = context_dropout
 
     all_labels = [p["actual_id"] for p in test_predictions]
     all_preds = [p["predicted_id"] for p in test_predictions]
@@ -497,6 +678,12 @@ def _train_impl(
             "label_smoothing": label_smoothing,
             "metric_for_best_model": metric_for_best_model,
             "seed": seed,
+            "early_stopping_patience": early_stopping_patience,
+            "llrd_decay": llrd_decay,
+            "head_lr_multiplier": head_lr_multiplier,
+            "rdrop_alpha": rdrop_alpha,
+            "logit_adjustment_tau": logit_adjustment_tau,
+            "ema_decay": ema_decay,
             "num_labels": num_labels,
             "train_samples": len(train_data),
             "val_samples": len(val_data),
@@ -534,6 +721,23 @@ def _train_impl(
             "total": test_total,
             "predictions": test_predictions,
         },
+        "validation_ctx_inference": None if val_ctx_predictions is None else {
+            "accuracy": sum(1 for p in val_ctx_predictions if p["correct"]) / max(1, len(val_ctx_predictions)),
+            "total": len(val_ctx_predictions),
+            "predictions": val_ctx_predictions,
+        },
+        "test_ctx_inference": None if test_ctx_predictions is None else {
+            "accuracy": sum(1 for p in test_ctx_predictions if p["correct"]) / max(1, len(test_ctx_predictions)),
+            "total": len(test_ctx_predictions),
+            "predictions": test_ctx_predictions,
+        },
+        "validation_ctx_name_inference": None if val_ctx_name_predictions is None else {
+            "predictions": val_ctx_name_predictions},
+        "test_ctx_name_inference": None if test_ctx_name_predictions is None else {
+            "predictions": test_ctx_name_predictions},
+        "context": {"enabled": use_context, "version": context_version,
+                    "context_dropout": context_dropout, "field_dropout": field_dropout,
+                    "train_ctx_records": len(train_ctx_data) if use_context else 0},
         "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU",
         "huggingface_url": hf_url,
         "quality_gate": gate,
@@ -549,6 +753,8 @@ def _train_impl(
     logits_payload = {
         "val_logits": val_output.predictions.astype(np.float16),
         "test_logits": test_output.predictions.astype(np.float16),
+        "val_ctx_logits": None if val_ctx_output is None else val_ctx_output.predictions.astype(np.float16),
+        "test_ctx_logits": None if test_ctx_output is None else test_ctx_output.predictions.astype(np.float16),
     }
 
     # Save results to volume
@@ -719,6 +925,56 @@ def _seed_agreement(seed_results):
     return {"pairwise_mean": float(np.mean(pair)), "unanimous": float(unanimous)}
 
 
+def _score_context_views(val_ctx_preds, test_ctx_preds, val_name_preds, test_name_preds,
+                         target_precision, mc):
+    """Score the context view, the name-only view on the same (name, context)
+    pairs (aligned record by record), and their max-confidence ensemble."""
+    def ensemble_view(ctx_preds, name_preds):
+        out = []
+        for p, n in zip(ctx_preds, name_preds):
+            q = dict(p)
+            if n["confidence"] > p["confidence"]:
+                for key in ("predicted_label", "predicted_id", "confidence", "correct", "topk_labels"):
+                    q[key] = n.get(key)
+            q["source"] = "name" if n["confidence"] > p["confidence"] else "context"
+            out.append(q)
+        return out
+
+    views = {}
+    for split, ctx_preds, name_preds in (("val", val_ctx_preds, val_name_preds),
+                                          ("test", test_ctx_preds, test_name_preds)):
+        assert len(ctx_preds) == len(name_preds), "context and name views must align"
+        views[split] = {"context": ctx_preds, "name_on_pairs": name_preds,
+                        "ensemble": ensemble_view(ctx_preds, name_preds)}
+    out = {"val": {}, "test": {}, "tau": {}}
+    for view in ("context", "name_on_pairs", "ensemble"):
+        tau = mc.fit_acceptance_threshold(views["val"][view], target_precision)
+        out["tau"][view] = tau
+        out["val"][view] = mc.score_predictions(views["val"][view], tau=tau)
+        out["test"][view] = mc.score_predictions(views["test"][view], tau=tau)
+    out["ensemble_source_context_share"] = float(np.mean(
+        [q["source"] == "context" for q in views["test"]["ensemble"]])) if views["test"]["ensemble"] else None
+    return out
+
+
+def _ctx_summary(ctx):
+    if not ctx:
+        return None
+    return {view: {"strict": ctx["test"][view]["strict"]["accuracy"],
+                   "lenient": ctx["test"][view]["lenient"]["accuracy"],
+                   "log1p_rows": ctx["test"][view]["strict"]["log1p_rows_accuracy"],
+                   "n": ctx["test"][view]["strict"]["n"],
+                   "tau": ctx["tau"][view]}
+            for view in ("name_on_pairs", "context", "ensemble")}
+
+
+def _ctx_full(ctx):
+    if not ctx:
+        return None
+    return {split: {view: {k: v for k, v in ctx[split][view].items() if k != "coverage_curve"}
+                    for view in ctx[split]} for split in ("val", "test")} | {"tau": ctx["tau"]}
+
+
 @app.local_entrypoint()
 def main(
     model: str = "microsoft/deberta-v3-base",
@@ -742,6 +998,15 @@ def main(
     output_dir: str = "output",
     baseline_path: str = "output/best_metrics.json",
     target_precision: float = 0.85,
+    context: bool = True,
+    context_dropout: float = 0.5,
+    field_dropout: float = 0.2,
+    early_stopping_patience: int = 3,
+    llrd_decay: float = 1.0,
+    head_lr_multiplier: float = 1.0,
+    rdrop_alpha: float = 0.0,
+    logit_adjustment_tau: float = 0.0,
+    ema_decay: float = 0.0,
 ):
     """
     Run fine-tuning from the command line.
@@ -810,6 +1075,19 @@ def main(
     test_data = _load_jsonl("data/test.jsonl")
     with open("data/label_mapping.json", "r") as f:
         label_mapping = json.load(f)
+    # Optional (name, context) views written by convert_to_jsonl.py
+    ctx_paths = {k: f"data/{k}_ctx.jsonl" for k in ("train", "validation", "test")}
+    use_context = context and all(os.path.exists(v) for v in ctx_paths.values())
+    if context and not use_context:
+        print("WARNING: --context requested but data/*_ctx.jsonl missing; training name-only")
+    train_ctx = _load_jsonl(ctx_paths["train"]) if use_context else None
+    val_ctx = _load_jsonl(ctx_paths["validation"]) if use_context else None
+    test_ctx = _load_jsonl(ctx_paths["test"]) if use_context else None
+    context_version = None
+    if use_context:
+        from clean_data import CONTEXT_VERSION as context_version  # noqa: N812
+        print(f"Context views: {len(train_ctx)} train / {len(val_ctx)} val / {len(test_ctx)} test "
+              f"(name, context) records; context version {context_version}")
     label2id = label_mapping["label2id"]
     id2label = label_mapping["id2label"]
     id2label_int = {int(k): v for k, v in id2label.items()}
@@ -851,6 +1129,12 @@ def main(
         label_smoothing=label_smoothing, metric_for_best_model=metric_for_best_model,
         push_to_hub=False, hf_repo=hf_repo, hf_token=hf_token, baseline_f1=None,
         target_precision=target_precision,
+        train_ctx_data=train_ctx, val_ctx_data=val_ctx, test_ctx_data=test_ctx,
+        context_dropout=context_dropout, field_dropout=field_dropout,
+        context_version=context_version,
+        early_stopping_patience=early_stopping_patience, llrd_decay=llrd_decay,
+        head_lr_multiplier=head_lr_multiplier, rdrop_alpha=rdrop_alpha,
+        logit_adjustment_tau=logit_adjustment_tau, ema_decay=ema_decay,
     )
     print(f"\nStarting Modal training on {gpu_upper} for seeds {seed_list}...")
     calls = {s: train_fn.spawn(seed=s, save_name=f"final_model_seed{s}", **common)
@@ -869,6 +1153,15 @@ def main(
             "test": mc.score_predictions(test_preds, tau=tau),
             "test_preds": test_preds,
         }
+        # Context views: the same model on (name, context) pairs; the name-only
+        # prediction of each pair's text; and their max-confidence ensemble
+        if use_context and res.get("test_ctx_inference"):
+            per_seed[s]["ctx"] = _score_context_views(
+                res["validation_ctx_inference"]["predictions"],
+                res["test_ctx_inference"]["predictions"],
+                res["validation_ctx_name_inference"]["predictions"],
+                res["test_ctx_name_inference"]["predictions"],
+                target_precision, mc)
     ensemble = None
     if len(seed_results) > 1:
         ens_val = _ensemble_predictions(seed_results, val_data, "val", id2label_int)
@@ -903,6 +1196,10 @@ def main(
                                       "test_lenient": per_seed[s]["test"]["lenient"]["accuracy"],
                                       "tau": per_seed[s]["tau"]} for s in seed_list},
             "seed_agreement": agreement,
+            "context": None if not use_context else {
+                "context_version": context_version, "context_dropout": context_dropout,
+                "field_dropout": field_dropout,
+                "test": _ctx_summary(per_seed[selected].get("ctx"))},
             "ensemble": None if ensemble is None else {
                 "test_strict": ensemble["test"]["strict"]["accuracy"],
                 "test_lenient": ensemble["test"]["lenient"]["accuracy"],
@@ -959,7 +1256,9 @@ def main(
                                          "validation": {k: v for k, v in per_seed[s]["val"].items()
                                                         if k != "coverage_curve"},
                                          "test": {k: v for k, v in per_seed[s]["test"].items()
-                                                  if k != "coverage_curve"}} for s in seed_list},
+                                                  if k != "coverage_curve"},
+                                         "context": _ctx_full(per_seed[s].get("ctx"))}
+                                for s in seed_list},
                    "ensemble": None if ensemble is None else {
                        "tau": ensemble["tau"],
                        "validation": {k: v for k, v in ensemble["val"].items() if k != "coverage_curve"},
@@ -1023,6 +1322,22 @@ def main(
         if agreement:
             f.write(f"  seed agreement on test: pairwise {agreement['pairwise_mean']:.3f}, "
                     f"unanimous {agreement['unanimous']:.3f}\n")
+        if use_context:
+            f.write("\nContext views on (name, context) pairs of the held-out sites "
+                    "(strict / lenient / log1p-rows / n):\n")
+            for s in seed_list:
+                c = per_seed[s].get("ctx")
+                if not c:
+                    continue
+                for view in ("name_on_pairs", "context", "ensemble"):
+                    for split in ("val", "test"):
+                        m = c[split][view]
+                        f.write(f"  seed {s} {split:<4} {view:<14} {m['strict']['accuracy']:.4f} / "
+                                f"{m['lenient']['accuracy']:.4f} / {m['strict']['log1p_rows_accuracy']:.4f} "
+                                f"/ {m['strict']['n']}\n")
+                for name, sl in c["test"]["context"]["slices"].items():
+                    f.write(f"    test context slice {name:<24} strict {sl['strict']:.4f} "
+                            f"lenient {sl['lenient']:.4f} n={sl['n']}\n")
         f.write("\nTest slices (selected seed; strict / lenient / n):\n")
         for name, sl in cand_test["slices"].items():
             f.write(f"  {name:<26} {sl['strict']:.4f} / {sl['lenient']:.4f} / {sl['n']}\n")
@@ -1085,3 +1400,201 @@ def main(
               f"lenient {ensemble['test']['lenient']['accuracy']:.4f}")
     print(f"Gate: {'PASSED' if decision['passed'] else 'FAILED'} ({decision['reason']})")
     print("=" * 60)
+
+
+# =============================================================================
+# Weight soup: average the seeds' fine-tuned weights (same init, same data)
+# =============================================================================
+
+@app.function(gpu="A100", timeout=60 * 60)
+def soup_eval(seeds: list, val_data: list, test_data: list, val_ctx_data: list = None,
+              test_ctx_data: list = None, max_seq_length: int = 64, greedy: bool = True,
+              save_name: str = "final_model_soup") -> dict:
+    """Uniform or greedy weight soup over final_model_seed{N} dirs on the
+    volume. Greedy: start from the seed with the best validation accuracy,
+    add seeds one at a time and keep them only if validation accuracy does
+    not drop (Wortsman et al. 2022). Returns name-only (and context-view)
+    predictions of the soup plus the per-seed validation accuracies, and
+    saves the soup with the mean calibration temperature and the selected
+    seeds recorded in its config."""
+    import json
+    import torch
+    from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+    volume.reload()
+    dirs = {s: volume_path / f"final_model_seed{s}" for s in seeds}
+    missing = [str(d) for d in dirs.values() if not d.exists()]
+    if missing:
+        raise FileNotFoundError(f"missing soup ingredients on the volume: {missing}")
+    tokenizer = AutoTokenizer.from_pretrained(str(dirs[seeds[0]]))
+    models = {s: AutoModelForSequenceClassification.from_pretrained(str(d)).eval() for s, d in dirs.items()}
+    id2label = {int(k): v for k, v in models[seeds[0]].config.id2label.items()}
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    def inputs_of(records):
+        return [r["text"] if not r.get("context") else f"{r['text']} | {r['context']}" for r in records]
+
+    @torch.no_grad()
+    def logits_of(model, records):
+        model.to(device)
+        texts = inputs_of(records)
+        out = []
+        for i in range(0, len(texts), 256):
+            enc = tokenizer(texts[i:i + 256], padding=True, truncation=True,
+                            max_length=max_seq_length, return_tensors="pt").to(device)
+            out.append(model(**enc).logits.float().cpu())
+        model.to("cpu")
+        return torch.cat(out)
+
+    val_labels = torch.tensor([r["label_id"] for r in val_data])
+
+    def val_acc(model):
+        return float((logits_of(model, val_data).argmax(1) == val_labels).float().mean())
+
+    per_seed_val = {s: val_acc(m) for s, m in models.items()}
+    order = sorted(seeds, key=lambda s: -per_seed_val[s])
+    print(f"Per-seed validation accuracy: {per_seed_val}")
+
+    def average(selected):
+        base = models[selected[0]]
+        soup = AutoModelForSequenceClassification.from_pretrained(str(dirs[selected[0]])).eval()
+        sd = {k: v.clone().float() for k, v in base.state_dict().items()}
+        for s in selected[1:]:
+            for k, v in models[s].state_dict().items():
+                if sd[k].dtype.is_floating_point:
+                    sd[k] += v.float()
+        for k in sd:
+            if sd[k].dtype.is_floating_point:
+                sd[k] /= len(selected)
+        soup.load_state_dict({k: v.to(base.state_dict()[k].dtype) for k, v in sd.items()})
+        return soup
+
+    if greedy:
+        selected = [order[0]]
+        best = per_seed_val[order[0]]
+        for s in order[1:]:
+            cand = average(selected + [s])
+            acc = val_acc(cand)
+            if acc >= best - 1e-9:
+                selected.append(s)
+                best = acc
+                print(f"  + seed {s}: validation {acc:.4f} (kept)")
+            else:
+                print(f"  + seed {s}: validation {acc:.4f} (dropped)")
+    else:
+        selected = list(seeds)
+    soup = average(selected)
+    temps = [float(getattr(models[s].config, "calibration_temperature", 1.0) or 1.0) for s in selected]
+    taus = [float(getattr(models[s].config, "acceptance_threshold", 1.0) or 1.0) for s in selected]
+    temperature = sum(temps) / len(temps)
+    soup.config.calibration_temperature = temperature
+    soup.config.acceptance_threshold = sum(taus) / len(taus)
+    soup.config.soup_seeds = selected
+    soup_dir = volume_path / save_name
+    soup_dir.mkdir(parents=True, exist_ok=True)
+    soup.save_pretrained(str(soup_dir))
+    tokenizer.save_pretrained(str(soup_dir))
+    volume.commit()
+
+    def predictions(model, records):
+        probs = torch.softmax(logits_of(model, records) / temperature, dim=1)
+        conf, ids = probs.max(dim=1)
+        topk = probs.topk(min(10, probs.shape[1]), dim=1).indices.tolist()
+        out = []
+        for r, i, c, tk in zip(records, ids.tolist(), conf.tolist(), topk):
+            rec = {"text": r["text"], "actual_label": r["label"], "actual_id": r["label_id"],
+                   "predicted_label": id2label[i], "predicted_id": i, "confidence": c,
+                   "correct": i == r["label_id"], "topk_labels": [id2label[j] for j in tk]}
+            for key in ("site", "rows", "seen_in_train", "accept", "context", "pair_seen_in_train"):
+                if key in r:
+                    rec[key] = r[key]
+            out.append(rec)
+        return out
+
+    result = {
+        "selected_seeds": selected,
+        "per_seed_val_accuracy": per_seed_val,
+        "calibration_temperature": temperature,
+        "save_name": save_name,
+        "validation_inference": {"predictions": predictions(soup, val_data)},
+        "test_inference": {"predictions": predictions(soup, test_data)},
+    }
+    if val_ctx_data:
+        result["validation_ctx_inference"] = {"predictions": predictions(soup, val_ctx_data)}
+        result["validation_ctx_name_inference"] = {
+            "predictions": predictions(soup, [dict(r, context="") for r in val_ctx_data])}
+    if test_ctx_data:
+        result["test_ctx_inference"] = {"predictions": predictions(soup, test_ctx_data)}
+        result["test_ctx_name_inference"] = {
+            "predictions": predictions(soup, [dict(r, context="") for r in test_ctx_data])}
+    return result
+
+
+@app.local_entrypoint()
+def soup(seeds: str = "42,43,44", greedy: bool = True, max_seq_length: int = 64,
+         output_dir: str = "output", target_precision: float = 0.85,
+         baseline_path: str = "output/best_metrics.json"):
+    """Evaluate a weight soup of already-trained seeds (on the volume) with
+    the same scorer and gate as a training run; writes
+    output/<timestamp>_soup_metrics.json (+ predictions) and prints the
+    composite comparison. Push manually with push_saved_model if adopted."""
+    import sys as _sys
+    _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import metrics_core as mc
+
+    seed_list = [int(x) for x in seeds.split(",") if x.strip()]
+    val_data = _load_jsonl("data/validation.jsonl")
+    test_data = _load_jsonl("data/test.jsonl")
+    val_ctx = _load_jsonl("data/validation_ctx.jsonl") if os.path.exists("data/validation_ctx.jsonl") else None
+    test_ctx = _load_jsonl("data/test_ctx.jsonl") if os.path.exists("data/test_ctx.jsonl") else None
+    with open("data/label_mapping.json") as f:
+        label2id = json.load(f)["label2id"]
+    res = soup_eval.remote(seed_list, val_data, test_data, val_ctx, test_ctx, max_seq_length, greedy)
+    val_preds = res["validation_inference"]["predictions"]
+    test_preds = res["test_inference"]["predictions"]
+    tau = mc.fit_acceptance_threshold(val_preds, target_precision)
+    val_m = mc.score_predictions(val_preds, tau=tau)
+    test_m = mc.score_predictions(test_preds, tau=tau)
+    fp = mc.fingerprints(test_data, list(label2id))
+    record = mc.build_metrics_record(test_m, fp, model=f"soup{res['selected_seeds']}",
+                                     seeds=seed_list, selected_seed=None,
+                                     timestamp=datetime.now().isoformat(), git_sha=_git_sha(),
+                                     extra={"soup": {"selected_seeds": res["selected_seeds"],
+                                                     "per_seed_val_accuracy": res["per_seed_val_accuracy"],
+                                                     "greedy": greedy},
+                                            "calibration_temperature": res["calibration_temperature"],
+                                            "acceptance_threshold": tau,
+                                            "validation_metrics": {k: v for k, v in val_m.items()
+                                                                   if k != "coverage_curve"}})
+    ctx = None
+    if res.get("test_ctx_inference"):
+        ctx = _score_context_views(res["validation_ctx_inference"]["predictions"],
+                                   res["test_ctx_inference"]["predictions"],
+                                   res["validation_ctx_name_inference"]["predictions"],
+                                   res["test_ctx_name_inference"]["predictions"],
+                                   target_precision, mc)
+        record["context"] = {"test": _ctx_summary(ctx)}
+    decision = {"passed": False, "reason": "no baseline", "axes": []}
+    if os.path.exists(baseline_path):
+        baseline = mc.legacy_baseline(baseline_path)
+        bp = baseline.get("predictions_path")
+        bpreds = mc.load_predictions_jsonl(bp) if bp and os.path.exists(bp) else None
+        decision = mc.promote_decision(record, baseline, test_preds, bpreds)
+    os.makedirs(output_dir, exist_ok=True)
+    stem = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_soup"
+    with open(os.path.join(output_dir, f"{stem}_metrics.json"), "w") as f:
+        json.dump({"candidate": record, "gate": decision, "context": _ctx_full(ctx)}, f, indent=2,
+                  default=str)
+    mc.write_predictions_jsonl(test_preds, os.path.join(output_dir, f"{stem}_predictions.jsonl"))
+    print(f"\nSoup of {res['selected_seeds']} (per-seed val {res['per_seed_val_accuracy']}):")
+    print(f"  validation strict {val_m['strict']['accuracy']:.4f} | test strict "
+          f"{test_m['strict']['accuracy']:.4f} lenient {test_m['lenient']['accuracy']:.4f} "
+          f"log1p-rows {test_m['strict']['log1p_rows_accuracy']:.4f}")
+    if ctx:
+        for view in ("name_on_pairs", "context", "ensemble"):
+            m = ctx["test"][view]
+            print(f"  test pairs {view:<14} strict {m['strict']['accuracy']:.4f} "
+                  f"lenient {m['lenient']['accuracy']:.4f}")
+    print(mc.format_axes_table(decision))
+    print(f"Saved: {output_dir}/{stem}_metrics.json (soup model on the volume as "
+          f"{res['save_name']}; push with push_saved_model if adopted)")

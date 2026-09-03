@@ -121,6 +121,24 @@ def build_corpus(extra_paths=(), seed=42, eval_fraction=0.05):
         names |= {normalize_text(str(d)) for d in real["description"].fillna("")
                   if str(d).strip()}
     sources["real train sites"] = names
+    # Context strings and joint "<name> | <context>" inputs so the encoder
+    # sees the context vocabulary (unit codes, equipment folders) before
+    # fine-tuning; still train sites only
+    ctx_cols = ("equip_path", "device_name", "object_type", "units", "value_kind", "description")
+    if all(c in real.columns for c in ctx_cols):
+        from clean_data import build_context, build_model_input
+        for c in ctx_cols:
+            real[c] = real[c].fillna("").astype(str)
+        contexts, joint = set(), set()
+        for row in real.itertuples():
+            ctx = build_context(equip=row.equip_path, description=row.description, units=row.units,
+                                value_kind=row.value_kind, object_type=row.object_type,
+                                device=row.device_name)
+            if ctx:
+                contexts.add(ctx)
+                joint.add(build_model_input(normalize_text(str(row.name)), ctx))
+        sources["train-site context strings"] = contexts
+        sources["train-site name | context inputs"] = joint
 
     synth = pd.read_csv("data/cleaned_data.csv")
     sources["synthetic templates"] = {str(t) for t in synth["text"]}

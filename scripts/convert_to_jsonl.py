@@ -57,7 +57,7 @@ from collections import Counter, defaultdict
 import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from clean_data import normalize_text
+from clean_data import normalize_text, build_context, CONTEXT_VERSION
 from extract_real_data import build_canonicalizer, build_display_name_index
 import math
 from augment import augment_pool
@@ -203,8 +203,9 @@ def load_equivalences(path, canon):
 
 def build_evidence(synth, real_train, generated=None):
     """
-    Per-text label evidence: {text: {label: {'synth': template rows,
-    'gen': generated rows, 'sites': Counter{site: real rows}}}}.
+    Per-(text, context) label evidence: {(text, context): {label: {'synth':
+    template rows, 'gen': generated rows, 'sites': Counter{site: real rows}}}}.
+    Template/generated texts and descriptions carry an empty context.
 
     Train-site descriptions are labeled evidence in their own right
     ("Damper Command" is as real as "DmpCmd"); held-out site descriptions
@@ -214,9 +215,11 @@ def build_evidence(synth, real_train, generated=None):
         return {'synth': 0.0, 'gen': 0.0, 'sites': Counter()}
     evidence = defaultdict(lambda: defaultdict(_empty))
     for row in synth.itertuples():
-        evidence[row.text][row.target]['synth'] += 1
+        evidence[(row.text, '')][row.target]['synth'] += 1
+    has_ctx = 'context' in real_train.columns
     for row in real_train.itertuples():
-        evidence[row.text][row.label]['sites'][row.site] += int(row.rows)
+        ctx = row.context if has_ctx else ''
+        evidence[(row.text, ctx)][row.label]['sites'][row.site] += int(row.rows)
     stats = {'described_rows': 0}
     if 'description' in real_train.columns:
         described = real_train[real_train['description'].fillna('')
@@ -225,12 +228,27 @@ def build_evidence(synth, real_train, generated=None):
             described['desc_text'] = described['description'].astype(str).map(normalize_text)
             described = described[described['desc_text'].str.len() > 0]
             for row in described.itertuples():
-                evidence[row.desc_text][row.label]['sites'][row.site] += int(row.rows)
+                evidence[(row.desc_text, '')][row.label]['sites'][row.site] += int(row.rows)
             stats['described_rows'] = len(described)
     if generated is not None:
         for row in generated.itertuples():
-            evidence[row.text][row.target]['gen'] += 1
+            evidence[(row.text, '')][row.target]['gen'] += 1
     return evidence, stats
+
+
+def merge_contexts(evidence):
+    """Collapse (text, context) evidence to name-only keys (text, '') by
+    summing the per-label evidence over contexts."""
+    def _empty():
+        return {'synth': 0.0, 'gen': 0.0, 'sites': Counter()}
+    merged = defaultdict(lambda: defaultdict(_empty))
+    for (text, _ctx), label_ev in evidence.items():
+        for label, ev in label_ev.items():
+            m = merged[(text, '')][label]
+            m['synth'] += ev['synth']
+            m['gen'] += ev['gen']
+            m['sites'].update(ev['sites'])
+    return merged
 
 
 def label_score(ev, row_cap=None):
@@ -272,65 +290,84 @@ def make_overlap_fn(eo66_path):
 
 def resolve_training_pool(evidence, overrides, row_cap=None, overlap_fn=None):
     """
-    Collapse {text: {label: evidence}} to one label per text.
+    Collapse {(text, context): {label: evidence}} to one label per key.
 
-    Manual overrides win; otherwise the strongest label_score. In capped
-    mode ties break on the number of sites backing a label, then on the
-    Display-Name overlap prior (when an overlap_fn is given); a residual tie
-    is dropped. Legacy mode (row_cap falsy, no overlap_fn) reproduces the
-    original raw-row majority exactly.
-    Returns (resolved {text: label}, conflicts list for the CSV report).
+    Manual overrides (per text, any context) win; otherwise the strongest
+    label_score. In capped mode ties break on the number of sites backing a
+    label, then on the Display-Name overlap prior (when an overlap_fn is
+    given); a residual tie is dropped. Legacy mode (row_cap falsy, no
+    overlap_fn) reproduces the original raw-row majority exactly.
+    Returns (resolved {(text, context): label}, conflicts list for the CSV report).
     """
     resolved = {}
     conflicts = []
     use_tiebreaks = bool(row_cap) or overlap_fn is not None
 
-    def describe(text, label, ev, score):
+    def describe(label, ev, score):
         rows = int(sum(ev['sites'].values()))
         return f"{label} ({score:g}; rows {rows}, sites {len(ev['sites'])})"
 
-    for text, label_ev in evidence.items():
+    for key, label_ev in evidence.items():
+        text, ctx = key
         keyed = []
         for label, ev in label_ev.items():
-            key = (label_score(ev, row_cap),
-                   len(ev['sites']) if use_tiebreaks else 0,
-                   overlap_fn(text, label) if overlap_fn is not None else 0.0)
-            keyed.append((key, label, ev))
+            rank = (label_score(ev, row_cap),
+                    len(ev['sites']) if use_tiebreaks else 0,
+                    overlap_fn(text, label) if overlap_fn is not None else 0.0)
+            keyed.append((rank, label, ev))
         keyed.sort(key=lambda x: x[1])                 # deterministic order among ties
         keyed.sort(key=lambda x: x[0], reverse=True)
-        targets = ' | '.join(describe(text, label, ev, key[0]) for key, label, ev in keyed)
+        targets = ' | '.join(describe(label, ev, rank[0]) for rank, label, ev in keyed)
 
         if text in overrides:
             target = overrides[text]
             if len(label_ev) > 1:
                 conflicts.append({
-                    'text': text,
-                    'targets': targets,
+                    'text': text, 'context': ctx, 'targets': targets,
                     'resolution': f"{target if target is not None else 'DROPPED'} (override)",
                 })
             if target is not None:
-                resolved[text] = target
+                resolved[key] = target
             continue
 
         if len(label_ev) == 1:
-            resolved[text] = next(iter(label_ev))
+            resolved[key] = next(iter(label_ev))
             continue
 
         is_tie = keyed[0][0] == keyed[1][0]
         resolution = 'DROPPED (tie)' if is_tie else keyed[0][1]
-        conflicts.append({'text': text, 'targets': targets, 'resolution': resolution})
+        conflicts.append({'text': text, 'context': ctx, 'targets': targets,
+                          'resolution': resolution})
         if not is_tie:
-            resolved[text] = keyed[0][1]
+            resolved[key] = keyed[0][1]
 
     # Overrides for texts absent from the source data are honored but flagged
-    known = set(evidence)
+    known = {k[0] for k in evidence}
     for text, target in overrides.items():
         if text not in known:
             print(f"WARNING: override text not found in data (typo or stale?): '{text}'")
             if target is not None:
-                resolved[text] = target
+                resolved[(text, '')] = target
 
     return resolved, conflicts
+
+
+def site_unique_pairs(site_df):
+    """Per-(text, context) weighted-majority gold label within one held-out
+    site. Returns list of (text, context, label, rows); ties are excluded."""
+    agg = defaultdict(Counter)
+    totals = Counter()
+    for row in site_df.itertuples():
+        key = (row.text, row.context)
+        agg[key][row.label] += row.rows
+        totals[key] += row.rows
+    out = []
+    for (text, ctx), label_weights in agg.items():
+        ranked = label_weights.most_common()
+        if len(ranked) > 1 and ranked[0][1] == ranked[1][1]:
+            continue
+        out.append((text, ctx, ranked[0][0], int(totals[(text, ctx)])))
+    return out
 
 
 def site_unique_texts(site_df):
@@ -385,6 +422,15 @@ def load_sources(input_csv, real_points_csv, synthetic_csv, output_dir,
         sys.exit(1)
     real['text'] = real['name'].astype(str).map(normalize_text)
     real['label'] = real['label'].astype(str).str.strip().map(canon)
+    # Optional context columns (scripts/extract_real_data.py >= context schema)
+    for c in ('equip_path', 'device_name', 'object_type', 'units', 'value_kind', 'description'):
+        if c not in real.columns:
+            real[c] = ''
+        real[c] = real[c].fillna('').astype(str)
+    real['context'] = [
+        build_context(equip=e, description=d, units=u, value_kind=k, object_type=o, device=v)
+        for e, d, u, k, o, v in zip(real['equip_path'], real['description'], real['units'],
+                                    real['value_kind'], real['object_type'], real['device_name'])]
     real = real[(real['text'].str.len() > 0) & (real['label'].str.len() > 0)]
 
     sites = sorted(real['site'].unique())
@@ -467,10 +513,20 @@ def convert_to_jsonl(
 
     row_cap = int(preprocessing.get('row_cap') or 0)
     overlap_fn = make_overlap_fn(os.path.join(output_dir, 'eo66.xlsx')) if row_cap else None
-    resolved, conflicts = resolve_training_pool(evidence, overrides, row_cap=row_cap,
-                                                overlap_fn=overlap_fn)
-    print(f"Training pool: {len(evidence)} unique texts -> {len(resolved)} after conflict "
+    # Name-only pool (contexts merged): the label space and the name-only
+    # training view -- identical to the pre-context pipeline
+    name_evidence = merge_contexts(evidence)
+    resolved_pairs_all, conflicts = resolve_training_pool(name_evidence, overrides,
+                                                          row_cap=row_cap, overlap_fn=overlap_fn)
+    resolved = {text: label for (text, _), label in resolved_pairs_all.items()}
+    print(f"Training pool: {len(name_evidence)} unique texts -> {len(resolved)} after conflict "
           f"resolution (row_cap={row_cap or 'legacy raw rows'})")
+    # Context pool: one label per (text, context) pair from the train sites
+    ctx_evidence = {k: v for k, v in evidence.items() if k[1]}
+    resolved_ctx, ctx_conflicts = resolve_training_pool(ctx_evidence, overrides,
+                                                        row_cap=row_cap, overlap_fn=overlap_fn)
+    print(f"Context pool: {len(ctx_evidence)} (text, context) pairs -> {len(resolved_ctx)} "
+          f"resolved ({len(ctx_conflicts)} pair-level conflicts)")
 
     conflicts_path = os.path.join(output_dir, 'label_conflicts.csv')
     if conflicts:
@@ -524,6 +580,32 @@ def convert_to_jsonl(
     assert len({r['text'] for r in train_records}) == len(train_records), \
         "Training texts must be unique after dedup"
 
+    # Context view: every resolved (text, context) pair from the train sites,
+    # restricted to the name-only label space (keeps the scoreboard stable).
+    # A pair whose label differs from the name-only majority is a context
+    # flip (the case context exists to teach); logged for review.
+    ctx_records, flips, ctx_out_of_space = [], [], 0
+    for (text, ctx), label in sorted(resolved_ctx.items()):
+        if label not in label2id:
+            ctx_out_of_space += 1
+            continue
+        ctx_records.append({'text': text, 'context': ctx, 'label': label,
+                            'label_id': label2id[label]})
+        name_label = resolved.get(text)
+        if name_label is not None and name_label != label:
+            rows = int(sum(sum(ev['sites'].values())
+                           for ev in ctx_evidence[(text, ctx)].values()))
+            flips.append({'text': text, 'context': ctx, 'context_label': label,
+                          'name_only_label': name_label, 'rows': rows})
+    print(f"Context view: {len(ctx_records)} (text, context) records, {len(flips)} flips vs "
+          f"the name-only label, {ctx_out_of_space} dropped (label outside the name-only space)")
+    flips_path = os.path.join(output_dir, 'context_flips.csv')
+    if flips:
+        pd.DataFrame(flips).sort_values('rows', ascending=False).to_csv(flips_path, index=False)
+        print(f"  Context flips saved: {flips_path}")
+    elif os.path.exists(flips_path):
+        os.remove(flips_path)
+
     # ----- Held-out sites -----
     train_texts = set(resolved)
 
@@ -563,6 +645,33 @@ def convert_to_jsonl(
     val_records, val_uncovered, val_ambiguous = build_split(val_sites, 'Validation')
     test_records, test_uncovered, test_ambiguous = build_split(test_sites, 'Test')
 
+    train_pairs = set(resolved_ctx)
+
+    def build_ctx_split(split_sites, name):
+        covered, ambiguous = [], 0
+        for site in split_sites:
+            site_df = real[real['site'] == site]
+            pairs = site_unique_pairs(site_df)
+            ambiguous += len(site_df.groupby(['text', 'context'])) - len(pairs)
+            for text, ctx, label, rows in pairs:
+                if label not in label2id:
+                    continue
+                covered.append({
+                    'text': text, 'context': ctx, 'label': label, 'label_id': label2id[label],
+                    'site': site, 'rows': rows,
+                    'seen_in_train': text in train_texts,
+                    'pair_seen_in_train': (text, ctx) in train_pairs,
+                    'accept': sorted({label} | train_site_labels.get(text, set())
+                                     | equivalences.get(label, set())),
+                })
+        with_ctx = sum(1 for r in covered if r['context'])
+        print(f"{name} (contextual): {len(covered)} covered (text, context) pairs from {split_sites} "
+              f"({with_ctx} with context, {ambiguous} ambiguous dropped)")
+        return covered
+
+    val_ctx_records = build_ctx_split(val_sites, 'Validation')
+    test_ctx_records = build_ctx_split(test_sites, 'Test')
+
     # ----- Write outputs -----
     print("\nWriting JSONL files...")
     write_jsonl(train_records, os.path.join(output_dir, 'train.jsonl'))
@@ -570,6 +679,9 @@ def convert_to_jsonl(
     write_jsonl(test_records, os.path.join(output_dir, 'test.jsonl'))
     write_jsonl(val_uncovered, os.path.join(output_dir, 'validation_uncovered.jsonl'))
     write_jsonl(test_uncovered, os.path.join(output_dir, 'test_uncovered.jsonl'))
+    write_jsonl(ctx_records, os.path.join(output_dir, 'train_ctx.jsonl'))
+    write_jsonl(val_ctx_records, os.path.join(output_dir, 'validation_ctx.jsonl'))
+    write_jsonl(test_ctx_records, os.path.join(output_dir, 'test_ctx.jsonl'))
 
     label_mapping_path = os.path.join(output_dir, 'label_mapping.json')
     with open(label_mapping_path, 'w', encoding='utf-8') as f:
@@ -621,6 +733,16 @@ def convert_to_jsonl(
             },
             'validation': split_summary(val_records, val_uncovered, val_ambiguous, val_sites),
             'test': split_summary(test_records, test_uncovered, test_ambiguous, test_sites),
+            'context': {
+                'context_version': CONTEXT_VERSION,
+                'train_pairs': len(ctx_records),
+                'train_flips': len(flips),
+                'train_pairs_outside_label_space': ctx_out_of_space,
+                'validation_pairs': len(val_ctx_records),
+                'validation_pairs_with_context': sum(1 for r in val_ctx_records if r['context']),
+                'test_pairs': len(test_ctx_records),
+                'test_pairs_with_context': sum(1 for r in test_ctx_records if r['context']),
+            },
             'class_distribution': dict(class_counts.most_common()),
             'text_length_stats': {
                 'min': int(text_lengths.min()),

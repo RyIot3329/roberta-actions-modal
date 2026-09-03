@@ -50,7 +50,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 # Reuse the exact normalization + label canonicalization of the pipeline
 sys.path.insert(0, str(Path(__file__).parent))
-from clean_data import normalize_text
+from clean_data import normalize_text, build_context, build_model_input
 from convert_to_jsonl import build_label_canonicalizer
 import metrics_core as mc
 
@@ -85,6 +85,18 @@ def load_dataset(args):
     df['text'] = df['point_name'].astype(str).map(normalize_text)
     df['desc_text'] = pd.Series(desc, index=df.index).fillna('').astype(str).map(
         lambda s: normalize_text(s) if s.strip() else '')
+    # Context string from the export's context columns (real_points.csv
+    # context schema); empty when the columns are absent
+    ctx_cols = ('equip_path', 'device_name', 'object_type', 'units', 'value_kind', 'description')
+    if all(c in df.columns for c in ctx_cols):
+        for c in ctx_cols:
+            df[c] = df[c].fillna('').astype(str)
+        df['context'] = [
+            build_context(equip=e, description=d, units=u, value_kind=k, object_type=o, device=v)
+            for e, d, u, k, o, v in zip(df['equip_path'], df['description'], df['units'],
+                                        df['value_kind'], df['object_type'], df['device_name'])]
+    else:
+        df['context'] = ''
     df = df[(df['text'].str.len() > 0) & (df['label'].astype(str).str.len() > 0)]
     n_desc = (df['desc_text'].str.len() > 0).sum()
     print(f"Loaded {source}: {len(df)} records, {int(df['weight'].sum())} weighted rows, "
@@ -253,6 +265,8 @@ def main():
                              "models needed 0.999")
     parser.add_argument("--no-ensemble", action="store_true",
                         help="Score names only, ignoring descriptions")
+    parser.add_argument("--no-context", action="store_true",
+                        help="Ignore the export's context columns (name/description views only)")
     parser.add_argument("--lenient", action="store_true",
                         help="Also report lenient accuracy: credit any label a TRAIN site "
                              "used for the identical normalized name (data/real_points.csv, "
@@ -279,6 +293,9 @@ def main():
     df = load_dataset(args)
     if args.no_ensemble:
         df['desc_text'] = ''
+    if args.no_context:
+        df['context'] = ''
+    df['ctx_text'] = [build_model_input(t, c) if c else '' for t, c in zip(df['text'], df['context'])]
 
     # Canonicalize gold labels the same way the training pipeline does
     canon = build_label_canonicalizer('data/eo66.xlsx', 'data/target_audit.csv')
@@ -321,7 +338,8 @@ def main():
               f"-- counted as errors, listed separately below")
 
     # Predict every unique view (names and descriptions) once
-    unique_texts = sorted(set(df["text"]) | {t for t in df["desc_text"] if t})
+    unique_texts = sorted(set(df["text"]) | {t for t in df["desc_text"] if t}
+                          | {t for t in df["ctx_text"] if t})
     print(f"\nRunning inference on {len(unique_texts)} unique strings "
           f"(names + descriptions), batch={BATCH_SIZE}...")
 
@@ -330,7 +348,7 @@ def main():
         for i in range(0, len(unique_texts), BATCH_SIZE):
             batch = unique_texts[i:i + BATCH_SIZE]
             inputs = tokenizer(batch, padding=True, truncation=True,
-                               max_length=32, return_tensors="pt").to(device)
+                               max_length=64, return_tensors="pt").to(device)
             probs = torch.softmax(model(**inputs).logits / temperature, dim=1)
             confs, ids = probs.max(dim=1)
             for text, pid, conf in zip(batch, ids.tolist(), confs.tolist()):
@@ -341,12 +359,17 @@ def main():
     df["conf_name"] = df["text"].map(pred_conf)
     df["pred_desc"] = df["desc_text"].map(lambda t: pred_label.get(t))
     df["conf_desc"] = df["desc_text"].map(lambda t: pred_conf.get(t, 0.0))
+    df["pred_ctx"] = df["ctx_text"].map(lambda t: pred_label.get(t))
+    df["conf_ctx"] = df["ctx_text"].map(lambda t: pred_conf.get(t, 0.0))
 
-    # Max-confidence ensemble: the more certain view wins
-    use_desc = df["conf_desc"] > df["conf_name"]
-    df["predicted"] = df["pred_name"].where(~use_desc, df["pred_desc"])
-    df["confidence"] = df["conf_name"].where(~use_desc, df["conf_desc"])
-    df["source"] = pd.Series('name', index=df.index).where(~use_desc, 'description')
+    # Max-confidence ensemble across views: the most certain view wins
+    views = {"name": ("pred_name", "conf_name"), "description": ("pred_desc", "conf_desc"),
+             "context": ("pred_ctx", "conf_ctx")}
+    conf_frame = pd.DataFrame({v: df[c] for v, (_, c) in views.items()})
+    best = conf_frame.idxmax(axis=1)
+    df["source"] = best
+    df["predicted"] = [df.at[i, views[v][0]] for i, v in zip(df.index, best)]
+    df["confidence"] = conf_frame.max(axis=1)
     df["correct"] = df["predicted"] == df["label"]
 
     # ----- Results -----
@@ -374,6 +397,15 @@ def main():
               f"of described records")
     else:
         print(f"Ensemble == name-only (no descriptions in this dataset): {wacc(df):.2%}")
+    has_ctx = df[df["ctx_text"].str.len() > 0]
+    if len(has_ctx):
+        has_ctx = has_ctx.assign(correct_ctx=has_ctx["pred_ctx"] == has_ctx["label"],
+                                 correct_name=has_ctx["pred_name"] == has_ctx["label"])
+        print(f"Context view, where present:        {wacc(has_ctx, 'correct_ctx'):.2%}  "
+              f"vs name-only on the same rows {wacc(has_ctx, 'correct_name'):.2%}  "
+              f"({has_ctx['weight'].sum() / total_w:.1%} of rows have context; "
+              f"ensemble chose context for "
+              f"{(has_ctx['source'] == 'context').mean():.0%} of them)")
     print(f"  on labels the model knows:        {wacc(known):.2%}  "
           f"({known['weight'].sum() / total_w:.1%} of rows)")
     print(f"Unique-name accuracy (ensemble):    {uniq['correct'].mean():.2%}  ({len(uniq)} names)")
@@ -417,8 +449,8 @@ def main():
     name = args.site or Path(args.csv).stem
     os.makedirs("output", exist_ok=True)
     out_path = f"output/external_eval_{name}.csv"
-    df[["point_name", "text", "desc_text", "label",
-        "pred_name", "conf_name", "pred_desc", "conf_desc",
+    df[["point_name", "text", "desc_text", "context", "label",
+        "pred_name", "conf_name", "pred_desc", "conf_desc", "pred_ctx", "conf_ctx",
         "predicted", "confidence", "source", "correct", "weight"]].to_csv(
         out_path, index=False)
     print(f"\nFull predictions saved to: {out_path}")

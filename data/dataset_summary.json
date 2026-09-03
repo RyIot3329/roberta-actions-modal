@@ -52,6 +52,16 @@
     "ambiguous_gold_dropped": 10,
     "multi_accept": 107
   },
+  "context": {
+    "context_version": "1",
+    "train_pairs": 27517,
+    "train_flips": 1585,
+    "train_pairs_outside_label_space": 51,
+    "validation_pairs": 7623,
+    "validation_pairs_with_context": 7623,
+    "test_pairs": 4593,
+    "test_pairs_with_context": 4593
+  },
   "class_distribution": {
     "zoneTemp": 401,
     "zoneTempSp": 400,
