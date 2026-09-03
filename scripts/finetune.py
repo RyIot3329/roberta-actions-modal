@@ -1007,6 +1007,7 @@ def main(
     rdrop_alpha: float = 0.0,
     logit_adjustment_tau: float = 0.0,
     ema_decay: float = 0.0,
+    soup: bool = True,
 ):
     """
     Run fine-tuning from the command line.
@@ -1178,18 +1179,73 @@ def main(
     results = seed_results[selected]
     cand_test = per_seed[selected]["test"]
     cand_preds = per_seed[selected]["test_preds"]
+    cand_name = f"seed{selected}"
+    cand_save_name = results["save_name"]
+    cand_temperature = results.get("calibration_temperature")
+    cand_tau = per_seed[selected]["tau"]
+    cand_ctx = per_seed[selected].get("ctx")
     print(f"\nSelected seed {selected} (median validation strict accuracy "
           f"{per_seed[selected]['val']['strict']['accuracy']:.4f})")
+
+    # Weight soup of the seeds (same init, same data): free at inference. It
+    # replaces the median seed as the candidate only when its VALIDATION strict
+    # accuracy is higher. Any soup failure leaves the run's results intact.
+    soup_entry = None
+    if soup and len(seed_list) > 1:
+        try:
+            print(f"Building the greedy weight soup of seeds {seed_list}...")
+            soup_res = soup_eval.remote(seed_list, val_data, test_data, val_ctx, test_ctx,
+                                        max_seq_length, True, "final_model_soup")
+            s_val = soup_res["validation_inference"]["predictions"]
+            s_test = soup_res["test_inference"]["predictions"]
+            s_tau = mc.fit_acceptance_threshold(s_val, target_precision)
+            soup_entry = {"selected_seeds": soup_res["selected_seeds"], "tau": s_tau,
+                          "val": mc.score_predictions(s_val, tau=s_tau),
+                          "test": mc.score_predictions(s_test, tau=s_tau),
+                          "test_preds": s_test, "temperature": soup_res["calibration_temperature"],
+                          "per_seed_val_accuracy": soup_res["per_seed_val_accuracy"]}
+            if use_context and soup_res.get("test_ctx_inference"):
+                soup_entry["ctx"] = _score_context_views(
+                    soup_res["validation_ctx_inference"]["predictions"],
+                    soup_res["test_ctx_inference"]["predictions"],
+                    soup_res["validation_ctx_name_inference"]["predictions"],
+                    soup_res["test_ctx_name_inference"]["predictions"], target_precision, mc)
+            print(f"Soup of {soup_entry['selected_seeds']}: validation strict "
+                  f"{soup_entry['val']['strict']['accuracy']:.4f} vs selected seed "
+                  f"{per_seed[selected]['val']['strict']['accuracy']:.4f}")
+            if soup_entry["val"]["strict"]["accuracy"] > per_seed[selected]["val"]["strict"]["accuracy"]:
+                cand_name = f"soup{soup_entry['selected_seeds']}"
+                cand_test = soup_entry["test"]
+                cand_preds = soup_entry["test_preds"]
+                cand_save_name = "final_model_soup"
+                cand_temperature = soup_entry["temperature"]
+                cand_tau = soup_entry["tau"]
+                cand_ctx = soup_entry.get("ctx")
+                print(f"Candidate: {cand_name} (validation beat the median seed)")
+        except Exception as e:  # noqa: BLE001
+            print(f"WARNING: soup evaluation failed ({type(e).__name__}: {e}); candidate stays seed {selected}")
+            soup_entry = None
 
     candidate_record = mc.build_metrics_record(
         cand_test, fingerprints, model=model_name, hf_repo=hf_repo, git_sha=_git_sha(),
         timestamp=results["timestamp"], seeds=seed_list, selected_seed=selected,
         extra={
-            "calibration_temperature": results.get("calibration_temperature"),
-            "acceptance_threshold": per_seed[selected]["tau"],
+            "candidate": cand_name,
+            "candidate_save_name": cand_save_name,
+            "calibration_temperature": cand_temperature,
+            "acceptance_threshold": cand_tau,
             "target_precision": target_precision,
-            "validation_metrics": {k: v for k, v in per_seed[selected]["val"].items()
+            "validation_metrics": {k: v for k, v in
+                                   (soup_entry["val"] if cand_name.startswith("soup") else per_seed[selected]["val"]).items()
                                    if k != "coverage_curve"},
+            "soup": None if soup_entry is None else {
+                "selected_seeds": soup_entry["selected_seeds"],
+                "per_seed_val_accuracy": soup_entry["per_seed_val_accuracy"],
+                "val_strict": soup_entry["val"]["strict"]["accuracy"],
+                "test_strict": soup_entry["test"]["strict"]["accuracy"],
+                "test_lenient": soup_entry["test"]["lenient"]["accuracy"],
+                "test_log1p_rows": soup_entry["test"]["strict"]["log1p_rows_accuracy"],
+                "is_candidate": cand_name.startswith("soup")},
             "seed_summary": {str(s): {"val_strict": per_seed[s]["val"]["strict"]["accuracy"],
                                       "test_strict": per_seed[s]["test"]["strict"]["accuracy"],
                                       "test_f1_weighted": per_seed[s]["test"]["strict"]["f1_weighted"],
@@ -1199,7 +1255,7 @@ def main(
             "context": None if not use_context else {
                 "context_version": context_version, "context_dropout": context_dropout,
                 "field_dropout": field_dropout,
-                "test": _ctx_summary(per_seed[selected].get("ctx"))},
+                "test": _ctx_summary(cand_ctx)},
             "ensemble": None if ensemble is None else {
                 "test_strict": ensemble["test"]["strict"]["accuracy"],
                 "test_lenient": ensemble["test"]["lenient"]["accuracy"],
@@ -1225,10 +1281,10 @@ def main(
     # ----- Gated push + baseline rewrite -----
     hf_url = None
     if decision["passed"] and push_to_hub and hf_repo and hf_token:
-        msg = (f"{model_name.split('/')[-1]}: seed {selected} of {seed_list}, {epochs}ep, "
+        msg = (f"{model_name.split('/')[-1]}: {cand_name} of seeds {seed_list}, {epochs}ep, "
                f"bs{batch_size}x{gradient_accumulation}, lr{learning_rate}, "
                f"test strict {cand_test['strict']['accuracy']:.4f}")
-        hf_url = push_saved_model.remote(results["save_name"], hf_repo, hf_token, msg)
+        hf_url = push_saved_model.remote(cand_save_name, hf_repo, hf_token, msg)
         os.makedirs(os.path.dirname(baseline_path) or ".", exist_ok=True)
         pred_path = os.path.join(os.path.dirname(baseline_path) or ".", "best_predictions.jsonl")
         candidate_record["predictions_path"] = pred_path
@@ -1263,6 +1319,11 @@ def main(
                        "tau": ensemble["tau"],
                        "validation": {k: v for k, v in ensemble["val"].items() if k != "coverage_curve"},
                        "test": {k: v for k, v in ensemble["test"].items() if k != "coverage_curve"}},
+                   "soup": None if soup_entry is None else {
+                       "selected_seeds": soup_entry["selected_seeds"], "tau": soup_entry["tau"],
+                       "validation": {k: v for k, v in soup_entry["val"].items() if k != "coverage_curve"},
+                       "test": {k: v for k, v in soup_entry["test"].items() if k != "coverage_curve"},
+                       "context": _ctx_full(soup_entry.get("ctx"))},
                    "coverage_curve_test": cand_test.get("coverage_curve")},
                   f, indent=2, default=str)
     mc.write_predictions_jsonl(cand_preds, os.path.join(output_dir, f"{stem}_predictions.jsonl"))
@@ -1319,6 +1380,10 @@ def main(
         if ensemble is not None:
             f.write(fmt_block("ensemble validation", ensemble["val"]))
             f.write(fmt_block("ensemble test      ", ensemble["test"]))
+        if soup_entry is not None:
+            f.write(fmt_block(f"soup{soup_entry['selected_seeds']} validation", soup_entry["val"]))
+            f.write(fmt_block(f"soup{soup_entry['selected_seeds']} test      ", soup_entry["test"]))
+        f.write(f"  candidate: {cand_name} (saved as {cand_save_name})\n")
         if agreement:
             f.write(f"  seed agreement on test: pairwise {agreement['pairwise_mean']:.3f}, "
                     f"unanimous {agreement['unanimous']:.3f}\n")
@@ -1398,6 +1463,11 @@ def main(
     if ensemble is not None:
         print(f"Ensemble: test strict {ensemble['test']['strict']['accuracy']:.4f} "
               f"lenient {ensemble['test']['lenient']['accuracy']:.4f}")
+    if soup_entry is not None:
+        print(f"Soup {soup_entry['selected_seeds']}: val strict {soup_entry['val']['strict']['accuracy']:.4f} | "
+              f"test strict {soup_entry['test']['strict']['accuracy']:.4f} "
+              f"lenient {soup_entry['test']['lenient']['accuracy']:.4f}")
+    print(f"Candidate: {cand_name}")
     print(f"Gate: {'PASSED' if decision['passed'] else 'FAILED'} ({decision['reason']})")
     print("=" * 60)
 

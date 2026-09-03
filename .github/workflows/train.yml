@@ -217,6 +217,7 @@ jobs:
           RDROP_ALPHA=$(get_config "" "rdrop_alpha" "0.0")
           LOGIT_ADJUSTMENT_TAU=$(get_config "" "logit_adjustment_tau" "0.0")
           EMA_DECAY=$(get_config "" "ema_decay" "0.0")
+          SOUP=$(get_config "" "soup" "true")
           if [ "$SEEDS" = "null" ]; then SEEDS=""; fi
           PUSH_TO_HUB=$(get_config "${{ github.event.inputs.push_to_hub }}" "push_to_hub" "true")
           HF_REPO=$(get_config "${{ github.event.inputs.hf_repo }}" "hf_repo" "RyIoT33/haystack-autotagging")
@@ -233,6 +234,7 @@ jobs:
           echo "rdrop_alpha=$RDROP_ALPHA" >> $GITHUB_OUTPUT
           echo "logit_adjustment_tau=$LOGIT_ADJUSTMENT_TAU" >> $GITHUB_OUTPUT
           echo "ema_decay=$EMA_DECAY" >> $GITHUB_OUTPUT
+          echo "soup=$SOUP" >> $GITHUB_OUTPUT
           echo "gpu=$GPU" >> $GITHUB_OUTPUT
           echo "epochs=$EPOCHS" >> $GITHUB_OUTPUT
           echo "batch_size=$BATCH_SIZE" >> $GITHUB_OUTPUT
@@ -387,6 +389,11 @@ jobs:
           CMD="$CMD --rdrop-alpha ${{ steps.config.outputs.rdrop_alpha }}"
           CMD="$CMD --logit-adjustment-tau ${{ steps.config.outputs.logit_adjustment_tau }}"
           CMD="$CMD --ema-decay ${{ steps.config.outputs.ema_decay }}"
+          if [ "${{ steps.config.outputs.soup }}" == "true" ]; then
+            CMD="$CMD --soup"
+          else
+            CMD="$CMD --no-soup"
+          fi
 
           # Add HF Hub flags if pushing
           if [ "${{ steps.config.outputs.push_to_hub }}" == "true" ]; then

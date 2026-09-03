@@ -33,6 +33,9 @@ metric_for_best_model: "f1_weighted"
 # ensemble is reported. Single-seed noise on the 830-text test is ~0.5pp.
 seed: 42
 seeds: "42,43,44"
+# Greedy weight soup of the seeds after training; becomes the gated candidate
+# only when its validation accuracy beats the median seed.
+soup: true
 push_to_hub: true
 hf_repo: "RyIoT33/haystack-autotagging"
 

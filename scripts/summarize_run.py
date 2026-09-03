@@ -49,6 +49,12 @@ def summarize(path):
     if ens:
         lines.append(f"| ensemble | {pct(ens.get('val_strict'))} | {pct(ens.get('test_strict'))} | "
                      f"{pct(ens.get('test_lenient'))} | {pct(ens.get('test_log1p_rows'))} | |")
+    soup = cand.get("soup")
+    if soup:
+        mark = " (candidate)" if soup.get("is_candidate") else ""
+        lines.append(f"| soup{soup.get('selected_seeds')}{mark} | {pct(soup.get('val_strict'))} | "
+                     f"{pct(soup.get('test_strict'))} | {pct(soup.get('test_lenient'))} | "
+                     f"{pct(soup.get('test_log1p_rows'))} | |")
     agree = cand.get("seed_agreement")
     if agree:
         lines.append(f"\nSeed agreement on test: pairwise {agree['pairwise_mean']:.3f}, "
