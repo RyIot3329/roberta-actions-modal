@@ -401,8 +401,17 @@ jobs:
           echo "output_file=$OUTPUT_FILE" >> $GITHUB_OUTPUT
           echo "output_filename=$(basename $OUTPUT_FILE)" >> $GITHUB_OUTPUT
 
+          # Markdown summary of the composite metrics + gate for the PR body
+          {
+            echo "summary<<SUMMARY_EOF"
+            python scripts/summarize_run.py
+            echo "SUMMARY_EOF"
+          } >> $GITHUB_OUTPUT
+
           # Add to workflow summary
           echo "## Training Results" >> $GITHUB_STEP_SUMMARY
+          python scripts/summarize_run.py >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Model:** ${{ steps.config.outputs.model }}" >> $GITHUB_STEP_SUMMARY
           echo "**GPU:** ${{ steps.config.outputs.gpu }}" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
@@ -480,6 +489,8 @@ jobs:
             - `${{ steps.train.outputs.output_file }}` - Training results
 
             ### Results
+            ${{ steps.train.outputs.summary }}
+
             📊 [View full results in workflow summary](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           labels: |
             automated
