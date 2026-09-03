@@ -18,6 +18,8 @@ beats it on validation.
 
 | 2026-09-03 19:02 | 33793766902 (promote.yml) | soup of run 4's seeds 42+43 re-evaluated under the trade-off clause (no retraining) | val 64.99 | 65.90 (lenient 70.96, log1p 74.04) | – | soup[42,43] | **PASSED: pair view 79.21 vs 68.87 (+10.34pp, CI +9.2..+11.5); name-only -0.61pp within the 1.5pp clause** | pushed to RyIoT33/haystack-autotagging (PR #33); pairs: name 69.4 / context 78.1 / ensemble 79.2 strict, lenient 86.8 |
 
+| 2026-09-03 19:33 | 33794115633 | **A/B A**: epochs 20, no early stopping (cosine anneals to zero) | 64.99 / 65.37 / 64.33 (mean 64.90 vs 64.39 before: +0.5pp) | 63.37 / 64.58 / 64.70 (lenient 68.19 / 70.00 / 69.88) | ensemble 65.30; soup[43,42] val 65.84, test 64.94 / 70.00 | soup[43,42] | FAILED: pair view +1.0pp [+0.3, +1.7] but name-only 64.94 vs 65.90 (-0.96), lenient -0.96, log1p -2.4 | adopted on the validation rule (+0.5pp mean, pairs +1.0pp); test name-only within seed noise |
+
 Gate policy decided 2026-09-03 (user): trade-off clause -- a pair-view gain of at
 least 5pp allows the name-only strict accuracy to sit up to 1.5pp below the deployed
 model. Run 4's soup (pair +10.3pp, name-only -0.6pp) qualifies; it is promoted from the

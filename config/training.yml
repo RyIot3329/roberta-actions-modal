@@ -66,8 +66,9 @@ field_dropout: 0.2
 #   logit_adjustment_tau > 0 = subtract tau*log(class prior) in the train loss
 #   ema_decay > 0 = evaluate/checkpoint the EMA of the weights
 early_stopping_patience: 0
-llrd_decay: 1.0
-head_lr_multiplier: 1.0
+# A/B B: layer-wise LR decay 0.9 per layer, classifier head at 10x the base LR
+llrd_decay: 0.9
+head_lr_multiplier: 10.0
 rdrop_alpha: 0.0
 logit_adjustment_tau: 0.0
 ema_decay: 0.0
