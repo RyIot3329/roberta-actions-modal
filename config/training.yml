@@ -36,6 +36,10 @@ seeds: "42,43,44"
 # Greedy weight soup of the seeds after training; becomes the gated candidate
 # only when its validation accuracy beats the median seed.
 soup: true
+# Fixed initialization seed for the fresh classifier head (pooler + classifier),
+# independent of the training seed, so multi-seed runs share a loss basin and
+# can be souped. -1 = legacy per-seed random head.
+head_init_seed: 1234
 push_to_hub: true
 hf_repo: "RyIoT33/haystack-autotagging"
 

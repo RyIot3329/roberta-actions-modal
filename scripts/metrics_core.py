@@ -35,10 +35,12 @@ THRESHOLD_GRID = [round(x, 2) for x in np.arange(0.05, 1.0, 0.05)]
 
 # Secondary axes (dotted paths into the metrics dict) that must not regress by
 # more than the margin. Slices are added dynamically from the baseline.
+# coverage at the validation-fitted threshold is REPORTED but not gated: on
+# ~1k validation texts the fitted tau swings by tenths and the coverage with it
+# (0.4% .. 47% between otherwise similar models), so it cannot block a promotion.
 SECONDARY_AXES = (
     "lenient.accuracy",
     "strict.log1p_rows_accuracy",
-    "coverage.coverage_log1p_rows",
 )
 
 
@@ -50,23 +52,36 @@ def _sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def fingerprints(test_records, labels) -> dict:
-    """Identify the scoreboard: the exact held-out (text, label, site) set and
-    the label space. A gate comparison is only meaningful when both match."""
+def fingerprints(test_records, labels, pair_records=None) -> dict:
+    """Identify the scoreboard: the exact held-out (text, label, site) set, the
+    label space and, when present, the (text, context, label, site) pair set.
+    A gate comparison is only meaningful when they match."""
     lines = sorted(f"{r['text']}\t{r['label']}\t{r.get('site', '')}" for r in test_records)
     label_list = sorted(set(labels))
-    return {
+    out = {
         "test_sha256": _sha256("\n".join(lines)),
         "label_space_sha256": _sha256("\n".join(label_list)),
         "n_test": len(test_records),
         "n_classes": len(label_list),
     }
+    if pair_records:
+        pairs = sorted(f"{r['text']}\t{r.get('context', '')}\t{r['label']}\t{r.get('site', '')}"
+                       for r in pair_records)
+        out["pairs_sha256"] = _sha256("\n".join(pairs))
+        out["n_pairs"] = len(pair_records)
+    return out
 
 
 def fingerprints_match(a: dict, b: dict) -> bool:
-    return bool(a and b
-                and a.get("test_sha256") == b.get("test_sha256")
-                and a.get("label_space_sha256") == b.get("label_space_sha256"))
+    if not (a and b):
+        return False
+    if a.get("test_sha256") != b.get("test_sha256") \
+            or a.get("label_space_sha256") != b.get("label_space_sha256"):
+        return False
+    # Pair sets must match when both sides have one
+    if a.get("pairs_sha256") and b.get("pairs_sha256") and a["pairs_sha256"] != b["pairs_sha256"]:
+        return False
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -222,7 +237,7 @@ def _join(preds_a, preds_b, key: str):
     # The same normalized name can occur in two held-out sites with different
     # golds, so records are paired on (key, site) when a site is present
     def k(p):
-        return (p[key], p.get("site", ""))
+        return (p[key], p.get("context", ""), p.get("site", ""))
     a = {k(p): p for p in preds_a}
     b = {k(p): p for p in preds_b}
     common = sorted(set(a) & set(b))
@@ -270,17 +285,30 @@ def _get(d: dict, path: str, default=None):
     return cur
 
 
+def _binomial_margin(p, n, base_margin):
+    """Non-inferiority margin widened to two binomial standard errors for
+    small slices (a 230-text slice moves by ~3pp between seeds)."""
+    if not n or p is None:
+        return base_margin
+    p = min(max(float(p), 0.01), 0.99)
+    return max(base_margin, 2.0 * math.sqrt(p * (1 - p) / n))
+
+
 def promote_decision(candidate: dict, baseline: dict,
                      candidate_preds=None, baseline_preds=None,
+                     candidate_pairs=None, baseline_pairs=None,
                      margin: float = DEFAULT_MARGIN, B: int = DEFAULT_BOOTSTRAP_B) -> dict:
     """Composite non-inferiority gate.
 
-    candidate/baseline are metrics records (build_metrics_record output).
-    Passes iff fingerprints match, the paired-bootstrap CI of the primary
-    delta excludes a drop larger than `margin`, and every secondary axis
-    (lenient, log1p-rows, coverage at 90%% precision, each slice) has a point
-    delta better than -margin. Without prediction files the primary check
-    falls back to the point delta.
+    Primary: when both records carry the operational pair view
+    (metrics.pairs_ensemble = max-confidence of name and context views on the
+    held-out (name, context) pairs) it is the primary, judged by a paired
+    bootstrap on the pair predictions; otherwise the per-name name-only strict
+    accuracy is (bootstrap on the per-name predictions). Secondary axes must not
+    regress beyond the margin: name-only strict accuracy (compared with the
+    baseline run's SEED MEAN when it recorded one -- the deployed seed alone is
+    a lucky draw), lenient accuracy, log1p-rows accuracy, and every per-name
+    slice with a two-standard-error margin. Fingerprints must match.
     """
     axes = []
     reasons = []
@@ -295,48 +323,70 @@ def promote_decision(candidate: dict, baseline: dict,
         }
 
     cm, bm = candidate.get("metrics", {}), baseline.get("metrics", {})
-    primary_c = _get(cm, PRIMARY_METRIC)
-    primary_b = _get(bm, PRIMARY_METRIC)
+    use_pairs = bool(_get(cm, "pairs_ensemble.accuracy") is not None
+                     and _get(bm, "pairs_ensemble.accuracy") is not None)
+    primary_axis = "pairs_ensemble.accuracy" if use_pairs else PRIMARY_METRIC
+    primary_c, primary_b = _get(cm, primary_axis), _get(bm, primary_axis)
+    preds_c = candidate_pairs if use_pairs else candidate_preds
+    preds_b = baseline_pairs if use_pairs else baseline_preds
     boot = None
-    if candidate_preds and baseline_preds:
-        boot = paired_bootstrap(baseline_preds, candidate_preds, B=B)
+    if preds_c and preds_b:
+        boot = paired_bootstrap(preds_b, preds_c, B=B)
         primary_ok = boot["ci_lo"] > -margin
-        axes.append({"axis": PRIMARY_METRIC + " (paired bootstrap ci_lo)",
+        axes.append({"axis": primary_axis + " (paired bootstrap ci_lo)",
                      "baseline": primary_b, "candidate": primary_c,
                      "delta": boot["delta"], "ci_lo": boot["ci_lo"], "ci_hi": boot["ci_hi"],
                      "threshold": -margin, "ok": bool(primary_ok)})
     else:
         primary_ok = (primary_c is not None and primary_b is not None
                       and primary_c - primary_b > -margin)
-        axes.append({"axis": PRIMARY_METRIC + " (point delta)", "baseline": primary_b,
+        axes.append({"axis": primary_axis + " (point delta)", "baseline": primary_b,
                      "candidate": primary_c,
                      "delta": None if primary_c is None or primary_b is None else primary_c - primary_b,
                      "threshold": -margin, "ok": bool(primary_ok)})
     if not primary_ok:
         reasons.append("primary regressed")
 
+    # Name-only strict accuracy: against the baseline run's seed mean when known
+    if use_pairs:
+        summary = baseline.get("seed_summary") or {}
+        seed_tests = [v.get("test_strict") for v in summary.values() if v.get("test_strict") is not None]
+        b_name = sum(seed_tests) / len(seed_tests) if seed_tests else _get(bm, PRIMARY_METRIC)
+        c_summary = candidate.get("seed_summary") or {}
+        c_tests = [v.get("test_strict") for v in c_summary.values() if v.get("test_strict") is not None]
+        c_name = sum(c_tests) / len(c_tests) if c_tests else _get(cm, PRIMARY_METRIC)
+        label = PRIMARY_METRIC + (" (seed means)" if seed_tests and c_tests else "")
+        if b_name is not None and c_name is not None:
+            ok = c_name - b_name > -margin
+            axes.append({"axis": label, "baseline": b_name, "candidate": c_name,
+                         "delta": c_name - b_name, "threshold": -margin, "ok": bool(ok)})
+            if not ok:
+                reasons.append(f"{label} regressed by {b_name - c_name:.4f}")
+
     secondary = list(SECONDARY_AXES)
-    secondary += [f"slices.{name}.strict" for name in sorted(_get(bm, "slices", {}) or {})]
-    for axis in secondary:
+    slice_names = sorted(_get(bm, "slices", {}) or {})
+    for axis in secondary + [f"slices.{name}.strict" for name in slice_names]:
         b_val, c_val = _get(bm, axis), _get(cm, axis)
         if b_val is None or c_val is None or (isinstance(b_val, float) and math.isnan(b_val)):
             axes.append({"axis": axis, "baseline": b_val, "candidate": c_val,
                          "delta": None, "threshold": -margin, "ok": True, "note": "not comparable"})
             continue
+        m = margin
+        if axis.startswith("slices."):
+            n = _get(bm, axis.rsplit(".", 1)[0] + ".n")
+            m = _binomial_margin(b_val, n, margin)
         delta = c_val - b_val
-        ok = delta > -margin
+        ok = delta > -m
         axes.append({"axis": axis, "baseline": b_val, "candidate": c_val,
-                     "delta": delta, "threshold": -margin, "ok": bool(ok)})
+                     "delta": delta, "threshold": -m, "ok": bool(ok)})
         if not ok:
             reasons.append(f"{axis} regressed by {-delta:.4f}")
 
-    # Promotion needs strict non-inferiority everywhere AND a strict-or-equal
-    # primary: an equal primary is allowed only when nothing regressed.
     passed = primary_ok and all(a["ok"] for a in axes)
     return {
         "passed": bool(passed),
         "reason": "ok" if passed else "; ".join(reasons),
-        "primary": PRIMARY_METRIC,
+        "primary": primary_axis,
         "margin": margin,
         "bootstrap": boot,
         "axes": axes,

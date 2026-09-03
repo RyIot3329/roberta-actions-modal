@@ -93,10 +93,22 @@ def test_gate_passes_equal_and_blocks_slice_regression():
             p["predicted_label"] = "z"
             flipped += 1
     d = mc.promote_decision(_record(worse, fp), _record(base, fp), worse, base)
-    assert not d["passed"]
-    assert any(a["axis"] == "slices.site:B.strict" and not a["ok"] for a in d["axes"]), d["axes"]
+    assert not d["passed"]                      # the primary (and lenient) regressed
+    # a 3pp drop on a 100-text slice is inside its two-standard-error margin ...
+    slice_axis = next(a for a in d["axes"] if a["axis"] == "slices.site:B.strict")
+    assert slice_axis["ok"] and slice_axis["threshold"] < -0.05
     table = mc.format_axes_table(d)
     assert "site:B" in table and "FAILED" in table
+    # ... but the same 3pp drop on a 4,000-text slice is a real regression
+    big = _preds(2400, 1600, site="C")
+    big_worse = [dict(p) for p in big]
+    flipped = 0
+    for p in big_worse:
+        if p["predicted_label"] == "x" and flipped < 120:
+            p["predicted_label"] = "z"
+            flipped += 1
+    d2 = mc.promote_decision(_record(big_worse, fp), _record(big, fp), big_worse, big)
+    assert any(a["axis"] == "slices.site:C.strict" and not a["ok"] for a in d2["axes"]), d2["axes"]
 
 
 def test_paired_bootstrap_on_archived_runs():
@@ -132,6 +144,44 @@ def test_paired_bootstrap_on_archived_runs():
             flipped += 1
     boot2 = mc.paired_bootstrap(a, worse, B=2000)
     assert boot2["ci_hi"] < 0, boot2
+
+
+
+
+def test_pairs_primary_and_seed_mean_axis():
+    """With pair views on both sides the operational pair ensemble is the
+    primary; the name-only view is judged against the baseline's seed mean."""
+    fp = {"test_sha256": "1", "label_space_sha256": "1", "n_test": 1, "n_classes": 1,
+          "pairs_sha256": "p", "n_pairs": 1}
+    base_name = _preds(66, 34)                # lucky deployed seed: 66%
+    cand_name = _preds(65, 35)                # candidate seed: 65%
+    base_pairs = [dict(p, context="eq a") for p in _preds(65, 35, site="P")]
+    cand_pairs = [dict(p, context="eq a") for p in _preds(78, 22, site="P")]
+    b = mc.build_metrics_record(mc.score_predictions(base_name, tau=0.5), fp, model="b")
+    b["metrics"]["pairs_ensemble"] = mc.score_predictions(base_pairs, tau=0.5)
+    b["seed_summary"] = {"42": {"test_strict": 0.66}, "43": {"test_strict": 0.642}, "44": {"test_strict": 0.63}}
+    c = mc.build_metrics_record(mc.score_predictions(cand_name, tau=0.5), fp, model="c")
+    c["metrics"]["pairs_ensemble"] = mc.score_predictions(cand_pairs, tau=0.5)
+    c["seed_summary"] = {"42": {"test_strict": 0.653}, "43": {"test_strict": 0.655}, "44": {"test_strict": 0.642}}
+    d = mc.promote_decision(c, b, cand_name, base_name, candidate_pairs=cand_pairs, baseline_pairs=base_pairs)
+    assert d["primary"] == "pairs_ensemble.accuracy"
+    assert d["axes"][0]["ok"] and d["axes"][0]["delta"] > 0.1
+    name_axis = next(a for a in d["axes"] if a["axis"].startswith("strict.accuracy"))
+    assert "seed means" in name_axis["axis"] and name_axis["ok"]
+    assert abs(name_axis["baseline"] - 0.644) < 1e-6
+    assert d["passed"], d["reason"]
+
+
+def test_pairs_mismatch_is_stale():
+    a = {"test_sha256": "1", "label_space_sha256": "1", "pairs_sha256": "p1"}
+    b = {"test_sha256": "1", "label_space_sha256": "1", "pairs_sha256": "p2"}
+    assert not mc.fingerprints_match(a, b)
+    assert mc.fingerprints_match(a, {"test_sha256": "1", "label_space_sha256": "1"})
+
+
+def test_slice_margin_widens_with_small_n():
+    assert mc._binomial_margin(0.8, 230, 0.005) > 0.05
+    assert mc._binomial_margin(0.8, 100000, 0.005) == 0.005
 
 
 if __name__ == "__main__":

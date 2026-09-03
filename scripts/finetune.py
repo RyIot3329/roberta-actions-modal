@@ -84,6 +84,7 @@ def _train_impl(
     baseline_f1: float = None,
     save_name: str = "final_model",
     target_precision: float = 0.85,
+    head_init_seed: int = 1234,
     train_ctx_data: list = None,
     val_ctx_data: list = None,
     test_ctx_data: list = None,
@@ -183,6 +184,23 @@ def _train_impl(
         token=hf_token,
     )
 
+    # Fresh head (pooler + classifier) initialized from a FIXED seed, independent
+    # of the training seed: seeds then differ only in data order and dropout,
+    # which keeps them in one loss basin so their weights can be averaged
+    # (weight soup). Without this every seed gets its own random head and
+    # averaging is meaningless.
+    if head_init_seed is not None and head_init_seed >= 0:
+        gen_state = torch.random.get_rng_state()
+        torch.manual_seed(head_init_seed)
+        n_reinit = 0
+        for name, module in model.named_modules():
+            if name.split(".")[0] in ("pooler", "classifier") and isinstance(module, torch.nn.Linear):
+                model._init_weights(module)
+                n_reinit += 1
+        torch.random.set_rng_state(gen_state)
+        set_seed(seed)
+        print(f"Head re-initialized from seed {head_init_seed} ({n_reinit} linear layers)")
+
     # Print model info
     total_params = sum(p.numel() for p in model.parameters())
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -221,10 +239,16 @@ def _train_impl(
             r = self.records[i]
             ctx = r.get("context") or ""
             if ctx and self.p_name_only > 0:
-                if random.random() < self.p_name_only:
+                # A flip (label differs from the name-only majority) is only
+                # right given its context: never blank it, and keep at least
+                # one field
+                if not r.get("flip") and random.random() < self.p_name_only:
                     ctx = ""
                 elif self.p_field > 0:
-                    fields = [f for f in ctx.split(CONTEXT_SEP) if random.random() >= self.p_field]
+                    all_fields = ctx.split(CONTEXT_SEP)
+                    fields = [f for f in all_fields if random.random() >= self.p_field]
+                    if not fields and r.get("flip"):
+                        fields = [random.choice(all_fields)]
                     ctx = CONTEXT_SEP.join(fields)
             text = r["text"] if not ctx else f"{r['text']}{CONTEXT_SEP}{ctx}"
             return {"text": text, "label": r["label_id"]}
@@ -684,6 +708,7 @@ def _train_impl(
             "rdrop_alpha": rdrop_alpha,
             "logit_adjustment_tau": logit_adjustment_tau,
             "ema_decay": ema_decay,
+            "head_init_seed": head_init_seed,
             "num_labels": num_labels,
             "train_samples": len(train_data),
             "val_samples": len(val_data),
@@ -946,7 +971,7 @@ def _score_context_views(val_ctx_preds, test_ctx_preds, val_name_preds, test_nam
         assert len(ctx_preds) == len(name_preds), "context and name views must align"
         views[split] = {"context": ctx_preds, "name_on_pairs": name_preds,
                         "ensemble": ensemble_view(ctx_preds, name_preds)}
-    out = {"val": {}, "test": {}, "tau": {}}
+    out = {"val": {}, "test": {}, "tau": {}, "test_preds": views["test"]}
     for view in ("context", "name_on_pairs", "ensemble"):
         tau = mc.fit_acceptance_threshold(views["val"][view], target_precision)
         out["tau"][view] = tau
@@ -1008,6 +1033,7 @@ def main(
     logit_adjustment_tau: float = 0.0,
     ema_decay: float = 0.0,
     soup: bool = True,
+    head_init_seed: int = 1234,
 ):
     """
     Run fine-tuning from the command line.
@@ -1097,7 +1123,7 @@ def main(
     print(f"Number of labels: {num_labels}")
 
     # ----- Scoreboard + baseline -----
-    fingerprints = mc.fingerprints(test_data, list(label2id))
+    fingerprints = mc.fingerprints(test_data, list(label2id), pair_records=test_ctx)
     baseline = None
     baseline_preds = None
     baseline_note = "no baseline file"
@@ -1136,6 +1162,7 @@ def main(
         early_stopping_patience=early_stopping_patience, llrd_decay=llrd_decay,
         head_lr_multiplier=head_lr_multiplier, rdrop_alpha=rdrop_alpha,
         logit_adjustment_tau=logit_adjustment_tau, ema_decay=ema_decay,
+        head_init_seed=head_init_seed,
     )
     print(f"\nStarting Modal training on {gpu_upper} for seeds {seed_list}...")
     calls = {s: train_fn.spawn(seed=s, save_name=f"final_model_seed{s}", **common)
@@ -1163,6 +1190,9 @@ def main(
                 res["validation_ctx_name_inference"]["predictions"],
                 res["test_ctx_name_inference"]["predictions"],
                 target_precision, mc)
+            # Operational view on the pair test: what the service returns when
+            # callers send context (max-confidence of name and context views)
+            per_seed[s]["pairs"] = per_seed[s]["ctx"]["test_preds"]["ensemble"]
     ensemble = None
     if len(seed_results) > 1:
         ens_val = _ensemble_predictions(seed_results, val_data, "val", id2label_int)
@@ -1184,6 +1214,7 @@ def main(
     cand_temperature = results.get("calibration_temperature")
     cand_tau = per_seed[selected]["tau"]
     cand_ctx = per_seed[selected].get("ctx")
+    cand_pairs = per_seed[selected].get("pairs")
     print(f"\nSelected seed {selected} (median validation strict accuracy "
           f"{per_seed[selected]['val']['strict']['accuracy']:.4f})")
 
@@ -1210,6 +1241,7 @@ def main(
                     soup_res["test_ctx_inference"]["predictions"],
                     soup_res["validation_ctx_name_inference"]["predictions"],
                     soup_res["test_ctx_name_inference"]["predictions"], target_precision, mc)
+                soup_entry["pairs"] = soup_entry["ctx"]["test_preds"]["ensemble"]
             print(f"Soup of {soup_entry['selected_seeds']}: validation strict "
                   f"{soup_entry['val']['strict']['accuracy']:.4f} vs selected seed "
                   f"{per_seed[selected]['val']['strict']['accuracy']:.4f}")
@@ -1225,11 +1257,20 @@ def main(
                 cand_temperature = soup_entry["temperature"]
                 cand_tau = soup_entry["tau"]
                 cand_ctx = soup_entry.get("ctx")
+                cand_pairs = soup_entry.get("pairs")
                 print(f"Candidate: {cand_name} (validation beat the median seed)")
         except Exception as e:  # noqa: BLE001
             print(f"WARNING: soup evaluation failed ({type(e).__name__}: {e}); candidate stays seed {selected}")
             soup_entry = None
 
+    if cand_pairs:
+        cand_test = dict(cand_test)
+        cand_test["pairs_ensemble"] = {k: v for k, v in cand_ctx["test"]["ensemble"].items()
+                                       if k != "coverage_curve"}
+        cand_test["pairs_context"] = {k: v for k, v in cand_ctx["test"]["context"].items()
+                                      if k != "coverage_curve"}
+        cand_test["pairs_name"] = {k: v for k, v in cand_ctx["test"]["name_on_pairs"].items()
+                                   if k != "coverage_curve"}
     candidate_record = mc.build_metrics_record(
         cand_test, fingerprints, model=model_name, hf_repo=hf_repo, git_sha=_git_sha(),
         timestamp=results["timestamp"], seeds=seed_list, selected_seed=selected,
@@ -1267,8 +1308,13 @@ def main(
                 "test_log1p_rows": ensemble["test"]["strict"]["log1p_rows_accuracy"]},
         },
     )
+    baseline_pairs = None
     if baseline is not None:
-        decision = mc.promote_decision(candidate_record, baseline, cand_preds, baseline_preds)
+        bpp = baseline.get("predictions_pairs_path")
+        if bpp and os.path.exists(bpp):
+            baseline_pairs = mc.load_predictions_jsonl(bpp)
+        decision = mc.promote_decision(candidate_record, baseline, cand_preds, baseline_preds,
+                                       candidate_pairs=cand_pairs, baseline_pairs=baseline_pairs)
     else:
         decision = {"passed": False, "reason": baseline_note, "axes": []}
     print("\n" + mc.format_axes_table(decision))
@@ -1293,6 +1339,10 @@ def main(
         pred_path = os.path.join(os.path.dirname(baseline_path) or ".", "best_predictions.jsonl")
         candidate_record["predictions_path"] = pred_path
         candidate_record["huggingface_url"] = hf_url
+        if cand_pairs:
+            pairs_path = os.path.join(os.path.dirname(baseline_path) or ".", "best_predictions_pairs.jsonl")
+            candidate_record["predictions_pairs_path"] = pairs_path
+            mc.write_predictions_jsonl(cand_pairs, pairs_path)
         with open(baseline_path, "w") as f:
             json.dump(candidate_record, f, indent=2)
         mc.write_predictions_jsonl(cand_preds, pred_path)
@@ -1331,6 +1381,8 @@ def main(
                    "coverage_curve_test": cand_test.get("coverage_curve")},
                   f, indent=2, default=str)
     mc.write_predictions_jsonl(cand_preds, os.path.join(output_dir, f"{stem}_predictions.jsonl"))
+    if cand_pairs:
+        mc.write_predictions_jsonl(cand_pairs, os.path.join(output_dir, f"{stem}_predictions_pairs.jsonl"))
 
     def fmt_block(name, m):
         s_, l_ = m["strict"], m["lenient"]

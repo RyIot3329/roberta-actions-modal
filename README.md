@@ -88,10 +88,16 @@ Key data-quality guarantees:
   (accept-set) accuracy, log1p(rows)-weighted accuracy, per-site and
   seen/unseen slices, top-k, and coverage at the validation-fitted acceptance
   threshold (85% precision). The candidate is compared with
-  `output/best_metrics.json` (fingerprinted with the exact test set and label
-  space) using a paired bootstrap on `output/best_predictions.jsonl`: it is
-  promoted only when strict accuracy is non-inferior (CI lower bound above
-  -0.5pp) and no secondary axis drops more than 0.5pp. A stale baseline
+  `output/best_metrics.json` (fingerprinted with the exact test set, label
+  space and (name, context) pair set) using a paired bootstrap on the stored
+  predictions: the primary is the operational pair view (`pairs_ensemble`:
+  max-confidence of the name-only and context views on the held-out pairs,
+  `output/best_predictions_pairs.jsonl`) when both sides have it, otherwise the
+  per-name name-only strict accuracy; promotion requires the primary's CI lower
+  bound above -0.5pp, the name-only strict accuracy non-inferior to the
+  baseline run's **seed mean** (a single deployed seed is a lucky draw), and no
+  lenient / log1p-rows / per-name slice regression beyond a two-standard-error
+  margin. Coverage at the acceptance threshold is reported, not gated. A stale baseline
   (fingerprint mismatch after new sites or a label-space change) never
   compares silently: CI re-scores the deployed model with
   `scripts/rescore_baseline.py` first. Never delete the baseline file by hand.

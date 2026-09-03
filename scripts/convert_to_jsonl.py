@@ -589,14 +589,17 @@ def convert_to_jsonl(
         if label not in label2id:
             ctx_out_of_space += 1
             continue
-        ctx_records.append({'text': text, 'context': ctx, 'label': label,
-                            'label_id': label2id[label]})
+        record = {'text': text, 'context': ctx, 'label': label, 'label_id': label2id[label]}
         name_label = resolved.get(text)
         if name_label is not None and name_label != label:
             rows = int(sum(sum(ev['sites'].values())
                            for ev in ctx_evidence[(text, ctx)].values()))
             flips.append({'text': text, 'context': ctx, 'context_label': label,
                           'name_only_label': name_label, 'rows': rows})
+            # A flip's label is only right GIVEN its context: training must never
+            # show it name-only (context dropout skips flips)
+            record['flip'] = True
+        ctx_records.append(record)
     print(f"Context view: {len(ctx_records)} (text, context) records, {len(flips)} flips vs "
           f"the name-only label, {ctx_out_of_space} dropped (label outside the name-only space)")
     flips_path = os.path.join(output_dir, 'context_flips.csv')
