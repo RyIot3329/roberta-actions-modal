@@ -351,7 +351,7 @@ jobs:
           echo "========================================"
 
           # Build the command
-          CMD="modal run ./scripts/finetune.py"
+          CMD="modal run ./scripts/finetune.py::main"
           CMD="$CMD --model '${{ steps.config.outputs.model }}'"
           CMD="$CMD --gpu '${{ steps.config.outputs.gpu }}'"
           CMD="$CMD --epochs ${{ steps.config.outputs.epochs }}"

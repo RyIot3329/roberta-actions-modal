@@ -5,10 +5,10 @@ Fine-tune DeBERTa-v3 / RoBERTa for HVAC Point Classification on Modal
 Fine-tuning transformer models on Modal's serverless GPU infrastructure.
 
 Usage:
-    modal run finetune.py
-    modal run finetune.py --model microsoft/deberta-v3-base
-    modal run finetune.py --model FacebookAI/roberta-base
-    modal run finetune.py --gpu A10G --epochs 9 --push-to-hub --hf-repo username/model-name
+    modal run finetune.py::main
+    modal run finetune.py::main --model microsoft/deberta-v3-base
+    modal run finetune.py::main --model FacebookAI/roberta-base
+    modal run finetune.py::main --gpu A10G --epochs 9 --push-to-hub --hf-repo username/model-name
 """
 
 import json

@@ -312,7 +312,7 @@ python scripts/print_tags.py
 python scripts/convert_to_jsonl.py    # --val-sites / --test-sites to change holdouts
 
 # Run training on Modal
-modal run scripts/finetune.py --epochs 2
+modal run scripts/finetune.py::main --epochs 2
 
 # Score any model against a held-out site export
 python scripts/evaluate_external.py --csv data/real_points.csv --site N4-Integ06
