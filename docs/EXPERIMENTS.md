@@ -16,6 +16,8 @@ beats it on validation.
 | 2026-09-03 17:44 | 33783782732 (dispatched) | flip-aware dropout, head_init_seed 1234, pair-primary gate | – | – | – | soup[42,43] | crashed in the gate (pair predictions file lacked `context`; fixed in 41ec19d) | CI re-scored the deployed model on the pair test: 68.87% name-only |
 | 2026-09-03 18:47 | 33789522186 (dispatched) | same as above, gate fixed | 64.61 / 64.52 / 64.04 | 64.58 / 64.46 / 63.98 (lenient 69.64 / 69.52 / 68.31) | ensemble 65.18; **soup[42,43] 65.90 / 70.96** (val 64.99) | soup[42,43] | FAILED on the name-only secondary only: **pair view 79.21 vs 68.87 (+10.34pp, CI +9.2..+11.5)**; name-only soup 65.90 vs deployed 66.51 (-0.61pp vs the 0.5pp margin) | pair view: name-only 69.4 / context 78.1 / ensemble 79.2, lenient 86.8, log1p 81.5; Integ06 pairs 81.7, Motorola 73.7, unseen pairs 73.0. Gate bug: candidate seed MEAN (64.3) was compared with the single deployed seed; fixed to deployable-vs-deployable |
 
+| 2026-09-03 19:02 | 33793766902 (promote.yml) | soup of run 4's seeds 42+43 re-evaluated under the trade-off clause (no retraining) | val 64.99 | 65.90 (lenient 70.96, log1p 74.04) | – | soup[42,43] | **PASSED: pair view 79.21 vs 68.87 (+10.34pp, CI +9.2..+11.5); name-only -0.61pp within the 1.5pp clause** | pushed to RyIoT33/haystack-autotagging (PR #33); pairs: name 69.4 / context 78.1 / ensemble 79.2 strict, lenient 86.8 |
+
 Gate policy decided 2026-09-03 (user): trade-off clause -- a pair-view gain of at
 least 5pp allows the name-only strict accuracy to sit up to 1.5pp below the deployed
 model. Run 4's soup (pair +10.3pp, name-only -0.6pp) qualifies; it is promoted from the

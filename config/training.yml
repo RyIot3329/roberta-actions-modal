@@ -11,7 +11,9 @@ model: "RyIoT33/deberta-v3-bms-base"
 # (patience 3) halts at the plateau. 30 lets the anneal actually complete:
 # the last 60-epoch run stopped at 26, leaving the LR at ~37% of peak.
 # LR is sqrt-scaled for the 4x batch increase (2e-5 @ bs32 -> 4e-5).
-epochs: 30
+# A/B A (finish the anneal): 20 epochs with no early stopping so the cosine
+# schedule reaches zero; the best validation epoch is still the one kept.
+epochs: 20
 batch_size: 128
 learning_rate: "4e-5"
 # 64 leaves room for the optional context string ("<name> | eq ... | unit ...")
@@ -63,7 +65,7 @@ field_dropout: 0.2
 #   rdrop_alpha > 0 = R-Drop consistency (2 forward passes/step)
 #   logit_adjustment_tau > 0 = subtract tau*log(class prior) in the train loss
 #   ema_decay > 0 = evaluate/checkpoint the EMA of the weights
-early_stopping_patience: 3
+early_stopping_patience: 0
 llrd_decay: 1.0
 head_lr_multiplier: 1.0
 rdrop_alpha: 0.0
