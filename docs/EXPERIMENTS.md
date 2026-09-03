@@ -26,6 +26,8 @@ beats it on validation.
 
 | 2026-09-03 21:18 | 33802655051 | **A/B C**: R-Drop alpha 1.0 + label smoothing 0.05 (on A) | 63.85 / 63.85 / 64.99 (mean 64.23, -0.7pp vs A) | 63.61 / 64.58 / 65.30 (lenient 68.92 / 69.88 / 70.24) | ensemble 64.58 / 70.00; soup[44,42] val 66.32, test 65.30 / 70.36 | soup[44,42] | FAILED: pair view -1.02pp [-1.6, -0.5]; name-only -0.60, lenient -0.60 | rejected (validation mean down, pair view down); reverted |
 
+| 2026-09-03 21:49 | 33807402626 | **A/B D**: logit adjustment tau 0.5 (macro-F1 probe, on A) | 63.95 / 64.33 / 64.61 (mean 64.30, -0.6pp vs A) | 64.58 / 62.41 / 62.65 (lenient 70.24 / 67.23 / 67.83); macro-F1 0.372 / 0.371 / 0.357 vs 0.377 on A | ensemble 63.86; soup[44,43] val 66.32, test 63.86 / 68.43 | soup[44,43] | FAILED: pair view -0.57pp [-1.35, +0.20]; name-only -2.05, lenient -2.53 | rejected: macro-F1 did not improve either; reverted |
+
 Gate policy decided 2026-09-03 (user): trade-off clause -- a pair-view gain of at
 least 5pp allows the name-only strict accuracy to sit up to 1.5pp below the deployed
 model. Run 4's soup (pair +10.3pp, name-only -0.6pp) qualifies; it is promoted from the
@@ -38,7 +40,7 @@ seeds still on the Modal volume via `promote.yml` instead of retraining.
 3. **E – EMA**: `ema_decay: 0.999`.
 4. **C – R-Drop**: `rdrop_alpha: 1.0` with `label_smoothing: 0.05` (2x step cost).
 5. **D – logit adjustment** (`logit_adjustment_tau: 0.5`): judged on macro-F1 only, never on the primary.
-6. **H – deberta-v3-large probe**, then distillation into the DAPT base if it clears +1.5pp.
+6. **H – deberta-v3-large probe** (run 10), then distillation into the DAPT base if it clears +1.5pp.
 
 Evidence gathered offline (2026-09-03, not runs): the Occam qualifier re-rank gives
 +0.2-0.3pp (not adopted); per-site kNN / prior adaptation with 100-150 labels gives
