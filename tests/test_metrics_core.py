@@ -194,6 +194,29 @@ def test_slice_margin_widens_with_small_n():
     assert mc._binomial_margin(0.8, 100000, 0.005) == 0.005
 
 
+def test_pair_predictions_round_trip_and_join(tmp_path=None):
+    """Written prediction files keep the context, so pair records pair up."""
+    import os
+    import tempfile
+    pairs = [dict(p, context=f"eq a{i % 2}", pair_seen_in_train=bool(i % 2))
+             for i, p in enumerate(_preds(6, 4, site="P"))]
+    path = os.path.join(tempfile.mkdtemp(), "pairs.jsonl")
+    mc.write_predictions_jsonl(pairs, path)
+    loaded = mc.load_predictions_jsonl(path)
+    assert loaded[0]["context"] == "eq a0" and "pair_seen_in_train" in loaded[1]
+    boot = mc.paired_bootstrap(loaded, pairs, B=200)
+    assert boot["n_paired"] == len(pairs) and boot["delta"] == 0.0
+
+
+def test_gate_survives_unpairable_predictions():
+    fp = {"test_sha256": "1", "label_space_sha256": "1", "n_test": 1, "n_classes": 1}
+    base = _preds(8, 2)
+    cand = [dict(p, text=p["text"] + "-other") for p in _preds(9, 1)]
+    d = mc.promote_decision(_record(cand, fp), _record(base, fp), cand, base)
+    assert "point delta" in d["axes"][0]["axis"] and d["axes"][0]["note"]
+    assert d["passed"] is False or d["passed"] is True  # decided, not raised
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):

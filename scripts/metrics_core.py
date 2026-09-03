@@ -330,8 +330,13 @@ def promote_decision(candidate: dict, baseline: dict,
     preds_c = candidate_pairs if use_pairs else candidate_preds
     preds_b = baseline_pairs if use_pairs else baseline_preds
     boot = None
+    boot_note = None
     if preds_c and preds_b:
-        boot = paired_bootstrap(preds_b, preds_c, B=B)
+        try:
+            boot = paired_bootstrap(preds_b, preds_c, B=B)
+        except ValueError as e:  # e.g. prediction files that cannot be paired
+            boot_note = f"paired bootstrap unavailable ({e}); point delta used"
+    if boot is not None:
         primary_ok = boot["ci_lo"] > -margin
         axes.append({"axis": primary_axis + " (paired bootstrap ci_lo)",
                      "baseline": primary_b, "candidate": primary_c,
@@ -343,9 +348,12 @@ def promote_decision(candidate: dict, baseline: dict,
         axes.append({"axis": primary_axis + " (point delta)", "baseline": primary_b,
                      "candidate": primary_c,
                      "delta": None if primary_c is None or primary_b is None else primary_c - primary_b,
-                     "threshold": -margin, "ok": bool(primary_ok)})
+                     "threshold": -margin, "ok": bool(primary_ok),
+                     **({"note": boot_note} if boot_note else {})})
     if not primary_ok:
         reasons.append("primary regressed")
+    if boot_note:
+        reasons.append(boot_note)
 
     # Per-name name-only strict and lenient accuracy: against the baseline
     # run's SEED MEAN when it recorded one (a single deployed seed is a lucky
@@ -449,8 +457,8 @@ def build_metrics_record(metrics: dict, fingerprints_: dict, model: str, hf_repo
 
 
 def write_predictions_jsonl(preds, path):
-    keys = ("text", "site", "rows", "seen_in_train", "actual_label", "predicted_label",
-            "confidence", "accept", "topk_labels")
+    keys = ("text", "context", "site", "rows", "seen_in_train", "pair_seen_in_train",
+            "actual_label", "predicted_label", "confidence", "accept", "topk_labels")
     with open(path, "w", encoding="utf-8") as f:
         for p in preds:
             row = {k: p[k] for k in keys if k in p}

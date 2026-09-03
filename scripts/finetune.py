@@ -1313,8 +1313,11 @@ def main(
         bpp = baseline.get("predictions_pairs_path")
         if bpp and os.path.exists(bpp):
             baseline_pairs = mc.load_predictions_jsonl(bpp)
-        decision = mc.promote_decision(candidate_record, baseline, cand_preds, baseline_preds,
-                                       candidate_pairs=cand_pairs, baseline_pairs=baseline_pairs)
+        try:
+            decision = mc.promote_decision(candidate_record, baseline, cand_preds, baseline_preds,
+                                           candidate_pairs=cand_pairs, baseline_pairs=baseline_pairs)
+        except Exception as e:  # noqa: BLE001 -- a gate bug must never lose a run's results
+            decision = {"passed": False, "reason": f"gate error: {type(e).__name__}: {e}", "axes": []}
     else:
         decision = {"passed": False, "reason": baseline_note, "axes": []}
     print("\n" + mc.format_axes_table(decision))
