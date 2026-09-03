@@ -1213,7 +1213,11 @@ def main(
             print(f"Soup of {soup_entry['selected_seeds']}: validation strict "
                   f"{soup_entry['val']['strict']['accuracy']:.4f} vs selected seed "
                   f"{per_seed[selected]['val']['strict']['accuracy']:.4f}")
-            if soup_entry["val"]["strict"]["accuracy"] > per_seed[selected]["val"]["strict"]["accuracy"]:
+            # A one-seed soup is that seed's own weights; require a real merge
+            # and a margin above inference noise before swapping candidates
+            if (len(soup_entry["selected_seeds"]) > 1
+                    and soup_entry["val"]["strict"]["accuracy"]
+                    > per_seed[selected]["val"]["strict"]["accuracy"] + 0.002):
                 cand_name = f"soup{soup_entry['selected_seeds']}"
                 cand_test = soup_entry["test"]
                 cand_preds = soup_entry["test_preds"]
