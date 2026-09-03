@@ -2,8 +2,8 @@
   "schema_version": 2,
   "model": "tfidf+sgd-hinge",
   "hf_repo": null,
-  "git_sha": "40ebf4e",
-  "timestamp": "2026-09-03T16:44:46.325143",
+  "git_sha": "41ec19d",
+  "timestamp": "2026-09-03T18:17:59.059735",
   "seeds": null,
   "selected_seed": null,
   "fingerprints": {
@@ -133,5 +133,5 @@
     }
   },
   "train_records": 47266,
-  "fit_seconds": 50.7
+  "fit_seconds": 39.3
 }
